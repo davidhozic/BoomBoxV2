@@ -14,12 +14,14 @@ void audio_visual(void *paramOdTaska);
 void polnjenje(void *paramOdTaska);
 void readVoltage(void *paramOdTaska);
 void events(void *paramOdTaska);
+void povprecna_glasnost(void *input);
+void merjenje_frekvence(void *input);
 /*************************KONEC PROTOTIPOV************************/
-
+extern const int mic_pin;
 TaskHandle_t core_handle;
 TaskHandle_t event_handle;
-
-
+TaskHandle_t avg_VL;
+TaskHandle_t frekVL;
 void setup()
 {
   DDRD = 0b11101001;
@@ -35,6 +37,9 @@ void setup()
   xTaskCreate(zaslon, "LVCHRG", 64, NULL, 1, NULL);
   xTaskCreate(polnjenje, "CHRG", 64, NULL, 1, NULL);
   xTaskCreate(thermal, "therm", 64, NULL, 1, NULL);
+  xTaskCreate(povprecna_glasnost, "avg_vol", 64, (void *)&mic_pin, 1, &avg_VL);
+  xTaskCreate(merjenje_frekvence, "frek meri", 64, (void *)&mic_pin, 1, &frekVL);
+  vTaskSuspend(frekVL);
 }
 
 void loop(){};

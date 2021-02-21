@@ -17,8 +17,36 @@ void events(void *paramOdTaska)
 
     while (true)
     {
-        button2Events();
+        static VHOD audioSW(4, 'B', 1);
+        static castimer hold_TIMER; // Timer that times the time of button press
+        static int hold_time = 0;
+        /******************************************** SWITCH 2 EVENTS ****************************************/
 
+        if (audioSW.vrednost())
+        {
+            hold_time = hold_TIMER.vrednost(); // Calls for value to start the timer
+
+            if (hold_time >= 3000 && hold_time <= 3200)
+            {
+                audio_mode_change("off");
+            }
+        }
+
+        else if (hold_time > 0)
+        {
+            hold_TIMER.ponastavi();
+            if (hold_time < 500)
+            {
+                Hardware::display_enabled = !Hardware::display_enabled;
+            }
+            else if (hold_time < 1500)
+            {
+                audio_mode_change("");
+            }
+            hold_time = 0;
+        }
+
+        /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware::PSW == false)
         {
             vTaskSuspend(core_handle);
@@ -32,41 +60,10 @@ void events(void *paramOdTaska)
             internal_power_switch_ev();
             vTaskResume(core_handle);
         }
+
+        /*************************************************************************************/
     }
 }
-
-void button2Events()
-{
-    static VHOD audioSW(4, 'B', 1);
-    static castimer hold_TIMER; // Timer that times the time of button press
-    static int hold_time = 0;
-    /******************************************** SWITCH 2 EVENTS ****************************************/
-
-    if (audioSW.vrednost())
-    {
-        hold_time = hold_TIMER.vrednost(); // Calls for value to start the timer
-
-        if (hold_time >= 3000 && hold_time <= 3200)
-        {
-            audio_mode_change("off");
-        }
-    }
-
-    else if (hold_time > 0)
-    {
-        hold_TIMER.ponastavi();
-        if (hold_time < 500)
-        {
-            Hardware::display_enabled = !Hardware::display_enabled;
-        }
-        else if (hold_time < 1500)
-        {
-            audio_mode_change("");
-        }
-        hold_time = 0;
-    }
-}
-/********************************************************************************************************/
 
 void external_power_switch_ev()
 {

@@ -13,8 +13,8 @@ namespace Hardware
      extern Errors Napaka;
      extern float Amplifier_temp;
      extern bool display_enabled;
-     struct evnT;
-     extern evnT event;
+     extern int povprecna_glasnost;
+     extern int frekvenca;
 } // namespace Hardware
 
 namespace TIMERS_folder

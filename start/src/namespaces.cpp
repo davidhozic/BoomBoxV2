@@ -10,6 +10,8 @@ bool Hardware::polnjenjeON = false;
 Errors Hardware::Napaka;
 float Hardware::Amplifier_temp = 0.0f;
 bool Hardware::display_enabled = true;
+int Hardware::povprecna_glasnost = 0;
+int Hardware::frekvenca = 0;
 
 castimer TIMERS_folder::stikaloCAS;
 castimer TIMERS_folder::timerL1;
