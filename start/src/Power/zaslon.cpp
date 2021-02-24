@@ -6,6 +6,7 @@
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\namespaces.h"
 
 VHOD BAT_PRIKAZ_SW(4, 'B', 1);
+uint8_t lcd_pb_pin = 2;
 extern VHOD napajalnik;
 void zaslon(void *paramOdTaska)
 {
@@ -18,13 +19,13 @@ void zaslon(void *paramOdTaska)
             {
                 if (Hardware::is_Powered_UP && TIMERS_folder::BATCHARGE_T.vrednost() > 6000)
                 { //Prižig vsakih 6s za 3s, če zunanje napajanje ni priključeno
-                    PORTB |= (1 << 2);
+                    PORTB |= (1 << lcd_pb_pin);
                 }
 
                 if (TIMERS_folder::BATCHARGE_T.vrednost() > 9000)
                 {
                     TIMERS_folder::BATCHARGE_T.ponastavi();
-                    PORTB &= ~(1 << 2);
+                    PORTB &= ~(1 << lcd_pb_pin);
                 }
             }
 
@@ -35,9 +36,8 @@ void zaslon(void *paramOdTaska)
             }
             else // Ce je napajalnik izkljucen in se ne polni, potem 3s gori
             {    /* Rising edge resets only after the risingEdge function is called which means it will still be on for 3s after charging finishes */
-                PORTB |= (1 << 2);
+                PORTB |= (1 << lcd_pb_pin);
                 vTaskDelay(3000 / portTICK_PERIOD_MS);
-                PORTB &= ~(1 << 2);
                 Hardware::display_enabled = false;
             }
         }

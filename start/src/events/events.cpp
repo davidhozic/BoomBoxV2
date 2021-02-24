@@ -1,34 +1,43 @@
-#include "Vhod.h"
+#include "D:\Documents\Arduino\libraries\VHOD\Vhod.h"
 #include "D:\Documents\Arduino\libraries\castimer\castimer.h"
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\namespaces.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 
-void audio_mode_change(char *ch);
+void mic_mode_change();
 void button2Events();
 void Shutdown();
 void external_power_switch_ev();
 void internal_power_switch_ev();
+void audio_mode_change(char * ch);
 extern VHOD napajalnik;
 
 extern TaskHandle_t core_handle;
 
 void events(void *paramOdTaska)
 {
+    VHOD audioSW(4, 'B', 1);
+    castimer hold_TIMER; // Timer that times the time of button press
+    castimer click_timer;
+    unsigned int hold_time = 0;
+
+    struct d02130404
+    {
+        bool double_click = false;
+        bool click = true;
+        uint8_t press_counter = 0;
+    }click_event;
 
     while (true)
     {
-        static VHOD audioSW(4, 'B', 1);
-        static castimer hold_TIMER; // Timer that times the time of button press
-        static int hold_time = 0;
         /******************************************** SWITCH 2 EVENTS ****************************************/
 
         if (audioSW.vrednost())
         {
             hold_time = hold_TIMER.vrednost(); // Calls for value to start the timer
 
-            if (hold_time >= 3000 && hold_time <= 3200)
+            if (hold_time >= 3000 && hold_time <= 3500)
             {
-                audio_mode_change("off");
+                audio_mode_change("off"); 
             }
         }
 
@@ -37,13 +46,34 @@ void events(void *paramOdTaska)
             hold_TIMER.ponastavi();
             if (hold_time < 500)
             {
-                Hardware::display_enabled = !Hardware::display_enabled;
+                click_event.press_counter++;
+                click_timer.ponastavi(); //Podaljsa casovik
             }
             else if (hold_time < 1500)
             {
-                audio_mode_change("");
+                mic_mode_change();
             }
             hold_time = 0;
+        }
+
+        /********************** CLICK MACHINE **********************/
+
+        if (click_event.press_counter > 0)
+        {
+            if (click_timer.vrednost() > 700)
+            { //Start casovnika
+                switch (click_event.press_counter)
+                {
+                case 1:
+                    Hardware::display_enabled = !Hardware::display_enabled; // Toggles LCD
+                    break;
+
+                case 2:
+                    audio_mode_change("");
+                    break;
+                }
+                click_event.press_counter = 0;
+            }
         }
 
         /******************************** POWER SWITCH EVENTS ********************************/
@@ -69,7 +99,7 @@ void external_power_switch_ev()
 {
 
     Shutdown();
-    vTaskDelay(15 / portTICK_PERIOD_MS);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
     PORTD |= (1 << 7);
     TIMERS_folder::stikaloCAS.ponastavi();
     Hardware::PSW = true;
@@ -78,7 +108,7 @@ void external_power_switch_ev()
 void internal_power_switch_ev()
 {
     Shutdown();
-    vTaskDelay(15 / portTICK_PERIOD_MS);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
     PORTD &= ~(1 << 7);
     TIMERS_folder::stikaloCAS.ponastavi();
     Hardware::PSW = false;

@@ -4,9 +4,10 @@
 #include "castimer.h"
 #include "Vhod.h"
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\Errors.h"
-#include <Arduino_FreeRTOS.h>
+#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\namespaces.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
+
 
 /* ************************** GLOBAL ************************************ */
 VHOD napajalnik(2, 'D', 0);
@@ -16,6 +17,16 @@ void Shutdown();
 void Power_UP();
 extern TaskHandle_t event_handle;
 extern const int REF_napetost = 5000; //Referenčna Hardware::napetost na ADC (4.999V - 5.002V)
+extern int A_mode;
+
+enum audio_mode
+{
+    Direct_signal, //Signal iz mikrofona -> lucke
+    NORMAL_FADE,
+    COLOR_FADE,
+    LENGTH_2,
+    OFF,
+};
 
 void core(void *paramOdTaska)
 {
@@ -79,15 +90,18 @@ void Shutdown()
     digitalWrite(5, LOW);  //G lucka
     digitalWrite(11, LOW); //B lucka
     Hardware::is_Powered_UP = false;
+    A_mode = OFF;
 }
 
 void Power_UP()
 {
-    vTaskDelay(15 / portTICK_PERIOD_MS);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
     PORTB |= 1;
     Hardware::is_Powered_UP = true;
     PORTD |= 1;
     vTaskDelay(210 / portTICK_PERIOD_MS);
+    A_mode = NORMAL_FADE;
 }
 
 void Shutdown();
+

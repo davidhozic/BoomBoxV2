@@ -18,8 +18,8 @@ void polnjenje(void *paramOdTaska)
     }
 
     else if (Hardware::napetost <= 4000 && Hardware::POLKONC) // For charging to continue it needs to discharge atleast 4% after full charge
-    {                                                          //Če se dokonca napolne, se bo polnjenje lahko nadaljevalo šele, ko se baterija izprazne za približno 10% (3V = 0%, 4.2V = 100%, 4.1V = 90% . 3.95V = 80% oz. 10% manj ;  Hardware::napetost = 0.012 * procent + 3);
-      Hardware::POLKONC = 0;                                   //Poenostavi se spremenljivka, zato da se v zgornjem pogoju vključi polnenje.
+    {                                                         //Če se dokonca napolne, se bo polnjenje lahko nadaljevalo šele, ko se baterija izprazne za približno 10% (3V = 0%, 4.2V = 100%, 4.1V = 90% . 3.95V = 80% oz. 10% manj ;  Hardware::napetost = 0.012 * procent + 3);
+      Hardware::POLKONC = 0;                                  //Poenostavi se spremenljivka, zato da se v zgornjem pogoju vključi polnenje.
       EEPROM.update(5, Hardware::POLKONC);
     }
 
@@ -29,7 +29,7 @@ void polnjenje(void *paramOdTaska)
       Hardware::polnjenjeON = false;
     }
 
-    else if (Hardware::POLKONC == 0 && napajalnik.vrednost() && Hardware::Napaka.AMP_oheat == false && Hardware::polnjenjeON == false)
+    else if (Hardware::POLKONC == 0 && napajalnik.vrednost() && Hardware::Napaka.AMP_oheat == false && !Hardware::polnjenjeON)
     {
       vTaskDelay(1000 / portTICK_PERIOD_MS);
       PORTD |= (1 << PD6);
