@@ -3,11 +3,10 @@
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
 #include "castimer.h"
 #include "Vhod.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\Errors.h"
+#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\Errors.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\namespaces.h"
+#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\namespaces.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
-
 
 /* ************************** GLOBAL ************************************ */
 VHOD napajalnik(2, 'D', 0);
@@ -32,6 +31,7 @@ void core(void *paramOdTaska)
 {
     while (true)
     {
+        Hardware::napetost = 4000;
         if (stikalo.vrednost() == 0)
         {
             if (Hardware::is_Powered_UP)
@@ -51,6 +51,7 @@ void core(void *paramOdTaska)
 
         if (TIMERS_folder::stikaloCAS.vrednost() >= 2000 && Hardware::Napaka.AMP_oheat == false && (Hardware::napetost >= 3100 || napajalnik.vrednost()) && Hardware::is_Powered_UP == false && (!napajalnik.vrednost() || Hardware::PSW))
         { /* Elapsed 2000 ms, not overheated, enough power or external power, not already powered up, if external power is set, wait till power is switched */
+            Serial.println("ON");
             vTaskSuspend(event_handle);
             Power_UP();
             vTaskResume(event_handle);
@@ -75,7 +76,7 @@ void readVoltage(void *paramOdTaska)
         vFirstRead = analogRead(A2) * REF_napetost / 1023.00;
         vTaskDelay(300 / portTICK_PERIOD_MS);
         int vSecRead = analogRead(A2) * REF_napetost / 1023.00f;
-        if (abs(vSecRead - vFirstRead) <= 0020)
+        if (abs(vSecRead - vFirstRead) <= 50)
         {
             Hardware::napetost = vSecRead;
         }
@@ -102,6 +103,3 @@ void Power_UP()
     vTaskDelay(210 / portTICK_PERIOD_MS);
     A_mode = NORMAL_FADE;
 }
-
-void Shutdown();
-

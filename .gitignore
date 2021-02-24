@@ -2,3 +2,5 @@ start/.vscode/arduino.json
 start/.vscode/c_cpp_properties.json
 start/.vscode/settings.json
 .gitignore (2).txt
+.vscode/arduino.json
+.gitignore

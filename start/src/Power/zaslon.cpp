@@ -3,7 +3,7 @@
 #include <Arduino_FreeRTOS.h>
 #include "Vhod.h"
 #include "castimer.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\namespaces.h"
+#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\namespaces.h"
 
 VHOD BAT_PRIKAZ_SW(4, 'B', 1);
 uint8_t lcd_pb_pin = 2;

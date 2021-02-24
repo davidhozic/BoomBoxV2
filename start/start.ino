@@ -2,9 +2,9 @@
 #include "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\sleep.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "Vhod.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\Errors.h"
+#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\Errors.h"
 #include "castimer.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\PolnenjeZvoc\code\start\src\header\namespaces.h"
+#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\namespaces.h"
 
 /*************************PROTOTIPI TASKOV************************/
 void core(void *paramOdTaska);
@@ -18,12 +18,15 @@ void povprecna_glasnost(void *input);
 void merjenje_frekvence(void *input);
 /*************************KONEC PROTOTIPOV************************/
 extern const int mic_pin;
-extern int barva[3];
 TaskHandle_t core_handle;
 TaskHandle_t event_handle;
 TaskHandle_t avg_VL;
 TaskHandle_t frekVL;
 TaskHandle_t audio_system;
+extern VHOD stikalo;
+
+
+
 void setup()
 {
   DDRD = 0b11101001;
@@ -31,9 +34,9 @@ void setup()
   PORTD = 0b00000000;
   PORTB = 0b00010000;
   Hardware::POLKONC = EEPROM.read(5);
-
+  Serial.begin(9600);
   xTaskCreate(events, "Events task", 64, NULL, 1, &event_handle);
-  xTaskCreate(readVoltage, "VOLT_BRANJE", 64, NULL, 1, NULL);
+  //xTaskCreate(readVoltage, "VOLT_BRANJE", 64, NULL, 1, NULL);
   xTaskCreate(core, "_core", 64, NULL, 1, &core_handle);
   xTaskCreate(audio_visual, "AUVIS", 64, NULL, 1, &audio_system);
   xTaskCreate(zaslon, "LVCHRG", 64, NULL, 1, NULL);
