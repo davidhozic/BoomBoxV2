@@ -26,7 +26,6 @@ TaskHandle_t audio_system;
 extern VHOD stikalo;
 
 
-
 void setup()
 {
   DDRD = 0b11101001;

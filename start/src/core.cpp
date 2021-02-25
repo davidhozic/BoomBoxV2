@@ -22,7 +22,7 @@ enum audio_mode
 {
     Direct_signal, //Signal iz mikrofona -> lucke
     NORMAL_FADE,
-    COLOR_FADE,
+    color_fade_create,
     LENGTH_2,
     OFF,
 };

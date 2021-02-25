@@ -16,8 +16,9 @@ enum audio_mode
     Direct_signal, //Signal iz mikrofona -> lucke
     NORMAL_FADE,
     COLOR_FADE,
+    COLOR_OFF_FADE,
     LENGTH_2,
-    OFF,
+    OFF
 };
 
 /*************************** KONSTANTE ************************/
@@ -26,17 +27,19 @@ int mic_mode = Average_volume;
 int A_mode = OFF;
 int barva_selekt = 0;
 const int rdeca_LED_trak = 9;  //Rdeča lučka je na pinu 9
-const int zelena_LED_trak = 3; //Zelena lučka je na pinu 3
+const int zelena_LED_trak = 3; //TR_BARVA[0] lučka je na pinu 3
 const int modra_LED_trak = 11; //Modra lučka je na pinu 11
 extern TaskHandle_t avg_VL;
 extern TaskHandle_t frekVL;
 extern TaskHandle_t audio_system;
 TaskHandle_t fade_control;
 TaskHandle_t color_fade_control;
-float MODRA = 0;
-float RDECA = 0;
-float ZELENA = 0;
+TaskHandle_t color_fade_off_fade_control;
 /*************************************************************/
+
+/********** GLOBAL **********/
+float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
+/****************************/
 
 enum barve
 {
@@ -61,75 +64,39 @@ struct c
     int AQUA[3] = {0, 255, 255};
     int VIOLET[3] = {255, 0, 255};
     int PINK[3] = {255, 20, 147};
-    int *barvni_ptr[8] = {&WHITE[3], &GREEN[3], &RED[3], &BLUE[3], &YELLOW[3], &AQUA[3], &VIOLET[3], &PINK[3]};
+    int *barvni_ptr[8] = {WHITE, GREEN, RED, BLUE, YELLOW, AQUA, VIOLET, PINK};
 } barva;
 
 void turnOFFstrip()
 {
     vTaskDelete(fade_control);
+    vTaskDelete(color_fade_control);
+    vTaskDelete(color_fade_off_fade_control);
     digitalWrite(rdeca_LED_trak, 0);
     digitalWrite(zelena_LED_trak, 0);
     digitalWrite(modra_LED_trak, 0);
-    RDECA = 0;
-    ZELENA = 0;
-    MODRA = 0;
+    TR_BARVA[0] = 0;
+    TR_BARVA[1] = 0;
+    TR_BARVA[2] = 0;
 }
 
-void fade_task(void *taskPARAM)
+void fade_task(void *taskPARAM) //Prizig na barbi in pocasen izklop
 {
     int BARVA = *((int *)taskPARAM);
     int svetlost = 255;
-    switch (BARVA)
-    {
-    case WHITE:
-        RDECA = barva.WHITE[0];
-        ZELENA = barva.WHITE[1];
-        MODRA = barva.WHITE[2];
-        break;
-    case RED:
-        RDECA = barva.RED[0];
-        ZELENA = barva.RED[1];
-        MODRA = barva.RED[2];
-        break;
-    case GREEN:
-        RDECA = barva.GREEN[0];
-        ZELENA = barva.GREEN[1];
-        MODRA = barva.GREEN[2];
-        break;
-    case BLUE:
-        RDECA = barva.BLUE[0];
-        ZELENA = barva.BLUE[1];
-        MODRA = barva.BLUE[2];
-        break;
-    case YELLOW:
-        RDECA = barva.YELLOW[0];
-        ZELENA = barva.YELLOW[1];
-        MODRA = barva.YELLOW[2];
-        break;
-    case AQUA:
-        RDECA = barva.AQUA[0];
-        ZELENA = barva.AQUA[1];
-        MODRA = barva.AQUA[2];
-        break;
-    case VIOLET:
-        RDECA = barva.VIOLET[0];
-        ZELENA = barva.VIOLET[1];
-        MODRA = barva.VIOLET[2];
-        break;
-    case PINK:
-        RDECA = barva.PINK[0];
-        ZELENA = barva.PINK[1];
-        MODRA = barva.PINK[2];
-        break;
-    }
+
+    TR_BARVA[0] = barva.barvni_ptr[BARVA][0];
+    TR_BARVA[1] = barva.barvni_ptr[BARVA][1];
+    TR_BARVA[2] = barva.barvni_ptr[BARVA][2];
+
     //Prižig lučk na neki barvi
     while (true)
     {
         if (svetlost > 0)
         {
-            analogWrite(rdeca_LED_trak, RDECA * svetlost / 255);
-            analogWrite(zelena_LED_trak, ZELENA * svetlost / 255);
-            analogWrite(modra_LED_trak, MODRA * svetlost / 255);
+            analogWrite(rdeca_LED_trak, TR_BARVA[0] * svetlost / 255);
+            analogWrite(zelena_LED_trak, TR_BARVA[1] * svetlost / 255);
+            analogWrite(modra_LED_trak, TR_BARVA[2] * svetlost / 255);
             svetlost -= 5;
             vTaskDelay(20 / portTICK_PERIOD_MS);
         }
@@ -140,38 +107,89 @@ void fade_task(void *taskPARAM)
     }
 }
 
-void fade(int barva)
+void fade_create(int barva)
 {
     vTaskDelete(fade_control);
-    xTaskCreate(fade_task, "normalni fade", 64, &barva, 1, &fade_control);
+    xTaskCreate(fade_task, "normalni fade_create", 64, &barva, 1, &fade_control);
 }
 
-void Color_Fade_task(void *b)
-{ //Fades from one color to another
+void Color_Fade_task(void *b) //Fade iz ene barve v drugo
+{                             //Fades from one color to another
     int8_t barva_param = *((int8_t *)b);
-    int8_t smer_r = 0;
-    int8_t smer_g = 0;
-    int8_t smer_b = 0;
+    float smer_r = 0;
+    float smer_g = 0;
+    float smer_b = 0;
 
     while (true)
     {
-        smer_r = (barva.barvni_ptr[barva_param][0] - RDECA) / (abs(barva.barvni_ptr[barva_param][0] - RDECA)); //barva.barvni_ptr ima shranjene naslove barvnih tabel
-        smer_g = (barva.barvni_ptr[barva_param][1] - ZELENA) / (abs(barva.barvni_ptr[barva_param][1] - ZELENA));
-        smer_b = (barva.barvni_ptr[barva_param][2] - MODRA) / (abs(barva.barvni_ptr[barva_param][2] - MODRA));
-        RDECA = RDECA + 5.5 * smer_r;
-        ZELENA = ZELENA + 5.5 * smer_g;
-        MODRA = MODRA + 5.5 * smer_b;
-        analogWrite(rdeca_LED_trak, RDECA);
-        analogWrite(zelena_LED_trak, ZELENA);
-        analogWrite(modra_LED_trak, MODRA);
+        smer_r = (barva.barvni_ptr[barva_param][0] - TR_BARVA[0]) / (abs(barva.barvni_ptr[barva_param][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
+        smer_g = (barva.barvni_ptr[barva_param][1] - TR_BARVA[1]) / (abs(barva.barvni_ptr[barva_param][1] - TR_BARVA[1]));
+        smer_b = (barva.barvni_ptr[barva_param][2] - TR_BARVA[2]) / (abs(barva.barvni_ptr[barva_param][2] - TR_BARVA[2]));
+
+        smer_r = isnan(smer_r) ? 0 : smer_r;
+        smer_g = isnan(smer_g) ? 0 : smer_g;
+        smer_b = isnan(smer_b) ? 0 : smer_b;
+
+        TR_BARVA[0] = TR_BARVA[0] + 7 * smer_r;
+        TR_BARVA[1] = TR_BARVA[1] + 5 * smer_g;
+        TR_BARVA[2] = TR_BARVA[2] + 7 * smer_b;
+        analogWrite(rdeca_LED_trak, TR_BARVA[1]);
+        analogWrite(zelena_LED_trak, TR_BARVA[0]);
+        analogWrite(modra_LED_trak, TR_BARVA[2]);
         vTaskDelay(16 / portTICK_PERIOD_MS);
     }
 }
 
-void Color_Fade(int barva)
+void color_fade_create(int barva)
 {
     vTaskDelete(color_fade_control);
     xTaskCreate(Color_Fade_task, "col_fade", 64, &barva, 1, &color_fade_control);
+}
+
+void Color_Fade_off_fade_task(void *b)
+{
+    int BARVA = *((int *)b);
+    uint8_t svetlost = 255;
+    float smer_r = 0;
+    float smer_g = 0;
+    float smer_b = 0;
+
+    while (abs(barva.barvni_ptr[BARVA][0] - TR_BARVA[0]) > 20 || abs(barva.barvni_ptr[BARVA][1] - TR_BARVA[1]) > 20 || abs(barva.barvni_ptr[BARVA][2] - TR_BARVA[2]) > 20)
+    {                                                                                                          // Fade Barve
+        smer_r = (barva.barvni_ptr[BARVA][0] - TR_BARVA[0]) / (abs(barva.barvni_ptr[BARVA][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
+        smer_g = (barva.barvni_ptr[BARVA][1] - TR_BARVA[1]) / (abs(barva.barvni_ptr[BARVA][1] - TR_BARVA[1]));
+        smer_b = (barva.barvni_ptr[BARVA][2] - TR_BARVA[2]) / (abs(barva.barvni_ptr[BARVA][2] - TR_BARVA[2]));
+
+        smer_r = isnan(smer_r) ? 0 : smer_r;
+        smer_g = isnan(smer_g) ? 0 : smer_g;
+        smer_b = isnan(smer_b) ? 0 : smer_b;
+
+        TR_BARVA[0] = TR_BARVA[0] + 7 * smer_r;
+        TR_BARVA[1] = TR_BARVA[1] + 5 * smer_g;
+        TR_BARVA[2] = TR_BARVA[2] + 7 * smer_b;
+        analogWrite(rdeca_LED_trak, TR_BARVA[1]);
+        analogWrite(zelena_LED_trak, TR_BARVA[0]);
+        analogWrite(modra_LED_trak, TR_BARVA[2]);
+        vTaskDelay(16 / portTICK_PERIOD_MS);
+    }
+
+    while (svetlost > 0) // Zniza Svetlost
+    {
+        svetlost -= 5;
+        analogWrite(rdeca_LED_trak, TR_BARVA[0] * svetlost / 255);
+        analogWrite(zelena_LED_trak, TR_BARVA[1] * svetlost / 255);
+        analogWrite(modra_LED_trak, TR_BARVA[2] * svetlost / 255);
+        vTaskDelay(16 / portTICK_PERIOD_MS);
+    }
+
+    vTaskResume(audio_system);
+    vTaskDelete(color_fade_off_fade_control);
+}
+
+void Color_Fade_off_fade_create(int b)
+{
+    xTaskCreate(Color_Fade_off_fade_task, "color fade with off fade", 64, &b, 1, &color_fade_off_fade_control);
+    vTaskSuspend(audio_system);
 }
 
 void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
@@ -179,6 +197,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
     int mikrofon = 0;
     while (true)
     {
+        uint8_t barva_selekt = random(0, barve::LENGHT);
         switch (mic_mode)
         {
         case Average_volume:
@@ -211,16 +230,16 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
 
         switch (A_mode)
         {
-        case NORMAL_FADE:
+        case NORMAL_FADE: //Prizig in fade izklop
             if (TIMERS_folder::lucke_filter_time.vrednost() > 100 && mikrofon == 1)
             { //Če se je vrednost spremenila
                 TIMERS_folder::lucke_filter_time.ponastavi();
-                uint8_t barva_selekt = random(0, barve::LENGHT);
-                fade(barva_selekt);
+
+                fade_create(barva_selekt); //Ustvari RTOS task
             }
             break;
 
-        case Direct_signal:
+        case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofona
             mikrofon = 0;
             int16_t temp = analogRead(mic_pin) * 255 / 1023 - ceil(255 / 2);
             uint8_t Signal_level = temp >= 0 ? temp : 0;
@@ -228,18 +247,22 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             analogWrite(modra_LED_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
             break;
 
-        case COLOR_FADE:
-            uint8_t barva_selekt = random(0, barve::LENGHT-1);
-            Color_Fade(barva_selekt);
+        case COLOR_FADE:                     //Prehod iz trenutne barve v zeljeno
+            color_fade_create(barva_selekt); //Ustvari RTOS task
+            break;
+
+        case COLOR_OFF_FADE:
+            Color_Fade_off_fade_create(barva_selekt);
             break;
 
         case OFF:
             turnOFFstrip();
+            A_mode = -1;
         }
     }
 }
 
-void mic_mode_change() // Switches audio mode
+void mic_mode_change() // Switches audio mode ; 1s hold
 {
     vTaskSuspend(avg_VL);
     vTaskSuspend(frekVL);
@@ -279,11 +302,12 @@ void mic_mode_change() // Switches audio mode
     vTaskResume(audio_system);
 }
 
-void audio_mode_change(char *ch)
+void audio_mode_change(char *ch) // Double click
 {
-    turnOFFstrip();
     vTaskSuspend(audio_system);
-    vTaskDelay(700);
+    turnOFFstrip();
+
+    vTaskDelay(700 / portTICK_PERIOD_MS);
 
     if (ch == "off")
     {
@@ -292,9 +316,8 @@ void audio_mode_change(char *ch)
     else
     {
         A_mode = (A_mode + 1) % audio_mode::LENGTH_2;
-        fade(WHITE);
     }
-    fade(RED);
-    vTaskDelay(500);
+
+    vTaskDelay(500 / portTICK_PERIOD_MS);
     vTaskResume(audio_system);
 }
