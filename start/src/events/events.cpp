@@ -8,7 +8,7 @@ void button2Events();
 void Shutdown();
 void external_power_switch_ev();
 void internal_power_switch_ev();
-void audio_mode_change(char * ch);
+void audio_mode_change(char *ch);
 extern VHOD napajalnik;
 
 extern TaskHandle_t core_handle;
@@ -25,7 +25,7 @@ void events(void *paramOdTaska)
         bool double_click = false;
         bool click = true;
         uint8_t press_counter = 0;
-    }click_event;
+    } click_event;
 
     while (true)
     {
@@ -37,7 +37,7 @@ void events(void *paramOdTaska)
 
             if (hold_time >= 3000 && hold_time <= 3500)
             {
-                audio_mode_change("off"); 
+                audio_mode_change("off");
             }
         }
 
@@ -51,7 +51,7 @@ void events(void *paramOdTaska)
             }
             else if (hold_time < 1500)
             {
-                mic_mode_change();
+                audio_mode_change("");
             }
             hold_time = 0;
         }
@@ -69,7 +69,7 @@ void events(void *paramOdTaska)
                     break;
 
                 case 2:
-                    audio_mode_change("");
+                    mic_mode_change();
                     break;
                 }
                 click_event.press_counter = 0;

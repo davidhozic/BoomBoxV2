@@ -35,7 +35,7 @@ void setup()
   Hardware::POLKONC = EEPROM.read(5);
   Serial.begin(9600);
   xTaskCreate(events, "Events task", 64, NULL, 1, &event_handle);
-  //xTaskCreate(readVoltage, "VOLT_BRANJE", 64, NULL, 1, NULL);
+  xTaskCreate(readVoltage, "VOLT_BRANJE", 64, NULL, 1, NULL);
   xTaskCreate(core, "_core", 64, NULL, 1, &core_handle);
   xTaskCreate(audio_visual, "AUVIS", 64, NULL, 1, &audio_system);
   xTaskCreate(zaslon, "LVCHRG", 64, NULL, 1, NULL);

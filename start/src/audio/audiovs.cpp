@@ -13,15 +13,16 @@ enum mic_detection_mode
 
 enum audio_mode
 {
-    Direct_signal, //Signal iz mikrofona -> lucke
+
     NORMAL_FADE,
     COLOR_FADE,
-    COLOR_OFF_FADE,
+    MIXED_FADE,
+    Direct_signal, //Signal iz mikrofona -> lucke
     LENGTH_2,
     OFF
 };
 
-/*************************** KONSTANTE ************************/
+/*************************** GLOBAL ************************/
 extern const int mic_pin = A0;
 int mic_mode = Average_volume;
 int A_mode = OFF;
@@ -39,6 +40,7 @@ TaskHandle_t color_fade_off_fade_control;
 
 /********** GLOBAL **********/
 float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
+int svetlost = 0;
 /****************************/
 
 enum barve
@@ -65,7 +67,7 @@ struct c
     int VIOLET[3] = {255, 0, 255};
     int PINK[3] = {255, 20, 147};
     int *barvni_ptr[8] = {WHITE, GREEN, RED, BLUE, YELLOW, AQUA, VIOLET, PINK};
-} barva;
+} barvi_struct;
 
 void turnOFFstrip()
 {
@@ -80,99 +82,32 @@ void turnOFFstrip()
     TR_BARVA[2] = 0;
 }
 
-void fade_task(void *taskPARAM) //Prizig na barbi in pocasen izklop
+/********************** COLOR MODE AXUALIRAY FUNCTIONS********************************/
+void color_fade_funct(int *BARVA)
 {
-    int BARVA = *((int *)taskPARAM);
-    int svetlost = 255;
-
-    TR_BARVA[0] = barva.barvni_ptr[BARVA][0];
-    TR_BARVA[1] = barva.barvni_ptr[BARVA][1];
-    TR_BARVA[2] = barva.barvni_ptr[BARVA][2];
-
-    //Prižig lučk na neki barvi
-    while (true)
+    while (abs(barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0]) > 5 || abs(barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]) > 5 || abs(barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]) > 5)
     {
-        if (svetlost > 0)
-        {
-            analogWrite(rdeca_LED_trak, TR_BARVA[0] * svetlost / 255);
-            analogWrite(zelena_LED_trak, TR_BARVA[1] * svetlost / 255);
-            analogWrite(modra_LED_trak, TR_BARVA[2] * svetlost / 255);
-            svetlost -= 5;
-            vTaskDelay(20 / portTICK_PERIOD_MS);
-        }
-        else
-        {
-            vTaskDelete(fade_control);
-        }
-    }
-}
-
-void fade_create(int barva)
-{
-    vTaskDelete(fade_control);
-    xTaskCreate(fade_task, "normalni fade_create", 64, &barva, 1, &fade_control);
-}
-
-void Color_Fade_task(void *b) //Fade iz ene barve v drugo
-{                             //Fades from one color to another
-    int8_t barva_param = *((int8_t *)b);
-    float smer_r = 0;
-    float smer_g = 0;
-    float smer_b = 0;
-
-    while (true)
-    {
-        smer_r = (barva.barvni_ptr[barva_param][0] - TR_BARVA[0]) / (abs(barva.barvni_ptr[barva_param][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
-        smer_g = (barva.barvni_ptr[barva_param][1] - TR_BARVA[1]) / (abs(barva.barvni_ptr[barva_param][1] - TR_BARVA[1]));
-        smer_b = (barva.barvni_ptr[barva_param][2] - TR_BARVA[2]) / (abs(barva.barvni_ptr[barva_param][2] - TR_BARVA[2]));
+        float smer_r = (barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0]) / (abs(barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
+        float smer_g = (barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]) / (abs(barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]));
+        float smer_b = (barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]) / (abs(barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]));
 
         smer_r = isnan(smer_r) ? 0 : smer_r;
         smer_g = isnan(smer_g) ? 0 : smer_g;
         smer_b = isnan(smer_b) ? 0 : smer_b;
 
-        TR_BARVA[0] = TR_BARVA[0] + 7 * smer_r;
-        TR_BARVA[1] = TR_BARVA[1] + 5 * smer_g;
-        TR_BARVA[2] = TR_BARVA[2] + 7 * smer_b;
+        TR_BARVA[0] = TR_BARVA[0] + 3 * smer_r;
+        TR_BARVA[1] = TR_BARVA[1] + 3 * smer_g;
+        TR_BARVA[2] = TR_BARVA[2] + 3 * smer_b;
         analogWrite(rdeca_LED_trak, TR_BARVA[1]);
         analogWrite(zelena_LED_trak, TR_BARVA[0]);
         analogWrite(modra_LED_trak, TR_BARVA[2]);
-        vTaskDelay(16 / portTICK_PERIOD_MS);
+        _delay_ms(5);
     }
 }
 
-void color_fade_create(int barva)
+void svetlost_niz_funct()
 {
-    vTaskDelete(color_fade_control);
-    xTaskCreate(Color_Fade_task, "col_fade", 64, &barva, 1, &color_fade_control);
-}
-
-void Color_Fade_off_fade_task(void *b)
-{
-    int BARVA = *((int *)b);
-    uint8_t svetlost = 255;
-    float smer_r = 0;
-    float smer_g = 0;
-    float smer_b = 0;
-
-    while (abs(barva.barvni_ptr[BARVA][0] - TR_BARVA[0]) > 20 || abs(barva.barvni_ptr[BARVA][1] - TR_BARVA[1]) > 20 || abs(barva.barvni_ptr[BARVA][2] - TR_BARVA[2]) > 20)
-    {                                                                                                          // Fade Barve
-        smer_r = (barva.barvni_ptr[BARVA][0] - TR_BARVA[0]) / (abs(barva.barvni_ptr[BARVA][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
-        smer_g = (barva.barvni_ptr[BARVA][1] - TR_BARVA[1]) / (abs(barva.barvni_ptr[BARVA][1] - TR_BARVA[1]));
-        smer_b = (barva.barvni_ptr[BARVA][2] - TR_BARVA[2]) / (abs(barva.barvni_ptr[BARVA][2] - TR_BARVA[2]));
-
-        smer_r = isnan(smer_r) ? 0 : smer_r;
-        smer_g = isnan(smer_g) ? 0 : smer_g;
-        smer_b = isnan(smer_b) ? 0 : smer_b;
-
-        TR_BARVA[0] = TR_BARVA[0] + 7 * smer_r;
-        TR_BARVA[1] = TR_BARVA[1] + 5 * smer_g;
-        TR_BARVA[2] = TR_BARVA[2] + 7 * smer_b;
-        analogWrite(rdeca_LED_trak, TR_BARVA[1]);
-        analogWrite(zelena_LED_trak, TR_BARVA[0]);
-        analogWrite(modra_LED_trak, TR_BARVA[2]);
-        vTaskDelay(16 / portTICK_PERIOD_MS);
-    }
-
+    svetlost = 255;
     while (svetlost > 0) // Zniza Svetlost
     {
         svetlost -= 5;
@@ -181,15 +116,42 @@ void Color_Fade_off_fade_task(void *b)
         analogWrite(modra_LED_trak, TR_BARVA[2] * svetlost / 255);
         vTaskDelay(16 / portTICK_PERIOD_MS);
     }
+}
+/*************************************************************************************/
 
-    vTaskResume(audio_system);
-    vTaskDelete(color_fade_off_fade_control);
+/***********************************************************************/
+void fade_task(void *taskPARAM) //Prizig na barbi in pocasen izklop
+{
+    int BARVA = *((int *)taskPARAM);
+
+    TR_BARVA[0] = barvi_struct.barvni_ptr[BARVA][0];
+    TR_BARVA[1] = barvi_struct.barvni_ptr[BARVA][1];
+    TR_BARVA[2] = barvi_struct.barvni_ptr[BARVA][2];
+
+    svetlost_niz_funct();
+    vTaskDelete(fade_control);
 }
 
-void Color_Fade_off_fade_create(int b)
+/***********************************************************************/
+
+/***********************************************************************/
+void Color_Fade_task(void *b) //Fade iz ene barve v drugo
+{                             //Fades from one color to another
+    int BARVA = *((int *)b);
+    color_fade_funct(&BARVA);
+}
+
+/***********************************************************************/
+
+/***********************************************************************/
+void Mesan_fade_task(void *b)
 {
-    xTaskCreate(Color_Fade_off_fade_task, "color fade with off fade", 64, &b, 1, &color_fade_off_fade_control);
-    vTaskSuspend(audio_system);
+    int BARVA = *((int *)b);
+
+    color_fade_funct(&BARVA);
+    svetlost_niz_funct();
+
+    vTaskDelete(color_fade_off_fade_control);
 }
 
 void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
@@ -197,8 +159,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
     int mikrofon = 0;
     while (true)
     {
-        uint8_t barva_selekt = random(0, barve::LENGHT);
-        switch (mic_mode)
+        switch (mic_mode) //MIC machine
         {
         case Average_volume:
             int trenutna_vrednost = analogRead(mic_pin);
@@ -228,36 +189,42 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             break;
         }
 
-        switch (A_mode)
-        {
-        case NORMAL_FADE: //Prizig in fade izklop
-            if (TIMERS_folder::lucke_filter_time.vrednost() > 100 && mikrofon == 1)
-            { //Če se je vrednost spremenila
-                TIMERS_folder::lucke_filter_time.ponastavi();
+        if (TIMERS_folder::lucke_filter_time.vrednost() > 100 && mikrofon == 1) // AUDIO_M machine
+        {                                                                       //Če se je vrednost spremenila
 
-                fade_create(barva_selekt); //Ustvari RTOS task
+            TIMERS_folder::lucke_filter_time.ponastavi();
+            uint8_t barva_selekt = random(0, barve::LENGHT);
+
+            switch (A_mode)
+            {
+            case NORMAL_FADE: //Prizig in fade izklop
+
+                vTaskDelete(fade_control);
+                xTaskCreate(fade_task, "normalni fade_create", 64, &barva_selekt, 1, &fade_control);
+                break;
+
+            case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
+                vTaskDelete(color_fade_control);
+                xTaskCreate(Color_Fade_task, "col_fade", 64, &barva_selekt, 1, &color_fade_control);
+                break;
+
+            case MIXED_FADE:
+                vTaskDelete(color_fade_off_fade_control);
+                xTaskCreate(Mesan_fade_task, "color fade with off fade", 64, &barva_selekt, 1, &color_fade_off_fade_control);
+                break;
+
+            case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofona
+                mikrofon = 0;
+                int16_t temp = analogRead(mic_pin) * 255 / 1023 - ceil(255 / 2);
+                uint8_t Signal_level = temp >= 0 ? temp : 0;
+                analogWrite(rdeca_LED_trak, Signal_level); // Direktna povezava mikrofona na izhod vijolicne barve
+                analogWrite(modra_LED_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
+                break;
+
+            case OFF:
+                turnOFFstrip();
+                A_mode = -1;
             }
-            break;
-
-        case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofona
-            mikrofon = 0;
-            int16_t temp = analogRead(mic_pin) * 255 / 1023 - ceil(255 / 2);
-            uint8_t Signal_level = temp >= 0 ? temp : 0;
-            analogWrite(rdeca_LED_trak, Signal_level); // Direktna povezava mikrofona na izhod vijolicne barve
-            analogWrite(modra_LED_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
-            break;
-
-        case COLOR_FADE:                     //Prehod iz trenutne barve v zeljeno
-            color_fade_create(barva_selekt); //Ustvari RTOS task
-            break;
-
-        case COLOR_OFF_FADE:
-            Color_Fade_off_fade_create(barva_selekt);
-            break;
-
-        case OFF:
-            turnOFFstrip();
-            A_mode = -1;
         }
     }
 }

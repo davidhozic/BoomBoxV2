@@ -20,18 +20,19 @@ extern int A_mode;
 
 enum audio_mode
 {
-    Direct_signal, //Signal iz mikrofona -> lucke
+
     NORMAL_FADE,
-    color_fade_create,
+    COLOR_FADE,
+    MIXED_FADE,
+    Direct_signal, //Signal iz mikrofona -> lucke
     LENGTH_2,
-    OFF,
+    OFF
 };
 
 void core(void *paramOdTaska)
 {
     while (true)
     {
-        Hardware::napetost = 4000;
         if (stikalo.vrednost() == 0)
         {
             if (Hardware::is_Powered_UP)
@@ -51,7 +52,6 @@ void core(void *paramOdTaska)
 
         if (TIMERS_folder::stikaloCAS.vrednost() >= 2000 && Hardware::Napaka.AMP_oheat == false && (Hardware::napetost >= 3100 || napajalnik.vrednost()) && Hardware::is_Powered_UP == false && (!napajalnik.vrednost() || Hardware::PSW))
         { /* Elapsed 2000 ms, not overheated, enough power or external power, not already powered up, if external power is set, wait till power is switched */
-            Serial.println("ON");
             vTaskSuspend(event_handle);
             Power_UP();
             vTaskResume(event_handle);
