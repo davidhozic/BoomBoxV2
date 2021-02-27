@@ -187,10 +187,10 @@ void fade_task(void *B) //Prizig na barbi in pocasen izklop
 
 void Color_Fade_task(void *B) //Fade iz ene barve v drugo
 {
-    bool is_breathing = eTaskGetState(Breathe_control) != NULL;
+    bool mixed_mode = Mixed_fade_control != NULL;
     while (barv_razlika_cond_true)
     {
-        if (!is_breathing) // Dihalni nacin svetlosti se ne izvaja
+        if (!mixed_mode) // Dihalni nacin svetlosti se ne izvaja
             tr_bright = 255;
 
         if (Timers.color_timer.vrednost() > 15)
@@ -235,8 +235,9 @@ void Mesan_fade_task(void *b)
     vTaskDelete(color_fade_control);
     xTaskCreate(Color_Fade_task, "col_fade", 45, b, 1, &color_fade_control);
 
-    while (eTaskGetState(Breathe_control) != NULL || eTaskGetState(color_fade_control) != NULL)
+    while (Breathe_control != NULL || color_fade_control != NULL)
     {
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     };
 
     TaskHandle_t temp = Mixed_fade_control;
