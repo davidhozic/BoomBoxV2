@@ -11,7 +11,6 @@ void thermal(void *paramOdTaska);
 void zaslon(void *paramOdTaska);
 void audio_visual(void *paramOdTaska);
 void polnjenje(void *paramOdTaska);
-void readVoltage(void *paramOdTaska);
 void events(void *paramOdTaska);
 void mic_mode_change();
 void audio_meritve(void *p);
@@ -27,17 +26,15 @@ void setup()
   DDRB = 0b00101111;
   PORTD = 0b00000000;
   PORTB = 0b00010000;
-  pinMode(13, OUTPUT);
   Hardware.POLKONC = EEPROM.read(5);
-  xTaskCreate(events, "Events task", 64, NULL, 1, &event_handle);
-  xTaskCreate(core, "_core", 140, NULL, 1, &core_handle);
-  xTaskCreate(audio_visual, "AUVIS", 140, NULL, 1, &audio_system_control);
-  xTaskCreate(zaslon, "LVCHRG", 64, NULL, 1, NULL);
-  xTaskCreate(polnjenje, "CHRG", 55, NULL, 1, NULL);
-  xTaskCreate(thermal, "therm", 80, NULL, 1, NULL);
-  xTaskCreate(audio_meritve, "audio_meritve", 64, NULL, 1, NULL);
-  xTaskCreate(readVoltage, "nap branje", 64, NULL, 1, NULL);
   delay(200);
+  xTaskCreate(core, "_core", 128, NULL, 1, &core_handle);
+  xTaskCreate(events, "Events task", 58, NULL, 1, &event_handle);
+  xTaskCreate(audio_visual, "AUVIS", 128, NULL, 1, &audio_system_control);
+  xTaskCreate(zaslon, "LVCHRG", 58, NULL, 1, NULL);
+  xTaskCreate(polnjenje, "CHRG", 55, NULL, 1, NULL);
+  xTaskCreate(thermal, "therm", 70, NULL, 1, NULL);
+  xTaskCreate(audio_meritve, "audio_meritve", 64, NULL, 1, NULL);
   vTaskStartScheduler();
 }
 

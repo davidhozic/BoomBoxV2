@@ -25,16 +25,6 @@ enum audio_mode
 
 struct hardware_struct
 {
-    const short REF_napetost = 5000; //Referenčna Hardware.napetost na ADC (4.999V - 5.002V)
-    bool is_Powered_UP = 0;
-    float napetost = 0;
-    bool PSW = 0;
-    bool POLKONC = 0;
-    bool polnjenjeON = 0;
-    bool AMP_oheat = 0;
-    bool display_enabled = 1;
-    const int vdiv_pin = A2;
-    
     struct adsys
     {
         int mic_mode = Frequency_mode;
@@ -48,8 +38,15 @@ struct hardware_struct
         int frekvenca;
     } AUSYS_vars;
 
-
-    float Amplifier_temp;
+    const short REF_VOLT = 5000; //Referenčna napetost na ADC (4.999V - 5.002V)
+    bool is_Powered_UP = 0;
+    bool PSW = 0;
+    bool POLKONC;
+    bool polnjenjeON;
+    bool AMP_oheat = 0;
+    bool display_enabled = 1;
+    float Amplifier_temp = 0;
+    float napetost = 0;
 };
 extern hardware_struct Hardware;
 
@@ -60,6 +57,7 @@ struct timer_struct
     castimer timer_frek_meri;
     castimer LCD_timer;
     castimer stikaloOFFtime;
+    castimer VOLT_timer;
 };
 extern timer_struct Timers;
 

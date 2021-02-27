@@ -8,12 +8,13 @@ void bujenje()
   detachInterrupt(0);
   sleep_disable();
   setup();
-  delay(20);
+  taskEXIT_CRITICAL();
 }
 
 void spanje()
-{                                      //Ko je zvočnik premalo napolnjen, gre v spanje da prepreči škodo kapaciteti baterij
-  vTaskSuspendAll();
+{
+  taskENTER_CRITICAL();
+  //Ko je zvočnik premalo napolnjen, gre v spanje da prepreči škodo kapaciteti baterij
   attachInterrupt(0, bujenje, RISING); //prekinitvena funkcija v procesorju št. 0 (pin 2)
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();

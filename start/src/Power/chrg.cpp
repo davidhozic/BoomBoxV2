@@ -11,15 +11,16 @@ void polnjenje(void *paramOdTaska)
 {
   while (true)
   {
-    if (Hardware.napetost >= 4015 && Hardware.POLKONC == 0)
+
+    if (Hardware.napetost >= 4.15 && Hardware.POLKONC == 0)
     {
       Hardware.POLKONC = 1;
       EEPROM.update(5, Hardware.POLKONC); //Posodobitev EEPROM-a na bajtu 1 z spremenljivko Hardware.POLKONC; Na vsake 5000 pisanj zamenja bajt na katerega piše
     }
 
-    else if (Hardware.napetost <= 4000 && Hardware.POLKONC) // For charging to continue it needs to discharge atleast 4% after full charge
-    {                                                         //Če se dokonca napolne, se bo polnjenje lahko nadaljevalo šele, ko se baterija izprazne za približno 10% (3V = 0%, 4.2V = 100%, 4.1V = 90% . 3.95V = 80% oz. 10% manj ;  Hardware.napetost = 0.012 * procent + 3);
-      Hardware.POLKONC = 0;                                  //Poenostavi se spremenljivka, zato da se v zgornjem pogoju vključi polnenje.
+    else if (Hardware.napetost <= 4.0 && Hardware.POLKONC) // For charging to continue it needs to discharge atleast 4% after full charge
+    {                                                   //Če se dokonca napolne, se bo polnjenje lahko nadaljevalo šele, ko se baterija izprazne za približno 10% (3V = 0%, 4.2V = 100%, 4.1V = 90% . 3.95V = 80% oz. 10% manj ;  napetost = 0.012 * procent + 3);
+      Hardware.POLKONC = 0;                             //Poenostavi se spremenljivka, zato da se v zgornjem pogoju vključi polnenje.
       EEPROM.update(5, Hardware.POLKONC);
     }
 
@@ -35,5 +36,6 @@ void polnjenje(void *paramOdTaska)
       PORTD |= (1 << PD6);
       Hardware.polnjenjeON = true;
     }
+
   }
 }

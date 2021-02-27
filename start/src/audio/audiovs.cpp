@@ -65,10 +65,13 @@ struct c
 **************************************************************************************************************************/
 void turnOFFstrip()
 {
+
     taskENTER_CRITICAL();
     vTaskDelete(fade_control);
     vTaskDelete(color_fade_control);
     vTaskDelete(Mixed_fade_control);
+    vTaskDelete(Breathe_control);
+
     digitalWrite(Hardware.AUSYS_vars.rdeca_LED_trak, 0);
     digitalWrite(Hardware.AUSYS_vars.zelena_LED_trak, 0);
     digitalWrite(Hardware.AUSYS_vars.modra_LED_trak, 0);
@@ -170,22 +173,21 @@ void fade_task(void *taskPARAM) //Prizig na barbi in pocasen izklop
     Hardware.AUSYS_vars.TR_BARVA[0] = mozne_barve.barvni_ptr[BARVA][0];
     Hardware.AUSYS_vars.TR_BARVA[1] = mozne_barve.barvni_ptr[BARVA][1];
     Hardware.AUSYS_vars.TR_BARVA[2] = mozne_barve.barvni_ptr[BARVA][2];
-    while (1)
-    {
-        while (svetlost > 0)
-            svetlost_mod_funct(&svetlost, -1);
-    }
+
+    while (svetlost > 0)
+        svetlost_mod_funct(&svetlost, -1);
+
+    vTaskDelete(fade_control);
 }
 
 void Color_Fade_task(void *b)  //Fade iz ene barve v drugo
 {                              //Fades from one color to another
     int t = random(500, 1001); //CAS
     byte BARVA = *((int *)b);
-    while (1)
-    {
-        while (barv_razlika_cond_true)
-            color_fade_funct(&BARVA, &t);
-    }
+    while (barv_razlika_cond_true)
+        color_fade_funct(&BARVA, &t);
+
+    vTaskDelete(color_fade_control);
 }
 
 void Mesan_fade_task(void *b)
@@ -193,7 +195,7 @@ void Mesan_fade_task(void *b)
     int t = random(500, 1001);
     byte BARVA = *((int *)b);
     int svetlost = random(230, 256);
-    while (1)
+    while (barv_razlika_cond_true || svetlost > 0)
     {
         if (barv_razlika_cond_true)
             color_fade_funct(&BARVA, &t);
@@ -201,10 +203,13 @@ void Mesan_fade_task(void *b)
         if (svetlost > 0)
             svetlost_mod_funct(&svetlost, -1);
     }
+
+    vTaskDelete(Mixed_fade_control);
 }
 
 void Fade_Breathe_Task(void *p)
 {
+    vTaskSuspend(audio_system_control);
     byte BARVA = *((int *)p);
     int svetlost = 0;
 
@@ -217,6 +222,8 @@ void Fade_Breathe_Task(void *p)
 
     while (svetlost > 0)
         svetlost_mod_funct(&svetlost, -1);
+    vTaskDelete(Breathe_control);
+    vTaskResume(audio_system_control);
 }
 
 /**************************************************************************************************************************/
@@ -274,22 +281,22 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             case NORMAL_FADE: //Prizig in fade izklop
 
                 vTaskDelete(fade_control);
-                xTaskCreate(fade_task, "normalni fade_create", 64, (void *)&barva_selekt, 1, &fade_control);
+                xTaskCreate(fade_task, "normalni fade_create", 60, (void *)&barva_selekt, 1, &fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
                 vTaskDelete(color_fade_control);
-                xTaskCreate(Color_Fade_task, "col_fade", 64, (void *)&barva_selekt, 1, &color_fade_control);
+                xTaskCreate(Color_Fade_task, "col_fade", 60, (void *)&barva_selekt, 1, &color_fade_control);
                 break;
 
             case MIXED_FADE:
                 vTaskDelete(Mixed_fade_control);
-                xTaskCreate(Mesan_fade_task, "color fade with off fade", 64, (void *)&barva_selekt, 1, &Mixed_fade_control);
+                xTaskCreate(Mesan_fade_task, "color fade with off fade", 60, (void *)&barva_selekt, 1, &Mixed_fade_control);
                 break;
 
             case Fade_Breathe:
                 vTaskDelete(Breathe_control);
-                xTaskCreate(Fade_Breathe_Task, "breathe fade", 64, (void *)&barva_selekt, 1, &Breathe_control);
+                xTaskCreate(Fade_Breathe_Task, "breathe fade", 60, (void *)&barva_selekt, 1, &Breathe_control);
                 break;
 
             case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofon_detect = 1a

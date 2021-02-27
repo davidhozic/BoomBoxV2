@@ -16,10 +16,12 @@ void thermal(void *paramOdTaska)
   {
     delay(1500);
     taskENTER_CRITICAL();
-    float AMP_Temp_S_Voltage = (float)analogRead(A1) * (float)Hardware.REF_napetost / 1023.00;
+    float AMP_Temp_S_Voltage = (float)analogRead(A1) * (float)Hardware.REF_VOLT / 1023.00;
     Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
+
     if (Hardware.Amplifier_temp >= error_temp)
     {
+      
       Hardware.AMP_oheat = true;
       if (Hardware.is_Powered_UP)
       {
