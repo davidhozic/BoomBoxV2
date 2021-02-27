@@ -1,4 +1,5 @@
 #include "D:\Documents\Arduino\libraries\castimer\castimer.h"
+#include "Arduino.h"
 
 #ifndef namespaces_H
 #define namespaces_H

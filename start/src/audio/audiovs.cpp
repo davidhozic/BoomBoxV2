@@ -77,6 +77,15 @@ void turnOFFstrip()
     taskEXIT_CRITICAL();
 }
 
+void writeTRAK()
+{
+    taskENTER_CRITICAL();
+    analogWrite(r_trak, tr_r * tr_bright / 255);
+    analogWrite(z_trak, tr_z * tr_bright / 255);
+    analogWrite(m_trak, tr_m * tr_bright / 255);
+    taskEXIT_CRITICAL();
+}
+
 void color_fade_funct(byte *B)
 {
 
@@ -98,15 +107,6 @@ void svetlost_mod_funct(byte *svetlost, byte smer)
 {
     *svetlost += 5 * smer;
     writeTRAK();
-}
-
-void writeTRAK()
-{
-    taskENTER_CRITICAL();
-    analogWrite(r_trak, tr_r * tr_bright / 255);
-    analogWrite(z_trak, tr_z * tr_bright / 255);
-    analogWrite(m_trak, tr_m * tr_bright / 255);
-    taskEXIT_CRITICAL();
 }
 
 void mic_mode_change() // Switches audio mode ; 1s hold
@@ -180,12 +180,14 @@ void fade_task(void *B) //Prizig na barbi in pocasen izklop
         }
     }
 
-    vTaskDelete(fade_control);
+    TaskHandle_t temp = fade_control;
+    fade_control = NULL;
+    vTaskDelete(temp);
 }
 
 void Color_Fade_task(void *B) //Fade iz ene barve v drugo
 {
-    bool is_breathing = eTaskGetState(Breathe_control) != eDeleted;
+    bool is_breathing = eTaskGetState(Breathe_control) != NULL;
     while (barv_razlika_cond_true)
     {
         if (!is_breathing) // Dihalni nacin svetlosti se ne izvaja
@@ -197,7 +199,9 @@ void Color_Fade_task(void *B) //Fade iz ene barve v drugo
             Timers.color_timer.ponastavi();
         }
     }
-    vTaskDelete(color_fade_control);
+    TaskHandle_t temp = color_fade_control;
+    color_fade_control = NULL;
+    vTaskDelete(temp);
 }
 
 void Fade_Breathe_Task(void *B)
@@ -219,7 +223,9 @@ void Fade_Breathe_Task(void *B)
         svetlost_mod_funct(&tr_bright, -1);
     }
     vTaskResume(audio_system_control);
-    vTaskDelete(Breathe_control);
+    TaskHandle_t temp = Breathe_control;
+    Breathe_control = NULL;
+    vTaskDelete(temp);
 }
 
 void Mesan_fade_task(void *b)
@@ -229,11 +235,13 @@ void Mesan_fade_task(void *b)
     vTaskDelete(color_fade_control);
     xTaskCreate(Color_Fade_task, "col_fade", 45, b, 1, &color_fade_control);
 
-    while (eTaskGetState(Breathe_control) != eDeleted || eTaskGetState(color_fade_control) != eDeleted)
+    while (eTaskGetState(Breathe_control) != NULL || eTaskGetState(color_fade_control) != NULL)
     {
     };
 
-    vTaskDelete(Mixed_fade_control);
+    TaskHandle_t temp = Mixed_fade_control;
+    Mixed_fade_control = NULL;
+    vTaskDelete(temp);
 }
 
 /**************************************************************************************************************************/
