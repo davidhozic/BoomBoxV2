@@ -1,9 +1,14 @@
 #include "D:\Documents\Arduino\libraries\castimer\castimer.h"
-#include "Arduino.h"
 
 #ifndef namespaces_H
 #define namespaces_H
-
+#define r_trak 9
+#define z_trak 3
+#define m_trak 11
+#define tr_r Hardware.AUSYS_vars.TR_BARVA[0]
+#define tr_z Hardware.AUSYS_vars.TR_BARVA[1]
+#define tr_m Hardware.AUSYS_vars.TR_BARVA[2]
+#define tr_bright Hardware.AUSYS_vars.tr_svetlost
 enum mic_detection_mode
 {
     Average_volume, // Meri povprecno glasnost
@@ -30,12 +35,10 @@ struct hardware_struct
         int mic_mode = Frequency_mode;
         int A_mode = OFF;
         const int mic_pin = A0;
-        const int rdeca_LED_trak = 9;  //Rdeča lučka je na pinu 9
-        const int zelena_LED_trak = 3; //Zelena lučka je na pinu 3
-        const int modra_LED_trak = 11; //Modra lučka je na pinu 11
         float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
         int povprecna_glasnost;
         int frekvenca;
+        byte tr_svetlost = 0;
     } AUSYS_vars;
 
     const short REF_VOLT = 5000; //Referenčna napetost na ADC (4.999V - 5.002V)
@@ -58,6 +61,8 @@ struct timer_struct
     castimer LCD_timer;
     castimer stikaloOFFtime;
     castimer VOLT_timer;
+    castimer brightness_timer;
+    castimer color_timer;
 };
 extern timer_struct Timers;
 
