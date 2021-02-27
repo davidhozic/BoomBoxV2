@@ -1,6 +1,6 @@
 #include "D:\Documents\Arduino\libraries\VHOD\Vhod.h"
 #include "D:\Documents\Arduino\libraries\castimer\castimer.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\stuff.h"
+#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "Arduino.h"
 
@@ -66,7 +66,7 @@ void events(void *paramOdTaska)
                 switch (click_event.press_counter)
                 {
                 case 1:
-                    display_enabled = !display_enabled; // Toggles LCD
+                    Hardware.display_enabled = !Hardware.display_enabled; // Toggles LCD
                     break;
 
                 case 2:
@@ -78,7 +78,7 @@ void events(void *paramOdTaska)
         }
 
         /******************************** POWER SWITCH EVENTS ********************************/
-        if (napajalnik.vrednost() && PSW == false)
+        if (napajalnik.vrednost() && Hardware.PSW == false)
         {
             vTaskSuspend(core_handle);
             delay(20);
@@ -87,7 +87,7 @@ void events(void *paramOdTaska)
             delay(20);
         }
 
-        else if (napajalnik.vrednost() == 0 && PSW)
+        else if (napajalnik.vrednost() == 0 && Hardware.PSW)
         {
             vTaskSuspend(core_handle);
             delay(20);
@@ -106,8 +106,8 @@ void external_power_switch_ev()
     Shutdown();
     delay(20);
     PORTD |= (1 << 7);
-    stikaloCAS.ponastavi();
-    PSW = true;
+    Timers.stikaloCAS.ponastavi();
+    Hardware.PSW = true;
 }
 
 void internal_power_switch_ev()
@@ -115,7 +115,7 @@ void internal_power_switch_ev()
     Shutdown();
     delay(20);
     PORTD &= ~(1 << 7);
-    stikaloCAS.ponastavi();
-    PSW = false;
+    Timers.stikaloCAS.ponastavi();
+    Hardware.PSW = false;
 }
 
