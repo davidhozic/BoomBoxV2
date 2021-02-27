@@ -81,15 +81,19 @@ void events(void *paramOdTaska)
         if (napajalnik.vrednost() && PSW == false)
         {
             vTaskSuspend(core_handle);
+            delay(20);
             external_power_switch_ev();
             vTaskResume(core_handle);
+            delay(20);
         }
 
         else if (napajalnik.vrednost() == 0 && PSW)
         {
             vTaskSuspend(core_handle);
+            delay(20);
             internal_power_switch_ev();
             vTaskResume(core_handle);
+            delay(20);
         }
 
         /*************************************************************************************/
@@ -114,3 +118,4 @@ void internal_power_switch_ev()
     stikaloCAS.ponastavi();
     PSW = false;
 }
+

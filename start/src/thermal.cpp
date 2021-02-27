@@ -1,7 +1,7 @@
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\stuff.h"
-#include "D:\Documents\Arduino\libraries\FreeRTOS\src\queue.h"
+
 
 
 extern const unsigned short error_temp = 60;
@@ -9,8 +9,6 @@ extern const short REF_napetost;
 
 void Shutdown();
 extern TaskHandle_t core_handle;
-extern QueueHandle_t T_vrta;
-
 
 void thermal(void *paramOdTaska)
 {

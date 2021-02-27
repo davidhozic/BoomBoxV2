@@ -4,6 +4,7 @@
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\stuff.h"
 extern const int mic_pin;
+castimer nap_read;
 
 void merjenje_frekvence()
 {
@@ -88,5 +89,13 @@ void meritve(void *p)
             pvp_glasnost();
             break;
         }
+    }
+
+    if (nap_read.vrednost() > 500)
+    {
+        taskENTER_CRITICAL();
+        napetost = (float)analogRead(A2) * (float)5.0 / 1023.00;
+        nap_read.ponastavi();
+        taskEXIT_CRITICAL();
     }
 }

@@ -3,6 +3,9 @@
 #include "Vhod.h"
 #include "Arduino.h"
 #include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\header\stuff.h"
+#define barv_razlika_cond_true abs(barvi_struct.barvni_ptr[BARVA][0] - TR_BARVA[0]) > 7 || abs(barvi_struct.barvni_ptr[BARVA][1] - TR_BARVA[1]) > 7 || abs(barvi_struct.barvni_ptr[BARVA][2] - TR_BARVA[2]) > 7
+#define povp_razlik_barv (abs(barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0]) + abs(barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]) + abs(barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2])) / 3
+#define t_en_krog *CAS * 5 / (povp_razlik_barv) //Cas za eno znizanje
 
 /*************************** GLOBAL ************************/
 extern const int mic_pin = A0;
@@ -21,7 +24,6 @@ TaskHandle_t Mixed_fade_control;
 
 /********** GLOBAL **********/
 float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
-int svetlost = 0;
 /****************************/
 
 enum barve
@@ -63,77 +65,87 @@ void turnOFFstrip()
     TR_BARVA[2] = 0;
 }
 
-/********************** COLOR MODE AXUALIRAY FUNCTIONS********************************/
-void color_fade_funct(int *BARVA)
+/********************** Pomozne funkcije********************************/
+void color_fade_funct(int *BARVA, int *CAS)
 {
-    while (abs(barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0]) > 5 || abs(barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]) > 5 || abs(barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]) > 5)
-    {
-        float smer_r = (barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0]) / (abs(barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
-        float smer_g = (barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]) / (abs(barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]));
-        float smer_b = (barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]) / (abs(barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]));
 
-        smer_r = isnan(smer_r) ? 0 : smer_r;
-        smer_g = isnan(smer_g) ? 0 : smer_g;
-        smer_b = isnan(smer_b) ? 0 : smer_b;
+    float smer_r = (barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0]) / (abs(barvi_struct.barvni_ptr[*BARVA][0] - TR_BARVA[0])); //barva.barvni_ptr ima shranjene naslove barvnih tabel
+    float smer_g = (barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]) / (abs(barvi_struct.barvni_ptr[*BARVA][1] - TR_BARVA[1]));
+    float smer_b = (barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]) / (abs(barvi_struct.barvni_ptr[*BARVA][2] - TR_BARVA[2]));
 
-        TR_BARVA[0] = TR_BARVA[0] + 3 * smer_r;
-        TR_BARVA[1] = TR_BARVA[1] + 3 * smer_g;
-        TR_BARVA[2] = TR_BARVA[2] + 3 * smer_b;
-        analogWrite(rdeca_LED_trak, TR_BARVA[1]);
-        analogWrite(zelena_LED_trak, TR_BARVA[0]);
-        analogWrite(modra_LED_trak, TR_BARVA[2]);
-        delay(5);
-    }
+    smer_r = isnan(smer_r) ? 0 : smer_r;
+    smer_g = isnan(smer_g) ? 0 : smer_g;
+    smer_b = isnan(smer_b) ? 0 : smer_b;
+
+    TR_BARVA[0] = TR_BARVA[0] + 5 * smer_r;
+    TR_BARVA[1] = TR_BARVA[1] + 5 * smer_g;
+    TR_BARVA[2] = TR_BARVA[2] + 5 * smer_b;
+    analogWrite(rdeca_LED_trak, TR_BARVA[0]);
+    analogWrite(zelena_LED_trak, TR_BARVA[1]);
+    analogWrite(modra_LED_trak, TR_BARVA[2]);
+    delay(t_en_krog);
 }
 
-void svetlost_niz_funct()
+void svetlost_niz_funct(int *svetlost)
 {
-    svetlost = 255;
-    while (svetlost > 0) // Zniza Svetlost
-    {
-        svetlost -= 5;
-        analogWrite(rdeca_LED_trak, TR_BARVA[0] * svetlost / 255);
-        analogWrite(zelena_LED_trak, TR_BARVA[1] * svetlost / 255);
-        analogWrite(modra_LED_trak, TR_BARVA[2] * svetlost / 255);
-        delay(15);
-    }
+
+    *svetlost -= 5;
+    analogWrite(rdeca_LED_trak, TR_BARVA[0] * *svetlost / 255);
+    analogWrite(zelena_LED_trak, TR_BARVA[1] * *svetlost / 255);
+    analogWrite(modra_LED_trak, TR_BARVA[2] * *svetlost / 255);
+    delay(15);
 }
 /*************************************************************************************/
 
-/***********************************************************************/
+/*****************************Glavni nacini***************************************/
 void fade_task(void *taskPARAM) //Prizig na barbi in pocasen izklop
 {
     int BARVA = *((int *)taskPARAM);
-
+    int svetlost = 255;
     TR_BARVA[0] = barvi_struct.barvni_ptr[BARVA][0];
     TR_BARVA[1] = barvi_struct.barvni_ptr[BARVA][1];
     TR_BARVA[2] = barvi_struct.barvni_ptr[BARVA][2];
 
-    svetlost_niz_funct();
+    while (svetlost > 0)
+        svetlost_niz_funct(&svetlost);
+
     vTaskDelete(fade_control);
 }
 
-/***********************************************************************/
-
-/***********************************************************************/
-void Color_Fade_task(void *b) //Fade iz ene barve v drugo
-{                             //Fades from one color to another
+void Color_Fade_task(void *b)  //Fade iz ene barve v drugo
+{                              //Fades from one color to another
+    int t = random(500, 1001); //CAS
     int BARVA = *((int *)b);
-    color_fade_funct(&BARVA);
+    while (barv_razlika_cond_true)
+        color_fade_funct(&BARVA, &t);
 }
 
-/***********************************************************************/
-
-/***********************************************************************/
 void Mesan_fade_task(void *b)
 {
+    int t = random(500, 1001);
     int BARVA = *((int *)b);
+    int svetlost = random(230, 256);
+    while (1)
+    {
+        /* code */
 
-    color_fade_funct(&BARVA);
-    svetlost_niz_funct();
+        if (barv_razlika_cond_true)
+        {
+            color_fade_funct(&BARVA, &t);
+        }
+        if (svetlost > 0)
+        {
+            svetlost_niz_funct(&svetlost);
+        }
 
+        if (!barv_razlika_cond_true && svetlost <= 0)
+        {
+            break;
+        }
+    }
     vTaskDelete(Mixed_fade_control);
 }
+/*********************************************************************************/
 
 void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
 {
@@ -171,7 +183,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
         }
 
         if (lucke_filter_time.vrednost() > 100 && mikrofon == 1) // AUDIO_M machine
-        {                                                                       //Če se je vrednost spremenila
+        {                                                        //Če se je vrednost spremenila
 
             lucke_filter_time.ponastavi();
             unsigned short barva_selekt = random(0, barve::LENGHT);
