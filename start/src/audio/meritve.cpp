@@ -10,7 +10,7 @@ void merjenje_frekvence()
     static int prejsnja_vrednost;
     static unsigned long lokal_timer;
 
-    int trenutna_vrednost = analogRead(Hardware.AUSYS_vars.mic_pin);
+    int trenutna_vrednost = analogRead(mic_pin);
     if (trenutna_vrednost > prejsnja_vrednost)
     {
         prejsnja_vrednost = trenutna_vrednost;
@@ -35,7 +35,7 @@ void pvp_glasnost()
     static unsigned short count_above_average = 0;
     static bool previosly_risen = false;
 
-    int trenutna_vrednost = analogRead(Hardware.AUSYS_vars.mic_pin);
+    int trenutna_vrednost = analogRead(mic_pin);
     if (trenutna_vrednost > max_vrednost)
     {
         max_vrednost = trenutna_vrednost;

@@ -15,6 +15,9 @@ void events(void *paramOdTaska);
 void mic_mode_change();
 void audio_meritve(void *p);
 /*************************KONEC PROTOTIPOV************************/
+void Fade_Breathe_Task(void *B);
+void Color_Fade_task(void* B);
+
 
 TaskHandle_t core_handle = NULL;
 TaskHandle_t event_handle = NULL;
@@ -38,4 +41,4 @@ void setup()
   vTaskStartScheduler();
 }
 
-void loop(){};
+void loop() {}

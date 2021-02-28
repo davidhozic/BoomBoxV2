@@ -17,6 +17,7 @@ void turnOFFstrip();
 extern TaskHandle_t temp;
 extern TaskHandle_t event_handle;
 extern TaskHandle_t core_handle;
+void events(void *paramOdTaska);
 /* *********************************************************************** */
 
 void core(void *paramOdTaska)
@@ -79,9 +80,11 @@ void core(void *paramOdTaska)
             vTaskResume(event_handle);
         }
 
+   
+
         if (Hardware.napetost < 3.07 && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
         {
-            spanje();
+            //spanje();
         }
     }
 }

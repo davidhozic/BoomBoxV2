@@ -6,6 +6,7 @@
 #define r_trak 9
 #define z_trak 3
 #define m_trak 11
+#define mic_pin A0
 #define tr_r Hardware.AUSYS_vars.TR_BARVA[0]
 #define tr_z Hardware.AUSYS_vars.TR_BARVA[1]
 #define tr_m Hardware.AUSYS_vars.TR_BARVA[2]
@@ -35,7 +36,6 @@ struct hardware_struct
     {
         int mic_mode = Frequency_mode;
         int A_mode = OFF;
-        const int mic_pin = A0;
         float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
         int povprecna_glasnost;
         int frekvenca;

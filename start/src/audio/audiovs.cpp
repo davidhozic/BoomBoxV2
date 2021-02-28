@@ -234,10 +234,9 @@ void Mesan_fade_task(void *b)
     xTaskCreate(Fade_Breathe_Task, "breathe fade", 45, b, 1, &Breathe_control);
     vTaskDelete(color_fade_control);
     xTaskCreate(Color_Fade_task, "col_fade", 45, b, 1, &color_fade_control);
-
+    delay(100);
     while (Breathe_control != NULL || color_fade_control != NULL)
     {
-        vTaskDelay(50 / portTICK_PERIOD_MS);
     };
 
     TaskHandle_t temp = Mixed_fade_control;
@@ -261,7 +260,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
         switch (Hardware.AUSYS_vars.mic_mode) //MIC machine
         {
         case Average_volume:
-            int trenutna_vrednost = analogRead(Hardware.AUSYS_vars.mic_pin);
+            int trenutna_vrednost = analogRead(mic_pin);
             if ((trenutna_vrednost - Hardware.AUSYS_vars.povprecna_glasnost) > 150 && Hardware.AUSYS_vars.povprecna_glasnost != 0)
             {
                 mikrofon_detect = 1;
@@ -320,7 +319,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
 
             case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofon_detect = 1a
                 mikrofon_detect = 0;
-                unsigned short Signal_level = analogRead(Hardware.AUSYS_vars.mic_pin) * 255 / 1023;
+                unsigned short Signal_level = analogRead(mic_pin) * 255 / 1023;
                 analogWrite(r_trak, Signal_level); // Direktna povezava mikrofon_detect = 1a na izhod vijolicne barve
                 analogWrite(m_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
                 break;

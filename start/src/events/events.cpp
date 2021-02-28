@@ -76,7 +76,7 @@ void events(void *paramOdTaska)
                 click_event.press_counter = 0;
             }
         }
-
+        
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {
