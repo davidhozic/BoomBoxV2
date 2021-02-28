@@ -79,8 +79,9 @@ void core(void *paramOdTaska)
             vTaskResume(event_control);
         }
 
-        if (Hardware.napetost < 3.07 && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
+        if (Hardware.napetost < 3.08 && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
         {
+            Shutdown();
             spanje();
         }
     }
