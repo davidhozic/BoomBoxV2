@@ -1,16 +1,19 @@
 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
-#include <Arduino_FreeRTOS.h>
+#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "Vhod.h"
 #include "castimer.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
+#include "../includes/includes.h"
 
 VHOD BAT_PRIKAZ_SW(4, 'B', 1);
 const int lcd_pb_pin = 2;
 extern VHOD napajalnik;
+
+
+
 void zaslon(void *paramOdTaska)
 {
-    vTaskDelay(200);
+
     while (1)
     {
         if (Hardware.display_enabled)

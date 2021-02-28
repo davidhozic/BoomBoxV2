@@ -1,9 +1,7 @@
 
-#include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
 #include "castimer.h"
-#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
-
+#include "../includes/includes.h"
+#include "includes/audio.h"
 
 void merjenje_frekvence()
 {
@@ -23,7 +21,7 @@ void merjenje_frekvence()
         Timers.timer_frek_meri.ponastavi();
         int cas_sekunde = cas_milisekunde / 1000;
         prejsnja_vrednost = trenutna_vrednost;
-        Hardware.AUSYS_vars.frekvenca = 1 / cas_sekunde;
+        AUSYS_vars.frekvenca = 1 / cas_sekunde;
     }
 }
 
@@ -48,7 +46,7 @@ void pvp_glasnost()
         if (previosly_risen)
         {
 
-            if (max_vrednost - Hardware.AUSYS_vars.povprecna_glasnost < 300 || count_above_average >= 10)
+            if (max_vrednost - AUSYS_vars.povprecna_glasnost < 300 || count_above_average >= 10)
             { /* Vrednost se ni bila zabelezena in glasnost ni porastla za vec kot 300 ADC oz. je porastla vec kot 10x */
                 vsota_branj += max_vrednost;
                 count_branj += 1;
@@ -66,7 +64,7 @@ void pvp_glasnost()
     if (count_branj == 200)
     {
 
-        Hardware.AUSYS_vars.povprecna_glasnost = vsota_branj / count_branj;
+        AUSYS_vars.povprecna_glasnost = vsota_branj / count_branj;
         count_branj = 0;
         vsota_branj = 0;
         count_above_average = 0;
@@ -77,7 +75,7 @@ void audio_meritve(void *p)
 {
     while (true)
     {
-        switch (Hardware.AUSYS_vars.mic_mode)
+        switch (AUSYS_vars.mic_mode)
         {
         case Frequency_mode:
             merjenje_frekvence();

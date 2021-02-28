@@ -3,6 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
+                "D:\\Documents\\Arduino\\libraries\\FreeRTOS\\src",
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
                 "D:\\Documents\\Arduino\\libraries\\**",
                 "C:\\Program Files (x86)\\Arduino\\libraries\\**",

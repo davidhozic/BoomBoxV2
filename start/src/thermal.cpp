@@ -1,6 +1,6 @@
-#include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
-#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
+#include <Arduino.h>
+#include <Arduino_FreeRTOS.h>
+#include "includes/includes.h"
 
 
 
@@ -14,7 +14,7 @@ void thermal(void *paramOdTaska)
 {
   while (true)
   {
-    delay(1500);
+    vTaskDelay(5000/ portTICK_PERIOD_MS);
     taskENTER_CRITICAL();
     float AMP_Temp_S_Voltage = (float)analogRead(A1) * (float)Hardware.REF_VOLT / 1023.00;
     Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
@@ -25,7 +25,7 @@ void thermal(void *paramOdTaska)
       Hardware.AMP_oheat = true;
       if (Hardware.is_Powered_UP)
       {
-        delay(200);
+        delay(50);
         Shutdown();
       }
     }

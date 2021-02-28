@@ -1,10 +1,12 @@
 
 
-#include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
+#include <Arduino.h>
 #include "castimer.h"
 #include "Vhod.h"
-#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
+#include <Arduino_FreeRTOS.h>
+#include "includes/includes.h"
+#include "audio/includes/audio.h"
+#include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src\EEPROM.h"
 
 VHOD napajalnik(2, 'D', 0);
 VHOD stikalo(4, 'D', 0);
@@ -14,9 +16,6 @@ void spanje();
 void Shutdown();
 void Power_UP();
 void turnOFFstrip();
-extern TaskHandle_t temp;
-extern TaskHandle_t event_handle;
-extern TaskHandle_t core_handle;
 void events(void *paramOdTaska);
 /* *********************************************************************** */
 
@@ -75,36 +74,40 @@ void core(void *paramOdTaska)
         //----------------------------------------------------------------------------------------------------------------------------------
         if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost >= 3.1 || Hardware.PSW) && !Hardware.is_Powered_UP)
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
-            vTaskSuspend(event_handle);
+            vTaskSuspend(event_control);
             Power_UP();
-            vTaskResume(event_handle);
+            vTaskResume(event_control);
         }
-
-   
 
         if (Hardware.napetost < 3.07 && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
         {
-            //spanje();
+            spanje();
         }
     }
 }
 
 void Shutdown()
 {
-
+    vTaskSuspend(audio_system_control);
+    taskENTER_CRITICAL();
     PORTB &= ~1;
     PORTD &= ~1; //Izklop
     turnOFFstrip();
     Hardware.is_Powered_UP = false;
-    Hardware.AUSYS_vars.A_mode = OFF;
+    Hardware.display_enabled = false;
+    AUSYS_vars.A_mode = OFF_A;
+    taskEXIT_CRITICAL();
 }
 
 void Power_UP()
 {
-    delay(20 / portTICK_PERIOD_MS);
+    delay(20);
     PORTB |= 1;
     Hardware.is_Powered_UP = true;
     PORTD |= 1;
-    delay(210 / portTICK_PERIOD_MS);
-    Hardware.AUSYS_vars.A_mode = NORMAL_FADE;
+    delay(210);
+    taskENTER_CRITICAL();
+    AUSYS_vars.A_mode = EEPROM.read(audiomode_eeprom_addr); //Prebere zadnje stanje audia
+    taskEXIT_CRITICAL();
+    vTaskResume(audio_system_control);
 }

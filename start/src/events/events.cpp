@@ -1,8 +1,8 @@
-#include "D:\Documents\Arduino\libraries\VHOD\Vhod.h"
-#include "D:\Documents\Arduino\libraries\castimer\castimer.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
-#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
-#include "Arduino.h"
+#include "Vhod.h"
+#include "castimer.h"
+#include "../includes/includes.h"
+#include <Arduino_FreeRTOS.h>
+#include <Arduino.h>
 
 void mic_mode_change();
 void button2Events();
@@ -11,8 +11,6 @@ void external_power_switch_ev();
 void internal_power_switch_ev();
 void audio_mode_change(char *ch);
 extern VHOD napajalnik;
-extern TaskHandle_t core_handle;
-
 VHOD audioSW(4, 'B', 1);
 castimer hold_TIMER; // Timer that times the time of button press
 castimer click_timer;
@@ -29,7 +27,6 @@ void events(void *paramOdTaska)
 {
     while (true)
     {
-
         /******************************************** SWITCH 2 EVENTS ****************************************/
 
         if (audioSW.vrednost())
@@ -76,23 +73,23 @@ void events(void *paramOdTaska)
                 click_event.press_counter = 0;
             }
         }
-        
+
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {
-            vTaskSuspend(core_handle);
+            vTaskSuspend(core_control);
             delay(20);
             external_power_switch_ev();
-            vTaskResume(core_handle);
+            vTaskResume(core_control);
             delay(20);
         }
 
         else if (napajalnik.vrednost() == 0 && Hardware.PSW)
         {
-            vTaskSuspend(core_handle);
+            vTaskSuspend(core_control);
             delay(20);
             internal_power_switch_ev();
-            vTaskResume(core_handle);
+            vTaskResume(core_control);
             delay(20);
         }
 
@@ -102,20 +99,24 @@ void events(void *paramOdTaska)
 
 void external_power_switch_ev()
 {
-
+    taskENTER_CRITICAL();
     Shutdown();
     delay(20);
     PORTD |= (1 << 7);
     Timers.stikaloCAS.ponastavi();
+    delay(500);
     Hardware.PSW = true;
+    taskEXIT_CRITICAL();
 }
 
 void internal_power_switch_ev()
 {
+    taskENTER_CRITICAL();
     Shutdown();
     delay(20);
     PORTD &= ~(1 << 7);
     Timers.stikaloCAS.ponastavi();
+    delay(500);
     Hardware.PSW = false;
+    taskEXIT_CRITICAL();
 }
-

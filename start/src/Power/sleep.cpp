@@ -1,13 +1,12 @@
-#include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino\Arduino.h"
+#include <Arduino.h>
 #include "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\sleep.h"
-#include "C:\Users\McHea\Google Drive\Projekti\Zvocnik (zakljucna naloga)\BoomBoxV2\start\src\global\stuff.h"
-#include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
+#include "../includes/includes.h"
+#include <Arduino_FreeRTOS.h>
 
 void bujenje()
 {
   detachInterrupt(0);
   sleep_disable();
-  setup();
   taskEXIT_CRITICAL();
 }
 
