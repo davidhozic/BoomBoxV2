@@ -13,14 +13,14 @@ enum barve
 
 struct c
 {
-    static int BELA[3];
-    static int ZELENA[3];
-    static int RDECA[3];
-    static int MODRA[3];
-    static int RUMENA[3];
-    static int MORSKO_MODRA[3];
-    static int VIJOLICNA[3];
-    static int ROZA[3];
+    int BELA[3] = {255, 255, 255};
+    int ZELENA[3] = {0, 255, 0};
+    int RDECA[3] = {255, 0, 0};
+    int MODRA[3] = {0, 0, 255};
+    int RUMENA[3] = {255, 255, 0};
+    int MORSKO_MODRA[3] = {0, 255, 255};
+    int VIJOLICNA[3] = {255, 0, 255};
+    int ROZA[3] = {255, 20, 147};
     int *barvni_ptr[8] = {BELA, ZELENA, RDECA, MODRA, RUMENA, MORSKO_MODRA, VIJOLICNA, ROZA};
 };
 extern c mozne_barve;
