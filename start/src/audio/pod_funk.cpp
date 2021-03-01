@@ -8,25 +8,25 @@
 *                                                                                                                         *
 **************************************************************************************************************************/
 
-void deleteHANDLES() // Zbrise obstojece taske ce obstajajo
+void delete_AVDIO_subTASK(int doNotDelete) // Zbrise obstojece taske ce obstajajo in niso oznacene kot da se jih ne sme brisati (da task ne izbrise samega sebe)
 {
-    if (fade_control != NULL)
+    if (fade_control != NULL && doNotDelete != dont_fade_delete)
     {
         vTaskDelete(fade_control);
         fade_control = NULL;
     }
 
-    if (color_fade_control != NULL)
+    if (color_fade_control != NULL && doNotDelete != dont_color_fade_delete)
     {
         vTaskDelete(color_fade_control);
         color_fade_control = NULL;
     }
-    if (Mixed_fade_control != NULL)
+    if (Mixed_fade_control != NULL && doNotDelete != dont_Mixed_fade_delete)
     {
         vTaskDelete(Mixed_fade_control);
         Mixed_fade_control = NULL;
     }
-    if (Breathe_control != NULL)
+    if (Breathe_control != NULL && doNotDelete != dont_Breathe_delete)
     {
         vTaskDelete(Breathe_control);
         Breathe_control = NULL;
@@ -37,7 +37,7 @@ void turnOFFstrip()
 {
 
     taskENTER_CRITICAL();
-    deleteHANDLES();
+    delete_AVDIO_subTASK(Delete_ALL);
     digitalWrite(r_trak, 0);
     digitalWrite(z_trak, 0);
     digitalWrite(m_trak, 0);
@@ -118,15 +118,15 @@ void audio_mode_change(char *ch) // Double click
 
     if (ch == "off")
     {
-        AUSYS_vars.A_mode = OFF_A;
+        trenutni_audio_mode = OFF_A;
     }
     else
     {
-        AUSYS_vars.A_mode = (AUSYS_vars.A_mode + 1) % audio_mode::LENGTH_2;
+        trenutni_audio_mode = (trenutni_audio_mode + 1) % audio_mode::LENGTH_2;
     }
-
-    EEPROM.update(audiomode_eeprom_addr, AUSYS_vars.A_mode); // Zapise zadnje stanje
-
+#if SHRANI_AUDIO_MODE
+    EEPROM.update(audiomode_eeprom_addr, trenutni_audio_mode); // Zapise zadnje stanje
+#endif
     vTaskDelay(500 / portTICK_PERIOD_MS);
     vTaskResume(audio_system_control);
 }

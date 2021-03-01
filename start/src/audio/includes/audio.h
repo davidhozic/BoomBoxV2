@@ -15,8 +15,11 @@
 #define tr_m AUSYS_vars.TR_BARVA[2]
 #define tr_bright AUSYS_vars.tr_svetlost
 #define barv_razlika_cond_true abs(mozne_barve.barvni_ptr[BARVA][0] - tr_r) > 5 || abs(mozne_barve.barvni_ptr[BARVA][1] - tr_z) > 5 || abs(mozne_barve.barvni_ptr[BARVA][2] - tr_m) > 5
+#define povprecna_glasnost AUSYS_vars.povprecna_glas
+#define frekvenca AUSYS_vars.frek
+#define trenutni_audio_mode AUSYS_vars.A_mode
 
-void deleteHANDLES();
+void delete_AVDIO_subTASK(int doNotDelete);
 void turnOFFstrip();
 void writeTRAK();
 void color_fade_funct(byte *B);
@@ -36,7 +39,7 @@ void Mesan_fade_task(void *b);
 enum mic_detection_mode
 {
     Average_volume, // Meri povprecno glasnost
-    Frequency_mode, // Hardware.AUSYS_vars.frekvenca
+    Frequency_mode, // Hardware.frekvenca
     LENGHT_1
 };
 
@@ -52,15 +55,27 @@ enum audio_mode
     OFF_A
 };
 
+enum control_blocks{ //doNotDelete
+    dont_fade_delete,
+    dont_color_fade_delete,
+    dont_Mixed_fade_delete,
+    dont_Breathe_delete,
+    Delete_ALL
+};
+
+
 struct adsys
 {
     int mic_mode = Frequency_mode;
     byte A_mode = OFF_A;
     float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
-    int povprecna_glasnost;
-    int frekvenca;
+    int povprecna_glas = 0;
+    int frek = 0;
     byte tr_svetlost = 0;
 };
 extern adsys AUSYS_vars;
+
+
+
 
 #endif

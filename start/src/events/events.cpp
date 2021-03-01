@@ -104,7 +104,7 @@ void external_power_switch_ev()
     delay(20);
     PORTD |= (1 << 7);
     Timers.stikaloCAS.ponastavi();
-    delay(500);
+    delay(20);
     Hardware.PSW = true;
     taskEXIT_CRITICAL();
 }
@@ -116,7 +116,7 @@ void internal_power_switch_ev()
     delay(20);
     PORTD &= ~(1 << 7);
     Timers.stikaloCAS.ponastavi();
-    delay(500);
+    delay(20);
     Hardware.PSW = false;
     taskEXIT_CRITICAL();
 }

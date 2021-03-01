@@ -1,13 +1,10 @@
 #include "D:\Documents\Arduino\libraries\castimer\castimer.h"
 #include "Arduino.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
+#include "settings.h"
 
 #ifndef namespaces_H
 #define namespaces_H
-
-
-#define battery_eeprom_addr 1
-#define audiomode_eeprom_addr 0
 
 extern TaskHandle_t core_control;
 extern TaskHandle_t event_control;
@@ -45,5 +42,8 @@ struct timer_struct
     castimer goTOidle_timer;
 };
 extern timer_struct Timers;
+
+
+
 
 #endif

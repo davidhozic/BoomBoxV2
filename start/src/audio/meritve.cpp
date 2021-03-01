@@ -21,7 +21,7 @@ void merjenje_frekvence()
         Timers.timer_frek_meri.ponastavi();
         int cas_sekunde = cas_milisekunde / 1000;
         prejsnja_vrednost = trenutna_vrednost;
-        AUSYS_vars.frekvenca = 1 / cas_sekunde;
+        frekvenca = 1 / cas_sekunde;
     }
 }
 
@@ -46,7 +46,7 @@ void pvp_glasnost()
         if (previosly_risen)
         {
 
-            if (max_vrednost - AUSYS_vars.povprecna_glasnost < 300 || count_above_average >= 10)
+            if (max_vrednost - povprecna_glasnost < 300 || count_above_average >= 10)
             { /* Vrednost se ni bila zabelezena in glasnost ni porastla za vec kot 300 ADC oz. je porastla vec kot 10x */
                 vsota_branj += max_vrednost;
                 count_branj += 1;
@@ -64,7 +64,7 @@ void pvp_glasnost()
     if (count_branj == 200)
     {
 
-        AUSYS_vars.povprecna_glasnost = vsota_branj / count_branj;
+        povprecna_glasnost = vsota_branj / count_branj;
         count_branj = 0;
         vsota_branj = 0;
         count_above_average = 0;

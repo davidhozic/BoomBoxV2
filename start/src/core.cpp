@@ -96,7 +96,7 @@ void Shutdown()
     turnOFFstrip();
     Hardware.is_Powered_UP = false;
     Hardware.display_enabled = false;
-    AUSYS_vars.A_mode = OFF_A;
+    trenutni_audio_mode = OFF_A;
     taskEXIT_CRITICAL();
 }
 
@@ -108,7 +108,11 @@ void Power_UP()
     PORTD |= 1;
     delay(210);
     taskENTER_CRITICAL();
-    AUSYS_vars.A_mode = EEPROM.read(audiomode_eeprom_addr); //Prebere zadnje stanje audia
+
+    #if SHRANI_AUDIO_MODE
+    trenutni_audio_mode = EEPROM.read(audiomode_eeprom_addr); //Prebere zadnje stanje audia
+    #endif
+
     taskEXIT_CRITICAL();
     vTaskResume(audio_system_control);
 }

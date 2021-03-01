@@ -1,7 +1,6 @@
 #include "includes/audio.h"
 #include "../includes/includes.h"
 
-adsys AUSYS_vars;
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                  GLAVNI NACINI TASKI                                                    *
@@ -28,10 +27,10 @@ void fade_task(void *B) //Prizig na barbi in pocasen izklop
 
 void Color_Fade_task(void *B) //Fade iz ene barve v drugo
 {
-    bool mixed_mode = Mixed_fade_control != NULL;
+
     while (barv_razlika_cond_true)
     {
-        if (!mixed_mode) // Dihalni nacin svetlosti se ne izvaja
+        if (Mixed_fade_control == NULL) // Dihalni nacin svetlosti se ne izvaja
             tr_bright = 255;
 
         if (Timers.color_timer.vrednost() > 15)
@@ -70,11 +69,8 @@ void Fade_Breathe_Task(void *B)
 
 void Mesan_fade_task(void *b)
 {
-    vTaskDelete(Breathe_control);
-
+    delete_AVDIO_subTASK(dont_Mixed_fade_delete);
     xTaskCreate(Fade_Breathe_Task, "breathe fade", 45, b, 1, &Breathe_control);
-    vTaskDelete(color_fade_control);
-
     xTaskCreate(Color_Fade_task, "col_fade", 45, b, 1, &color_fade_control);
     delay(100);
     while (Breathe_control != NULL)

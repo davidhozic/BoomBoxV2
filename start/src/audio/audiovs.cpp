@@ -4,7 +4,6 @@
 #include "../includes/includes.h"
 #include "includes/audio.h"
 
-
 /*************************** task nadzor  **************************/
 TaskHandle_t fade_control = NULL;
 TaskHandle_t color_fade_control = NULL;
@@ -22,7 +21,6 @@ TaskHandle_t Breathe_control = NULL;
 *                                                                                                                         *
 **************************************************************************************************************************/
 
-
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                            GLAVNI UPRAVLJALNI SISTEM (TASK)                                             *
@@ -38,7 +36,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
         {
         case Average_volume:
             int trenutna_vrednost = analogRead(mic_pin);
-            if ((trenutna_vrednost - AUSYS_vars.povprecna_glasnost) > 150 && AUSYS_vars.povprecna_glasnost != 0)
+            if ((trenutna_vrednost - povprecna_glasnost) > 150 && povprecna_glasnost != 0)
             {
                 mikrofon_detect = 1;
             }
@@ -49,7 +47,7 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             break;
 
         case Frequency_mode:
-            if (AUSYS_vars.frekvenca > 0 && AUSYS_vars.frekvenca <= 60)
+            if (frekvenca > 0 && frekvenca <= 60)
             {
                 mikrofon_detect = 1;
             }
@@ -61,30 +59,29 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
         }
 
         if (Timers.lucke_filter_time.vrednost() > 100 && mikrofon_detect == 1) // AUDIO_M machine
-        {                                                                      //Če se je vrednost spremenila
-
+        {
             Timers.lucke_filter_time.ponastavi();
             byte barva_selekt = random(0, barve::LENGHT);
-            taskENTER_CRITICAL();
-            switch (AUSYS_vars.A_mode)
+
+            switch (trenutni_audio_mode)
             {
             case NORMAL_FADE: //Prizig in fade izklop
-                deleteHANDLES();
+                delete_AVDIO_subTASK(Delete_ALL);
                 xTaskCreate(fade_task, "normalni fade_create", 45, (void *)&barva_selekt, 1, &fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-                deleteHANDLES();
+                delete_AVDIO_subTASK(Delete_ALL);
                 xTaskCreate(Color_Fade_task, "col_fade", 45, (void *)&barva_selekt, 1, &color_fade_control);
                 break;
 
             case MIXED_FADE:
-                deleteHANDLES();
+                delete_AVDIO_subTASK(Delete_ALL);
                 xTaskCreate(Mesan_fade_task, "color fade with off fade", 20, (void *)&barva_selekt, 1, &Mixed_fade_control);
                 break;
 
             case Fade_Breathe:
-                deleteHANDLES();
+                delete_AVDIO_subTASK(Delete_ALL);
                 xTaskCreate(Fade_Breathe_Task, "breathe fade", 45, (void *)&barva_selekt, 1, &Breathe_control);
                 break;
 
@@ -98,7 +95,6 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             case OFF_A:
                 turnOFFstrip();
             }
-            taskEXIT_CRITICAL();
         }
     }
 }
