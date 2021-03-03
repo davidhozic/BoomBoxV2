@@ -55,9 +55,9 @@ void color_fade_funct(byte *B)
     mozne_barve.barvni_ptr[*B][1] >= tr_z ? smer[1] = 1 : smer[1] = -1;
     mozne_barve.barvni_ptr[*B][2] >= tr_m ? smer[2] = 1 : smer[2] = -1;
 
-    tr_r = tr_r + (5 * smer[0]);
-    tr_z = tr_z + (5 * smer[1]);
-    tr_m = tr_m + (5 * smer[2]);
+    tr_r = tr_r + (10 * smer[0]);
+    tr_z = tr_z + (10 * smer[1]);
+    tr_m = tr_m + (10 * smer[2]);
 
     tr_r = tr_r < 0 ? 0 : tr_r;
     tr_z = tr_z < 0 ? 0 : tr_z;

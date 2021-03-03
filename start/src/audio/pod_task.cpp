@@ -32,7 +32,7 @@ void Color_Fade_task(void *B) //Fade iz ene barve v drugo
             tr_bright = 255;
 
         color_fade_funct((byte *)B);
-        vTaskDelay(3);
+        vTaskDelay(1);
     }
     color_fade_control = NULL;
     vTaskDelete(NULL);
