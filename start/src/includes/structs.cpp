@@ -4,5 +4,4 @@
 
 hardware_struct Hardware;
 timer_struct Timers;
-c mozne_barve;
 adsys AUSYS_vars;

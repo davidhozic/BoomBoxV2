@@ -4,9 +4,7 @@
 
 
 
-extern const unsigned short error_temp = 60;
-
-
+const unsigned short error_temp = 60;
 void Shutdown();
 extern TaskHandle_t core_handle;
 
@@ -16,12 +14,11 @@ void thermal(void *paramOdTaska)
   {
     vTaskDelay(5000/ portTICK_PERIOD_MS);
     taskENTER_CRITICAL();
-    float AMP_Temp_S_Voltage = (float)analogRead(A1) * (float)Hardware.REF_VOLT / 1023.00;
+    unsigned int AMP_Temp_S_Voltage = analogRead(A1) * Hardware.REF_VOLT / 1023.00;
     Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
 
     if (Hardware.Amplifier_temp >= error_temp)
     {
-      
       Hardware.AMP_oheat = true;
       if (Hardware.is_Powered_UP)
       {
@@ -30,7 +27,7 @@ void thermal(void *paramOdTaska)
       }
     }
     taskEXIT_CRITICAL();
-    /*
+    /*   STARO
       if (hlajenjeCas.vrednost() < 300000 && Hardware.Amplifier_temp < 42.00 || napajalnik.vrednost() == 0)
       {
         digitalWrite(ventilator, 0);

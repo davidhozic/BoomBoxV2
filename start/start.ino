@@ -1,6 +1,5 @@
 #include <Arduino_FreeRTOS.h>
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src\EEPROM.h"
-#include "C:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\sleep.h"
 #include "Vhod.h"
 #include "castimer.h"
 #include "src/includes/includes.h"
@@ -47,10 +46,10 @@ void setup()
   xTaskCreate(polnjenje, "CHRG", 64, NULL, 1, &chrg_control);
   xTaskCreate(thermal, "therm", 64, NULL, 1, &thermal_control);
   xTaskCreate(audio_meritve, "audio_meritve", 64, NULL, 1, &meas_control);
-  vTaskSuspend(audio_system_control);
+  if (eTaskGetState(audio_system_control) != eSuspended)
+    vTaskSuspend(audio_system_control);
 }
 
 void loop()
 {
-
 }

@@ -14,6 +14,7 @@ extern TaskHandle_t chrg_control;
 extern TaskHandle_t thermal_control;
 extern TaskHandle_t meas_control;
 
+#define toggleLCD() Hardware.display_enabled = !(Hardware.display_enabled);
 
 struct hardware_struct
 {
@@ -25,7 +26,7 @@ struct hardware_struct
     bool AMP_oheat = 0;
     bool display_enabled = 1;
     float Amplifier_temp = 0;
-    float napetost = 0;
+    unsigned int napetost = 0;
 };
 extern hardware_struct Hardware;
 
@@ -33,17 +34,13 @@ struct timer_struct
 {
     castimer stikaloCAS;
     castimer lucke_filter_time;
-    castimer timer_frek_meri;
+    castimer audio_timer;
     castimer LCD_timer;
     castimer stikaloOFFtime;
     castimer VOLT_timer;
     castimer brightness_timer;
     castimer color_timer;
-    castimer goTOidle_timer;
 };
 extern timer_struct Timers;
-
-
-
 
 #endif

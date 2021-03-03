@@ -20,13 +20,12 @@ TaskHandle_t Breathe_control = NULL;
 *                                                                                                                         *
 *                                                                                                                         *
 **************************************************************************************************************************/
-
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                            GLAVNI UPRAVLJALNI SISTEM (TASK)                                             *
 *                                                                                                                         *
 **************************************************************************************************************************/
-
+c mozne_barve;
 void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
 {
     bool mikrofon_detect = 0;
@@ -66,22 +65,22 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             switch (trenutni_audio_mode)
             {
             case NORMAL_FADE: //Prizig in fade izklop
-                delete_AVDIO_subTASK(Delete_ALL);
+                delete_AVDIO_subTASK();
                 xTaskCreate(fade_task, "normalni fade_create", 45, (void *)&barva_selekt, 1, &fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-                delete_AVDIO_subTASK(Delete_ALL);
+                delete_AVDIO_subTASK();
                 xTaskCreate(Color_Fade_task, "col_fade", 45, (void *)&barva_selekt, 1, &color_fade_control);
                 break;
 
             case MIXED_FADE:
-                delete_AVDIO_subTASK(Delete_ALL);
+                delete_AVDIO_subTASK();
                 xTaskCreate(Mesan_fade_task, "color fade with off fade", 20, (void *)&barva_selekt, 1, &Mixed_fade_control);
                 break;
 
             case Fade_Breathe:
-                delete_AVDIO_subTASK(Delete_ALL);
+                delete_AVDIO_subTASK();
                 xTaskCreate(Fade_Breathe_Task, "breathe fade", 45, (void *)&barva_selekt, 1, &Breathe_control);
                 break;
 

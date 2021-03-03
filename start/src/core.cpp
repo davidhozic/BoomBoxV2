@@ -48,38 +48,37 @@ void core(void *paramOdTaska)
         *                                                                                             *
         *                                                                                             * 
         ***********************************************************************************************/
-        static float firstRead = 0;
-        if (firstRead == 0)
-        {
-            taskENTER_CRITICAL();
-            firstRead = analogRead(A2) * 5.0 / 1023.0;
-            taskEXIT_CRITICAL();
-        }
-        else if (Timers.VOLT_timer.vrednost() > 500)
-        {
-            taskENTER_CRITICAL();
-            float secondRead = analogRead(A2) * 5.0 / 1023.0;
 
-            if (abs(secondRead - firstRead) < 0.15)
-            {
-                Hardware.napetost = secondRead;
-            }
-            firstRead = 0;
-            Timers.VOLT_timer.ponastavi();
+        static unsigned int vsota_br = 0;
+        static unsigned short st_br = 0;
+        taskENTER_CRITICAL();
+        vsota_br += analogRead(vDIV_pin) * Hardware.REF_VOLT / 1023;
+        st_br++;
+        taskEXIT_CRITICAL();
+
+        if (st_br >= 10)
+        {
+            taskENTER_CRITICAL();
+            Hardware.napetost = vsota_br / st_br;
             taskEXIT_CRITICAL();
+            vsota_br = 0;
+            st_br = 0;
         }
+        vTaskDelay(30 / portTICK_PERIOD_MS);
 
         //----------------------------------------------------------------------------------------------------------------------------------
         //                                               Power UP
         //----------------------------------------------------------------------------------------------------------------------------------
-        if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost >= 3.1 || Hardware.PSW) && !Hardware.is_Powered_UP)
+        if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && !Hardware.is_Powered_UP)
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
-            vTaskSuspend(event_control);
+            if (eTaskGetState(audio_system_control) != eSuspended)
+                vTaskSuspend(event_control);
             Power_UP();
-            vTaskResume(event_control);
+            if (eTaskGetState(audio_system_control) == eSuspended)
+                vTaskResume(event_control);
         }
 
-        if (Hardware.napetost < 3.08 && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
+        if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
         {
             Shutdown();
             spanje();
@@ -89,13 +88,13 @@ void core(void *paramOdTaska)
 
 void Shutdown()
 {
-    vTaskSuspend(audio_system_control);
+    if (eTaskGetState(audio_system_control) != eSuspended)
+        vTaskSuspend(audio_system_control);
     taskENTER_CRITICAL();
     PORTB &= ~1;
     PORTD &= ~1; //Izklop
     turnOFFstrip();
     Hardware.is_Powered_UP = false;
-    Hardware.display_enabled = false;
     trenutni_audio_mode = OFF_A;
     taskEXIT_CRITICAL();
 }
@@ -107,12 +106,11 @@ void Power_UP()
     Hardware.is_Powered_UP = true;
     PORTD |= 1;
     delay(210);
-    taskENTER_CRITICAL();
 
-    #if SHRANI_AUDIO_MODE
+    Hardware.display_enabled = true;
+#if SHRANI_AUDIO_MODE
     trenutni_audio_mode = EEPROM.read(audiomode_eeprom_addr); //Prebere zadnje stanje audia
-    #endif
-
-    taskEXIT_CRITICAL();
-    vTaskResume(audio_system_control);
+#endif
+    if (eTaskGetState(audio_system_control) == eSuspended)
+        vTaskResume(audio_system_control);
 }

@@ -4,3 +4,21 @@ start/.vscode/settings.json
 .gitignore (2).txt
 .vscode/arduino.json
 .gitignore
+all_in_one.cpp
+BoomBoxV2.zip
+razdeljeno/start/start.ino
+razdeljeno/start/src/core.cpp
+razdeljeno/start/src/thermal.cpp
+razdeljeno/start/src/audio/audiovs.cpp
+razdeljeno/start/src/audio/meritve.cpp
+razdeljeno/start/src/audio/pod_funk.cpp
+razdeljeno/start/src/audio/pod_task.cpp
+razdeljeno/start/src/audio/BARVE/barve.h
+razdeljeno/start/src/audio/includes/audio.h
+razdeljeno/start/src/events/events.cpp
+razdeljeno/start/src/includes/includes.h
+razdeljeno/start/src/includes/settings.h
+razdeljeno/start/src/includes/structs.cpp
+razdeljeno/start/src/Power/chrg.cpp
+razdeljeno/start/src/Power/sleep.cpp
+razdeljeno/start/src/Power/zaslon.cpp

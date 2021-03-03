@@ -9,7 +9,6 @@
 #define r_trak 9
 #define z_trak 3
 #define m_trak 11
-#define mic_pin A0
 #define tr_r AUSYS_vars.TR_BARVA[0]
 #define tr_z AUSYS_vars.TR_BARVA[1]
 #define tr_m AUSYS_vars.TR_BARVA[2]
@@ -19,17 +18,19 @@
 #define frekvenca AUSYS_vars.frek
 #define trenutni_audio_mode AUSYS_vars.A_mode
 
-void delete_AVDIO_subTASK(int doNotDelete);
-void turnOFFstrip();
-void writeTRAK();
-void color_fade_funct(byte *B);
-void svetlost_mod_funct(byte *svetlost, byte smer);
-void mic_mode_change();
-void audio_mode_change(char *ch);
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;
 extern TaskHandle_t Mixed_fade_control;
 extern TaskHandle_t Breathe_control;
+
+void delete_AVDIO_subTASK();
+void turnOFFstrip();
+void writeTRAK();
+void color_fade_funct(byte *B);
+void svetlost_mod_funct(int smer);
+void mic_mode_change();
+void audio_mode_change(char *ch);
+
 
 void fade_task(void *B);
 void Color_Fade_task(void *B);
@@ -55,20 +56,12 @@ enum audio_mode
     OFF_A
 };
 
-enum control_blocks{ //doNotDelete
-    dont_fade_delete,
-    dont_color_fade_delete,
-    dont_Mixed_fade_delete,
-    dont_Breathe_delete,
-    Delete_ALL
-};
-
 
 struct adsys
 {
     int mic_mode = Frequency_mode;
     byte A_mode = OFF_A;
-    float TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
+    byte TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
     int povprecna_glas = 0;
     int frek = 0;
     byte tr_svetlost = 0;
