@@ -48,9 +48,9 @@ void turnOFFstrip()
 void writeTRAK()
 {
     taskENTER_CRITICAL();
-    analogWrite(r_trak, tr_r * tr_bright / 255);
-    analogWrite(z_trak, tr_z * tr_bright / 255);
-    analogWrite(m_trak, tr_m * tr_bright / 255);
+    analogWrite(r_trak, (float)tr_r * tr_bright / 255.00);
+    analogWrite(z_trak, (float)tr_z * tr_bright / 255.00);
+    analogWrite(m_trak, (float)tr_m * tr_bright / 255.00);
     taskEXIT_CRITICAL();
 }
 

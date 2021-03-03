@@ -14,7 +14,7 @@ extern TaskHandle_t chrg_control;
 extern TaskHandle_t thermal_control;
 extern TaskHandle_t meas_control;
 
-#define toggleLCD() Hardware.display_enabled = !(Hardware.display_enabled);
+
 
 struct hardware_struct
 {

@@ -49,17 +49,17 @@ void core(void *paramOdTaska)
         *                                                                                             * 
         ***********************************************************************************************/
 
-        static unsigned int vsota_br = 0;
+        static unsigned long vsota_br = 0;
         static unsigned short st_br = 0;
         taskENTER_CRITICAL();
-        vsota_br += analogRead(vDIV_pin) * Hardware.REF_VOLT / 1023;
+        vsota_br += analogRead(vDIV_pin) * (float)Hardware.REF_VOLT / 1023.00;
         st_br++;
         taskEXIT_CRITICAL();
 
         if (st_br >= 10)
         {
             taskENTER_CRITICAL();
-            Hardware.napetost = vsota_br / st_br;
+            Hardware.napetost = (float)vsota_br / st_br;
             taskEXIT_CRITICAL();
             vsota_br = 0;
             st_br = 0;

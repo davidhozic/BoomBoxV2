@@ -5,6 +5,14 @@
 #include <Arduino.h>
 #include "../audio/includes/audio.h"
 
+#define toggleLCD() Hardware.display_enabled = !(Hardware.display_enabled);
+#define showSeek()                                       \
+    tr_r = mozne_barve.barvni_ptr[evnt_st.menu_seek][0]; \
+    tr_z = mozne_barve.barvni_ptr[evnt_st.menu_seek][1]; \
+    tr_m = mozne_barve.barvni_ptr[evnt_st.menu_seek][2]; \
+    tr_bright = 255;                                     \
+    writeTRAK(); // Prikaze element v seeku ce je scroll aktiven
+
 void mic_mode_change();
 void button2Events();
 void Shutdown();
@@ -22,20 +30,26 @@ VHOD eventSW(4, 'B', 0);
     unsigned short press_counter = 0;
 } click_event; */
 
-enum hhrdstrctev_states
+enum menu_seek
 {
+    TOGGLE_LCD,
     MIC_MODE_CH,
     A_MODE_CH,
     A_MODE_OFF,
-    LENGTH,
+    LENGTH
+};
+
+enum states
+{
+    unset,
     SCROLL,
-    unset
+    LLENGTH
 };
 
 struct sw2_state_machine_strct
 {
     unsigned short state = unset;
-    unsigned short menu_seek = LENGTH - 1;
+    unsigned short menu_seek = TOGGLE_LCD;
     castimer state_exit_timer;
     castimer hold_timer;
     unsigned int hold_time = 0;
@@ -51,37 +65,35 @@ void events(void *paramOdTaska)
         //State machine
         if (Hardware.is_Powered_UP)
         {
-            if (eventSW.vrednost() && evnt_st.state == unset)
-            {
-                evnt_st.hold_time = evnt_st.hold_timer.vrednost();
-                if (evnt_st.hold_time >= 2000)
-                {
-                    evnt_st.state = SCROLL;
-                    evnt_st.hold_timer.ponastavi();
-                    evnt_st.hold_time = 0;
-                }
-            }
 
             switch (evnt_st.state)
             {
             case unset:
-                if (eventSW.fallingEdge())
+                if (eventSW.vrednost() && evnt_st.hold_timer.vrednost() > 2000)
                 {
-                    toggleLCD();
+
+                    evnt_st.state = SCROLL;
+                    evnt_st.state_exit_timer.ponastavi();
+                    evnt_st.hold_timer.ponastavi();
+                    showSeek(); //Prikaze element v seeku
+                    while (eventSW.vrednost())
+                    {
+                        vTaskDelay(200 / portTICK_PERIOD_MS);
+                    }
                 }
+
+                else if (!eventSW.vrednost())
+                    evnt_st.hold_timer.ponastavi();
+
                 break;
             case SCROLL:
-                delete_AVDIO_subTASK();
+
                 if (eTaskGetState(audio_system_control) != eSuspended)
                     vTaskSuspend(audio_system_control);
 
-                tr_r = mozne_barve.barvni_ptr[evnt_st.menu_seek][0];
-                tr_z = mozne_barve.barvni_ptr[evnt_st.menu_seek][1];
-                tr_m = mozne_barve.barvni_ptr[evnt_st.menu_seek][2];
-                tr_bright = 255;
-                writeTRAK();
+                showSeek();
 
-                if (evnt_st.state_exit_timer.vrednost() > 4000) // auto izhod iz scrolla
+                if (evnt_st.state_exit_timer.vrednost() > 5000) // auto izhod iz scrolla
                 {
                     evnt_st.state = unset;
                     turnOFFstrip();
@@ -103,9 +115,11 @@ void events(void *paramOdTaska)
                     else if (evnt_st.hold_time > 1000)
                     {
                         turnOFFstrip();
-
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
+                        case TOGGLE_LCD:
+                            toggleLCD();
+                            break;
                         case A_MODE_CH:
                             audio_mode_change("");
                             break;
@@ -116,18 +130,18 @@ void events(void *paramOdTaska)
 
                         case MIC_MODE_CH:
                             mic_mode_change();
+                            break;
                         }
-
+                        if (eTaskGetState(audio_system_control) == eSuspended) //Resuma se v scrollu saj se izven SCROLL lahko
+                            vTaskResume(audio_system_control);                 //izvajajo podtaski AU-sistema, ki suspendajo ta task in takrat se ne sme resumati
                         evnt_st.state = unset;
+                        evnt_st.menu_seek = TOGGLE_LCD;
                     }
 
                     evnt_st.hold_timer.ponastavi();
                     evnt_st.hold_time = 0;
                 }
-
-                if (eTaskGetState(audio_system_control) == eSuspended) //Resuma se v scrollu saj se izven SCROLL lahko 
-                    vTaskResume(audio_system_control);                 //izvajajo podtaski AU-sistema, ki suspendajo ta task in takrat se ne sme resumati
-                break;  
+                break;
             }
         }
 

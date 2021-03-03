@@ -14,7 +14,7 @@ void thermal(void *paramOdTaska)
   {
     vTaskDelay(5000/ portTICK_PERIOD_MS);
     taskENTER_CRITICAL();
-    unsigned int AMP_Temp_S_Voltage = analogRead(A1) * Hardware.REF_VOLT / 1023.00;
+    unsigned int AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_VOLT / 1023.00;
     Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
 
     if (Hardware.Amplifier_temp >= error_temp)

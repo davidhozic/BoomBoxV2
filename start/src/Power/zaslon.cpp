@@ -44,6 +44,7 @@ void zaslon(void *paramOdTaska)
         }
         else
         {
+            PORTB &= ~(1 << lcd_pb_pin);
             vTaskDelay(2000 / portTICK_PERIOD_MS);
         }
     }
