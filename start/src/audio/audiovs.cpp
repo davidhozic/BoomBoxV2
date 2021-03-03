@@ -57,7 +57,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
             break;
         } */
 
-        if (mic_sim_timer.vrednost() > 2000)
+        if (mic_sim_timer.vrednost() > 5000)
         {
             AUSYS_vars.mikrofon_detect = true;
             mic_sim_timer.ponastavi();
@@ -73,27 +73,27 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
             switch (trenutni_audio_mode)
             {
             case NORMAL_FADE: //Prizig in fade izklop
-                delete_AVDIO_subTASK();
-                xTaskCreate(fade_task, "normalni fade_create", 70, (void *)&barva_selekt, tskIDLE_PRIORITY, &fade_control);
+                deleteALL_tasks();
+                xTaskCreate(fade_task, "normalni fade_create", 70, (void *)&barva_selekt, 1, &fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-                delete_AVDIO_subTASK();
-                xTaskCreate(Color_Fade_task, "col_fade", 70, (void *)&barva_selekt, tskIDLE_PRIORITY, &color_fade_control);
+                deleteALL_tasks();
+                xTaskCreate(Color_Fade_task, "col_fade", 70, (void *)&barva_selekt, 1, &color_fade_control);
                 break;
 
             case MIXED_FADE:
-                delete_AVDIO_subTASK();
-                xTaskCreate(Mesan_fade_task, "color fade with off fade", 70, (void *)&barva_selekt, tskIDLE_PRIORITY, &Mixed_fade_control);
+                deleteALL_tasks();
+                xTaskCreate(Mesan_fade_task, "color fade with off fade", 70, (void *)&barva_selekt, 1, &Mixed_fade_control);
                 break;
 
             case Fade_Breathe:
-                delete_AVDIO_subTASK();
-                xTaskCreate(Fade_Breathe_Task, "breathe fade", 70, (void *)&barva_selekt, tskIDLE_PRIORITY, &Breathe_control);
+                deleteALL_tasks();
+                xTaskCreate(Fade_Breathe_Task, "breathe fade", 70, (void *)&barva_selekt, 1, &Breathe_control);
                 break;
 
             case Direct_signal: //Vijolicna barva glede na direktn signal iz AUSYS_vars.mikrofon_detect = 1a
-                unsigned short Signal_level = analogRead(mic_pin) * 255 / 1023;
+                unsigned short Signal_level = (float)analogRead(mic_pin) * 255.00 / 1023.00;
                 analogWrite(r_trak, Signal_level); // Direktna povezava AUSYS_vars.mikrofon_detect = 1a na izhod vijolicne barve
                 analogWrite(m_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
                 break;

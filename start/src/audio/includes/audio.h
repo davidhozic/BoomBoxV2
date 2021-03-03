@@ -23,13 +23,14 @@ extern TaskHandle_t color_fade_control;
 extern TaskHandle_t Mixed_fade_control;
 extern TaskHandle_t Breathe_control;
 
-void delete_AVDIO_subTASK();
+void holdALL_tasks();
 void turnOFFstrip();
 void writeTRAK();
 void color_fade_funct(byte *B);
 void svetlost_mod_funct(int smer);
 void mic_mode_change();
 void audio_mode_change(char *ch);
+void deleteALL_tasks();
 
 void fade_task(void *B);
 void Color_Fade_task(void *B);
@@ -59,13 +60,13 @@ struct adsys
 {
     int mic_mode = Average_volume;
     bool mikrofon_detect = false;
-    byte A_mode = OFF_A;
+    byte A_mode = COLOR_FADE;
     short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
     int povprecna_glas = 0;
     int frek = 0;
     short tr_svetlost = 0;
-    byte barva_list = 0;
 };
 extern adsys AUSYS_vars;
 
 #endif
+

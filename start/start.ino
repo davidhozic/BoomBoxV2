@@ -3,12 +3,13 @@
 #include "Vhod.h"
 #include "castimer.h"
 #include "src/includes/includes.h"
+#include "src/audio/includes/audio.h"
 
 /*************************PROTOTIPI TASKOV************************/
 void core(void *paramOdTaska);
 void thermal(void *paramOdTaska);
 void zaslon(void *paramOdTaska);
-void audio_visual(void* p);
+void audio_visual(void *p);
 void polnjenje(void *paramOdTaska);
 void events(void *paramOdTaska);
 void mic_mode_change();

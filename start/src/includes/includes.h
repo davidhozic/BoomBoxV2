@@ -6,18 +6,24 @@
 #ifndef namespaces_H
 #define namespaces_H
 
-#define holdAUDIOSYS()                                 \
-    if (eTaskGetState(audio_system_control) != eSuspended) \
-    {                                                \
-        vTaskSuspend(audio_system_control);           \
+#define holdTASK(task)                                     \
+    if (eTaskGetState(task) != eSuspended && task != NULL) \
+    {                                                      \
+        vTaskSuspend(task);                                \
     }
 
-#define resumeAUDIOSYS()                               \
-    if (eTaskGetState(audio_system_control) == eSuspended) \
-    {                                                \
-        vTaskResume(audio_system_control);            \
+#define resumeTASK(task)                                   \
+    if (eTaskGetState(task) == eSuspended && task != NULL) \
+    {                                                      \
+        vTaskResume(task);                                 \
     }
 
+#define deleteTask(task)   \
+    if (task != NULL)      \
+    {                      \
+        vTaskDelete(task); \
+        task = NULL;       \
+    }
 
 extern TaskHandle_t core_control;
 extern TaskHandle_t event_control;

@@ -80,8 +80,8 @@ void events(void *paramOdTaska)
             case unset:
                 if (eventSW.vrednost() && evnt_st.hold_timer.vrednost() > 1000)
                 {
-                    holdAUDIOSYS();
-
+                    holdTASK(audio_system_control);
+                    deleteALL_tasks();
                     evnt_st.state = SCROLL;
                     evnt_st.state_exit_timer.ponastavi();
                     evnt_st.hold_timer.ponastavi();
@@ -134,7 +134,7 @@ void events(void *paramOdTaska)
                         evnt_st.state = unset;
                         evnt_st.menu_seek = TOGGLE_LCD;
                         evnt_st.longPRESS = true;
-                        resumeAUDIOSYS();
+                        resumeTASK(audio_system_control);
                     }
                 }
 
