@@ -65,15 +65,17 @@ void color_fade_funct(byte *B)
     smer_g = isnan(smer_g) ? 0 : smer_g;
     smer_b = isnan(smer_b) ? 0 : smer_b;
 
+   
     tr_r += 6 * smer_r;
     tr_z += 6 * smer_g;
     tr_m += 6 * smer_b;
+
     writeTRAK();
 }
 
 void svetlost_mod_funct(int smer)
 {
-    tr_bright += 8 * smer; //8 stopenj = priblizno 500ms na fade oz 1000ms na breathe (za polni fade)
+    tr_bright += 5 * smer; //8 stopenj = priblizno 500ms na fade oz 1000ms na breathe (za polni fade)
     writeTRAK();
 }
 
@@ -114,7 +116,7 @@ void audio_mode_change(char *ch) // Double click
         vTaskSuspend(audio_system_control);
     turnOFFstrip();
 
-    vTaskDelay(300 / portTICK_PERIOD_MS);
+    delay(300);
 
     if (ch == "off")
     {
@@ -125,10 +127,9 @@ void audio_mode_change(char *ch) // Double click
         trenutni_audio_mode = (trenutni_audio_mode + 1) % audio_mode::LENGTH_2;
     }
 
-#if SHRANI_AUDIO_MODE
-    EEPROM.update(audiomode_eeprom_addr, trenutni_audio_mode); // Zapise zadnje stanje
-#endif
-    vTaskDelay(200 / portTICK_PERIOD_MS);
+    delay(200);
     if (eTaskGetState(audio_system_control) == eSuspended)
         vTaskResume(audio_system_control);
+
+    delay(100);
 }

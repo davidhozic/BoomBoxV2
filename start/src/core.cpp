@@ -88,12 +88,9 @@ void core(void *paramOdTaska)
 
 void Shutdown()
 {
-    if (eTaskGetState(audio_system_control) != eSuspended)
-        vTaskSuspend(audio_system_control);
     taskENTER_CRITICAL();
     PORTB &= ~1;
     PORTD &= ~1; //Izklop
-    turnOFFstrip();
     Hardware.is_Powered_UP = false;
     trenutni_audio_mode = OFF_A;
     taskEXIT_CRITICAL();
@@ -106,11 +103,5 @@ void Power_UP()
     Hardware.is_Powered_UP = true;
     PORTD |= 1;
     delay(210);
-
     Hardware.display_enabled = true;
-#if SHRANI_AUDIO_MODE
-    trenutni_audio_mode = EEPROM.read(audiomode_eeprom_addr); //Prebere zadnje stanje audia
-#endif
-    if (eTaskGetState(audio_system_control) == eSuspended)
-        vTaskResume(audio_system_control);
 }

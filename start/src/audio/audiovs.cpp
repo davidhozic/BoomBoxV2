@@ -26,9 +26,9 @@ TaskHandle_t Breathe_control = NULL;
 *                                                                                                                         *
 **************************************************************************************************************************/
 c mozne_barve;
+castimer mic_sim_timer;
 void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
 {
-    bool mikrofon_detect = 0;
     while (true)
     {
         switch (AUSYS_vars.mic_mode) //MIC machine
@@ -37,63 +37,66 @@ void audio_visual(void *paramOdTaska) //Funkcija avdio-vizualnega sistema
             int trenutna_vrednost = analogRead(mic_pin);
             if ((trenutna_vrednost - povprecna_glasnost) > 150 && povprecna_glasnost != 0)
             {
-                mikrofon_detect = 1;
+                AUSYS_vars.mikrofon_detect = 1;
             }
             else
             {
-                mikrofon_detect = 0;
+                AUSYS_vars.mikrofon_detect = 0;
             }
             break;
 
         case Frequency_mode:
             if (frekvenca > 0 && frekvenca <= 60)
             {
-                mikrofon_detect = 1;
+                AUSYS_vars.mikrofon_detect = 1;
             }
             else
             {
-                mikrofon_detect = 0;
+                AUSYS_vars.mikrofon_detect = 0;
             }
             break;
         }
 
-        if (Timers.lucke_filter_time.vrednost() > 100 && mikrofon_detect == 1) // AUDIO_M machine
+
+        delay(1000);
+        AUSYS_vars.A_mode = !AUSYS_vars.A_mode;
+
+        if (Timers.lucke_filter_time.vrednost() > 100 && AUSYS_vars.mikrofon_detect == 1) // AUDIO_M machine
         {
-            Timers.lucke_filter_time.ponastavi();
             byte barva_selekt = random(0, barve::LENGHT);
 
             switch (trenutni_audio_mode)
             {
             case NORMAL_FADE: //Prizig in fade izklop
                 delete_AVDIO_subTASK();
-                xTaskCreate(fade_task, "normalni fade_create", 45, (void *)&barva_selekt, 1, &fade_control);
+                xTaskCreate(fade_task, "normalni fade_create", 64, (void *)&barva_selekt, 1, &fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
                 delete_AVDIO_subTASK();
-                xTaskCreate(Color_Fade_task, "col_fade", 45, (void *)&barva_selekt, 1, &color_fade_control);
+                xTaskCreate(Color_Fade_task, "col_fade", 64, (void *)&barva_selekt, 1, &color_fade_control);
                 break;
 
             case MIXED_FADE:
                 delete_AVDIO_subTASK();
-                xTaskCreate(Mesan_fade_task, "color fade with off fade", 20, (void *)&barva_selekt, 1, &Mixed_fade_control);
+                xTaskCreate(Mesan_fade_task, "color fade with off fade", 64, (void *)&barva_selekt, 1, &Mixed_fade_control);
                 break;
 
             case Fade_Breathe:
                 delete_AVDIO_subTASK();
-                xTaskCreate(Fade_Breathe_Task, "breathe fade", 45, (void *)&barva_selekt, 1, &Breathe_control);
+                xTaskCreate(Fade_Breathe_Task, "breathe fade", 64, (void *)&barva_selekt, 1, &Breathe_control);
                 break;
 
-            case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofon_detect = 1a
-                mikrofon_detect = 0;
+            case Direct_signal: //Vijolicna barva glede na direktn signal iz AUSYS_vars.mikrofon_detect = 1a
                 unsigned short Signal_level = analogRead(mic_pin) * 255 / 1023;
-                analogWrite(r_trak, Signal_level); // Direktna povezava mikrofon_detect = 1a na izhod vijolicne barve
+                analogWrite(r_trak, Signal_level); // Direktna povezava AUSYS_vars.mikrofon_detect = 1a na izhod vijolicne barve
                 analogWrite(m_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
                 break;
 
             case OFF_A:
-                turnOFFstrip();
+                break;
             }
+            Timers.lucke_filter_time.ponastavi();
         }
     }
 }

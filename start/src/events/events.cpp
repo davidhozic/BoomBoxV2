@@ -53,7 +53,7 @@ struct sw2_state_machine_strct
     castimer state_exit_timer;
     castimer hold_timer;
     unsigned int hold_time = 0;
-
+    bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 } evnt_st;
 
 void events(void *paramOdTaska)
@@ -62,10 +62,12 @@ void events(void *paramOdTaska)
     {
         /******************************************** SWITCH 2 EVENTS ****************************************/
 
-        //State machine
-        if (Hardware.is_Powered_UP)
-        {
+        if (eventSW.fallingEdge())
+            evnt_st.longPRESS = false; // Po dolgem pritisku, cakaj na izpust gumba
 
+        //State machine
+        if (Hardware.is_Powered_UP && !evnt_st.longPRESS)
+        {
             switch (evnt_st.state)
             {
             case unset:
@@ -76,10 +78,8 @@ void events(void *paramOdTaska)
                     evnt_st.state_exit_timer.ponastavi();
                     evnt_st.hold_timer.ponastavi();
                     showSeek(); //Prikaze element v seeku
-                    while (eventSW.vrednost())
-                    {
-                        vTaskDelay(200 / portTICK_PERIOD_MS);
-                    }
+                    turnOFFstrip();
+                    evnt_st.longPRESS = true;
                 }
 
                 else if (!eventSW.vrednost())
@@ -87,7 +87,6 @@ void events(void *paramOdTaska)
 
                 break;
             case SCROLL:
-
                 if (eTaskGetState(audio_system_control) != eSuspended)
                     vTaskSuspend(audio_system_control);
 
@@ -104,17 +103,13 @@ void events(void *paramOdTaska)
                 {
                     evnt_st.hold_time = evnt_st.hold_timer.vrednost(); //stopa cas pritiska
                     evnt_st.state_exit_timer.ponastavi();
-                }
 
-                else if (evnt_st.hold_time > 0)
-                {
-
-                    if (evnt_st.hold_time < 500)
-                        evnt_st.menu_seek += 1 % LENGTH;
-
-                    else if (evnt_st.hold_time > 1000)
+                    if (evnt_st.hold_time > 1000)
                     {
                         turnOFFstrip();
+                        if (eTaskGetState(audio_system_control) != eSuspended)
+                            vTaskSuspend(audio_system_control);
+
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
                         case TOGGLE_LCD:
@@ -136,7 +131,15 @@ void events(void *paramOdTaska)
                             vTaskResume(audio_system_control);                 //izvajajo podtaski AU-sistema, ki suspendajo ta task in takrat se ne sme resumati
                         evnt_st.state = unset;
                         evnt_st.menu_seek = TOGGLE_LCD;
+                        evnt_st.longPRESS = true;
                     }
+                }
+
+                else if (evnt_st.hold_time > 0)
+                {
+
+                    if (evnt_st.hold_time < 500)
+                        evnt_st.menu_seek = (evnt_st.menu_seek + 1) % LENGTH;
 
                     evnt_st.hold_timer.ponastavi();
                     evnt_st.hold_time = 0;

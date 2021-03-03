@@ -31,7 +31,6 @@ void svetlost_mod_funct(int smer);
 void mic_mode_change();
 void audio_mode_change(char *ch);
 
-
 void fade_task(void *B);
 void Color_Fade_task(void *B);
 void Fade_Breathe_Task(void *B);
@@ -51,24 +50,22 @@ enum audio_mode
     COLOR_FADE,
     MIXED_FADE,
     Fade_Breathe,
-    Direct_signal, //Signal iz mikrofon_detecta -> lucke
+    Direct_signal, //Signal iz AUSYS_vars.mikrofon_detecta -> lucke
     LENGTH_2,
     OFF_A
 };
 
-
 struct adsys
 {
     int mic_mode = Frequency_mode;
+    bool mikrofon_detect = 0;
     byte A_mode = OFF_A;
-    byte TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
+    short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
     int povprecna_glas = 0;
     int frek = 0;
-    byte tr_svetlost = 0;
+    short tr_svetlost = 0;
+    byte barva_list = 0;
 };
 extern adsys AUSYS_vars;
-
-
-
 
 #endif

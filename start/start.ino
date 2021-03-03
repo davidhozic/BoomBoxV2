@@ -39,15 +39,13 @@ void setup()
   Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
 #endif
   delay(200);
-  xTaskCreate(core, "_core", 128, NULL, 1, &core_control);
-  xTaskCreate(events, "Events task", 64, NULL, 1, &event_control);
-  xTaskCreate(audio_visual, "AUVIS", 64, NULL, 1, &audio_system_control);
-  xTaskCreate(zaslon, "LVCHRG", 64, NULL, 1, &zaslon_control);
-  xTaskCreate(polnjenje, "CHRG", 64, NULL, 1, &chrg_control);
-  xTaskCreate(thermal, "therm", 64, NULL, 1, &thermal_control);
-  xTaskCreate(audio_meritve, "audio_meritve", 64, NULL, 1, &meas_control);
-  if (eTaskGetState(audio_system_control) != eSuspended)
-    vTaskSuspend(audio_system_control);
+  xTaskCreate(core, "_core", 80, NULL, 1, &core_control);
+  xTaskCreate(events, "Events task", 80, NULL,1, &event_control);
+ // xTaskCreate(audio_visual, "AUVIS", 80, NULL, 1, &audio_system_control);
+  //xTaskCreate(zaslon, "LVCHRG", 55, NULL, 1, &zaslon_control);
+  //xTaskCreate(polnjenje, "CHRG", 55, NULL, 1, &chrg_control);
+  xTaskCreate(thermal, "therm", 55, NULL, 1, &thermal_control);
+  //xTaskCreate(audio_meritve, "audio_meritve", 55, NULL, 1, &meas_control);
 }
 
 void loop()

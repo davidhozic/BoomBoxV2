@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Arduino_FreeRTOS.h>
 #include "includes/includes.h"
-
+#include "audio/includes./audio.h"
 
 
 const unsigned short error_temp = 60;
@@ -13,7 +13,8 @@ void thermal(void *paramOdTaska)
   while (true)
   {
     vTaskDelay(5000/ portTICK_PERIOD_MS);
-    taskENTER_CRITICAL();
+ 
+     taskENTER_CRITICAL();
     unsigned int AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_VOLT / 1023.00;
     Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
 
