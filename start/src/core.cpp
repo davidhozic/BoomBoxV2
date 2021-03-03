@@ -17,6 +17,7 @@ void Shutdown();
 void Power_UP();
 void turnOFFstrip();
 void events(void *paramOdTaska);
+void audio_visual();
 /* *********************************************************************** */
 
 void core(void *paramOdTaska)
@@ -49,33 +50,17 @@ void core(void *paramOdTaska)
         *                                                                                             * 
         ***********************************************************************************************/
 
-        static unsigned long vsota_br = 0;
-        static unsigned short st_br = 0;
         taskENTER_CRITICAL();
-        vsota_br += analogRead(vDIV_pin) * (float)Hardware.REF_VOLT / 1023.00;
-        st_br++;
+        Hardware.napetost = analogRead(vDIV_pin) * (float)Hardware.REF_VOLT / 1023.00;
         taskEXIT_CRITICAL();
 
-        if (st_br >= 10)
-        {
-            taskENTER_CRITICAL();
-            Hardware.napetost = (float)vsota_br / st_br;
-            taskEXIT_CRITICAL();
-            vsota_br = 0;
-            st_br = 0;
-        }
-        vTaskDelay(30 / portTICK_PERIOD_MS);
-
+       
         //----------------------------------------------------------------------------------------------------------------------------------
         //                                               Power UP
         //----------------------------------------------------------------------------------------------------------------------------------
         if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && !Hardware.is_Powered_UP)
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
-            if (eTaskGetState(audio_system_control) != eSuspended)
-                vTaskSuspend(event_control);
             Power_UP();
-            if (eTaskGetState(audio_system_control) == eSuspended)
-                vTaskResume(event_control);
         }
 
         if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti

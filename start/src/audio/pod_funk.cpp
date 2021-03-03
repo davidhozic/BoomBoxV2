@@ -35,6 +35,8 @@ void delete_AVDIO_subTASK() // Zbrise obstojece taske ce obstajajo
 
 void turnOFFstrip()
 {
+    taskENTER_CRITICAL();
+    AUSYS_vars.mikrofon_detect = false;
     delete_AVDIO_subTASK();
     digitalWrite(r_trak, 0);
     digitalWrite(z_trak, 0);
@@ -43,6 +45,7 @@ void turnOFFstrip()
     tr_z = 0;
     tr_m = 0;
     tr_bright = 0;
+    taskEXIT_CRITICAL();
 }
 
 void writeTRAK()
@@ -65,25 +68,22 @@ void color_fade_funct(byte *B)
     smer_g = isnan(smer_g) ? 0 : smer_g;
     smer_b = isnan(smer_b) ? 0 : smer_b;
 
-   
-    tr_r += 6 * smer_r;
-    tr_z += 6 * smer_g;
-    tr_m += 6 * smer_b;
+    tr_r += 10 * smer_r;
+    tr_z += 10 * smer_g;
+    tr_m += 10 * smer_b;
 
     writeTRAK();
 }
 
 void svetlost_mod_funct(int smer)
 {
-    tr_bright += 5 * smer; //8 stopenj = priblizno 500ms na fade oz 1000ms na breathe (za polni fade)
+    tr_bright += 12 * smer; //8 stopenj = priblizno 500ms na fade oz 1000ms na breathe (za polni fade)
     writeTRAK();
 }
 
 void mic_mode_change() // Switches audio mode ; 1s hold
 {
-    if (eTaskGetState(audio_system_control) != eSuspended)
-        vTaskSuspend(audio_system_control);
-
+    holdAUDIOSYS();
     int ct = 0, delay_switch = 300;
 
     AUSYS_vars.mic_mode = (AUSYS_vars.mic_mode + 1) % mic_detection_mode::LENGHT_1;
@@ -106,14 +106,12 @@ void mic_mode_change() // Switches audio mode ; 1s hold
     PORTB &= ~(1 << 1); //R
     PORTD &= ~(1 << 3); //G
     PORTB &= ~(1 << 3); //B
-    if (eTaskGetState(audio_system_control) == eSuspended)
-        vTaskResume(audio_system_control);
+    resumeAUDIOSYS();
 }
 
 void audio_mode_change(char *ch) // Double click
 {
-    if (eTaskGetState(audio_system_control) != eSuspended)
-        vTaskSuspend(audio_system_control);
+    holdAUDIOSYS();
     turnOFFstrip();
 
     delay(300);
@@ -127,9 +125,5 @@ void audio_mode_change(char *ch) // Double click
         trenutni_audio_mode = (trenutni_audio_mode + 1) % audio_mode::LENGTH_2;
     }
 
-    delay(200);
-    if (eTaskGetState(audio_system_control) == eSuspended)
-        vTaskResume(audio_system_control);
-
-    delay(100);
+    resumeAUDIOSYS();
 }

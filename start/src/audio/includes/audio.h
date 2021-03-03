@@ -52,13 +52,13 @@ enum audio_mode
     Fade_Breathe,
     Direct_signal, //Signal iz AUSYS_vars.mikrofon_detecta -> lucke
     LENGTH_2,
-    OFF_A
+    OFF_A = -1
 };
 
 struct adsys
 {
-    int mic_mode = Frequency_mode;
-    bool mikrofon_detect = 0;
+    int mic_mode = Average_volume;
+    bool mikrofon_detect = false;
     byte A_mode = OFF_A;
     short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
     int povprecna_glas = 0;

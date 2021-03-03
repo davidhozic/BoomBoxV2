@@ -16,7 +16,7 @@ void fade_task(void *B) //Prizig na barbi in pocasen izklop
     while (tr_bright > 0)
     {
         svetlost_mod_funct(-1);
-        delay(3);
+        delay(15);
     }
     fade_control = NULL;
     vTaskDelete(NULL);
@@ -30,7 +30,7 @@ void Color_Fade_task(void *B) //Fade iz ene barve v drugo
         if (Mixed_fade_control == NULL) // Dihalni nacin svetlosti se ne izvaja
             tr_bright = 255;
 
-        delay(3);
+        delay(15);
         color_fade_funct((byte *)B);
     }
     color_fade_control = NULL;
@@ -48,13 +48,13 @@ void Fade_Breathe_Task(void *B)
     while (tr_bright < 255)
     {
         svetlost_mod_funct(1);
-        delay(3);
+        delay(15);
     }
 
     while (tr_bright > 0)
     {
         svetlost_mod_funct(-1);
-        delay(3);
+        delay(15);
     }
     tr_bright = 0;
     Breathe_control = NULL;
@@ -63,12 +63,9 @@ void Fade_Breathe_Task(void *B)
 
 void Mesan_fade_task(void *b)
 {
-    if (eTaskGetState(audio_system_control) != eSuspended)
-        vTaskSuspend(audio_system_control);
 
-
-    xTaskCreate(Fade_Breathe_Task, "breathe fade", 64, b, 1, &Breathe_control);
-    xTaskCreate(Color_Fade_task, "col_fade", 64, b, 1, &color_fade_control);
+    xTaskCreate(Fade_Breathe_Task, "breathe fade", 70, b, tskIDLE_PRIORITY, &Breathe_control);
+    xTaskCreate(Color_Fade_task, "col_fade", 70, b, tskIDLE_PRIORITY, &color_fade_control);
 
 
     while (Breathe_control != NULL)
@@ -82,9 +79,6 @@ void Mesan_fade_task(void *b)
         vTaskDelete(color_fade_control);
 
     taskEXIT_CRITICAL();
-
-    if (eTaskGetState(audio_system_control) == eSuspended)
-        vTaskResume(audio_system_control);
 
     color_fade_control = NULL;
     vTaskDelete(NULL);

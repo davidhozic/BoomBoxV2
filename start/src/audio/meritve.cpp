@@ -17,11 +17,13 @@ void merjenje_frekvence()
 
     if (prejsnja_vrednost - trenutna_vrednost >= 50)
     {
+        taskENTER_CRITICAL();
         int cas_milisekunde = lokal_timer * 4;
         Timers.audio_timer.ponastavi();
         float cas_sekunde = (float)cas_milisekunde / 1000.00;
         prejsnja_vrednost = trenutna_vrednost;
         frekvenca = 1 / cas_sekunde;
+        taskEXIT_CRITICAL();
     }
 }
 
@@ -77,7 +79,9 @@ void pvp_glasnost()
     if (count_branj >= max_branja)
     {
         first_read = true;
+        taskENTER_CRITICAL();
         povprecna_glasnost = vsota_branj / count_branj;
+        taskEXIT_CRITICAL();
         count_branj = 0;
         vsota_branj = 0;
         count_above_average = 0;

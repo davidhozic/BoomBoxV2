@@ -60,10 +60,17 @@ void events(void *paramOdTaska)
 {
     while (true)
     {
+
         /******************************************** SWITCH 2 EVENTS ****************************************/
 
-        if (eventSW.fallingEdge())
-            evnt_st.longPRESS = false; // Po dolgem pritisku, cakaj na izpust gumba
+        if (eventSW.vrednost())
+        {
+            Timers.SW2_off_timer.ponastavi(); // Filtrira lazne nepritiske
+        }
+        else if (Timers.SW2_off_timer.vrednost() > 100)
+        {
+            evnt_st.longPRESS = false;
+        }
 
         //State machine
         if (Hardware.is_Powered_UP && !evnt_st.longPRESS)
@@ -71,14 +78,15 @@ void events(void *paramOdTaska)
             switch (evnt_st.state)
             {
             case unset:
-                if (eventSW.vrednost() && evnt_st.hold_timer.vrednost() > 2000)
+                if (eventSW.vrednost() && evnt_st.hold_timer.vrednost() > 1000)
                 {
+                    holdAUDIOSYS();
 
                     evnt_st.state = SCROLL;
                     evnt_st.state_exit_timer.ponastavi();
                     evnt_st.hold_timer.ponastavi();
-                    showSeek(); //Prikaze element v seeku
                     turnOFFstrip();
+                    showSeek(); //Prikaze element v seeku
                     evnt_st.longPRESS = true;
                 }
 
@@ -87,12 +95,10 @@ void events(void *paramOdTaska)
 
                 break;
             case SCROLL:
-                if (eTaskGetState(audio_system_control) != eSuspended)
-                    vTaskSuspend(audio_system_control);
 
                 showSeek();
 
-                if (evnt_st.state_exit_timer.vrednost() > 5000) // auto izhod iz scrolla
+                if (evnt_st.state_exit_timer.vrednost() > 6000) // auto izhod iz scrolla
                 {
                     evnt_st.state = unset;
                     turnOFFstrip();
@@ -107,8 +113,6 @@ void events(void *paramOdTaska)
                     if (evnt_st.hold_time > 1000)
                     {
                         turnOFFstrip();
-                        if (eTaskGetState(audio_system_control) != eSuspended)
-                            vTaskSuspend(audio_system_control);
 
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
@@ -127,11 +131,10 @@ void events(void *paramOdTaska)
                             mic_mode_change();
                             break;
                         }
-                        if (eTaskGetState(audio_system_control) == eSuspended) //Resuma se v scrollu saj se izven SCROLL lahko
-                            vTaskResume(audio_system_control);                 //izvajajo podtaski AU-sistema, ki suspendajo ta task in takrat se ne sme resumati
                         evnt_st.state = unset;
                         evnt_st.menu_seek = TOGGLE_LCD;
                         evnt_st.longPRESS = true;
+                        resumeAUDIOSYS();
                     }
                 }
 
@@ -198,19 +201,15 @@ void events(void *paramOdTaska)
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {
-            vTaskSuspend(core_control);
             delay(20);
             external_power_switch_ev();
-            vTaskResume(core_control);
             delay(20);
         }
 
         else if (napajalnik.vrednost() == 0 && Hardware.PSW)
         {
-            vTaskSuspend(core_control);
             delay(20);
             internal_power_switch_ev();
-            vTaskResume(core_control);
             delay(20);
         }
 

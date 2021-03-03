@@ -6,6 +6,19 @@
 #ifndef namespaces_H
 #define namespaces_H
 
+#define holdAUDIOSYS()                                 \
+    if (eTaskGetState(audio_system_control) != eSuspended) \
+    {                                                \
+        vTaskSuspend(audio_system_control);           \
+    }
+
+#define resumeAUDIOSYS()                               \
+    if (eTaskGetState(audio_system_control) == eSuspended) \
+    {                                                \
+        vTaskResume(audio_system_control);            \
+    }
+
+
 extern TaskHandle_t core_control;
 extern TaskHandle_t event_control;
 extern TaskHandle_t audio_system_control;
@@ -13,8 +26,6 @@ extern TaskHandle_t zaslon_control;
 extern TaskHandle_t chrg_control;
 extern TaskHandle_t thermal_control;
 extern TaskHandle_t meas_control;
-
-
 
 struct hardware_struct
 {
@@ -40,6 +51,7 @@ struct timer_struct
     castimer VOLT_timer;
     castimer brightness_timer;
     castimer color_timer;
+    castimer SW2_off_timer;
 };
 extern timer_struct Timers;
 

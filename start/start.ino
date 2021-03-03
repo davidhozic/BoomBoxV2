@@ -8,7 +8,7 @@
 void core(void *paramOdTaska);
 void thermal(void *paramOdTaska);
 void zaslon(void *paramOdTaska);
-void audio_visual(void *paramOdTaska);
+void audio_visual(void* p);
 void polnjenje(void *paramOdTaska);
 void events(void *paramOdTaska);
 void mic_mode_change();
@@ -39,13 +39,13 @@ void setup()
   Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
 #endif
   delay(200);
-  xTaskCreate(core, "_core", 80, NULL, 1, &core_control);
-  xTaskCreate(events, "Events task", 80, NULL,1, &event_control);
- // xTaskCreate(audio_visual, "AUVIS", 80, NULL, 1, &audio_system_control);
-  //xTaskCreate(zaslon, "LVCHRG", 55, NULL, 1, &zaslon_control);
-  //xTaskCreate(polnjenje, "CHRG", 55, NULL, 1, &chrg_control);
-  xTaskCreate(thermal, "therm", 55, NULL, 1, &thermal_control);
-  //xTaskCreate(audio_meritve, "audio_meritve", 55, NULL, 1, &meas_control);
+  xTaskCreate(core, "_core", 128, NULL, tskIDLE_PRIORITY, &core_control);
+  xTaskCreate(events, "Events task", 64, NULL, tskIDLE_PRIORITY, &event_control);
+  xTaskCreate(zaslon, "LVCHRG", 60, NULL, tskIDLE_PRIORITY, &zaslon_control);
+  xTaskCreate(thermal, "therm", 60, NULL, tskIDLE_PRIORITY, &thermal_control);
+  xTaskCreate(polnjenje, "CHRG", 60, NULL, tskIDLE_PRIORITY, &chrg_control);
+  xTaskCreate(audio_visual, "auvs", 64, NULL, tskIDLE_PRIORITY, &audio_system_control);
+  //xTaskCreate(audio_meritve, "audio_meritve", 64, NULL, 2, &meas_control);
 }
 
 void loop()
