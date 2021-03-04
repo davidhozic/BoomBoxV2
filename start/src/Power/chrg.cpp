@@ -36,7 +36,7 @@ void polnjenje(void *paramOdTaska)
 
     else if (Hardware.POLKONC == 0 && napajalnik.vrednost() && Hardware.AMP_oheat == false && !Hardware.polnjenjeON)
     {
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      delay_FRTOS(1000);
       PORTD |= (1 << PD6);
       Hardware.polnjenjeON = true;
     }

@@ -23,7 +23,11 @@
     {                      \
         vTaskDelete(task); \
         task = NULL;       \
+        delay(12);     \
     }
+
+
+#define delay_FRTOS(x) vTaskDelay(pdMS_TO_TICKS(x))
 
 extern TaskHandle_t core_control;
 extern TaskHandle_t event_control;
@@ -58,6 +62,8 @@ struct timer_struct
     castimer brightness_timer;
     castimer color_timer;
     castimer SW2_off_timer;
+    castimer average_v_timer;
+    castimer frek_meassurement_t;
 };
 extern timer_struct Timers;
 

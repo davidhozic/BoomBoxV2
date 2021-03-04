@@ -15,10 +15,15 @@ void zaslon(void *paramOdTaska)
     {
         if (Hardware.display_enabled)
         {
-            if (napajalnik.vrednost() == 0)
+            if (Hardware.AMP_oheat)
             {
+                delay_FRTOS(250);
+                PORTB ^= (1 << lcd_pb_pin);
+            }
 
-                if (Timers.LCD_timer.vrednost() >= 9000)
+            else if (napajalnik.vrednost() == 0)
+            {
+                if (Timers.LCD_timer.vrednost() >= 9000 || !Hardware.is_Powered_UP)
                 {
                     Timers.LCD_timer.ponastavi();
                     PORTB &= ~(1 << lcd_pb_pin);
@@ -30,22 +35,22 @@ void zaslon(void *paramOdTaska)
             }
 
             else if (Hardware.polnjenjeON)
-            {                                         //Če je zunanje napajanje priključeno in baterije niso napolnjene, zaslon utripa
-                vTaskDelay(500 / portTICK_PERIOD_MS); //1Hz utripanje
+            {                     //Če je zunanje napajanje priključeno in baterije niso napolnjene, zaslon utripa
+                delay_FRTOS(500); //1Hz utripanje
                 PORTB = PORTB ^ 0b00000100;
                 Timers.LCD_timer.ponastavi();
             }
             else // Ce je napajalnik izkljucen in se ne polni, potem 3s gori
             {
                 PORTB |= (1 << lcd_pb_pin);
-                vTaskDelay(3000 / portTICK_PERIOD_MS);
+                delay_FRTOS(3000);
                 Hardware.display_enabled = false;
             }
         }
         else
         {
             PORTB &= ~(1 << lcd_pb_pin);
-            vTaskDelay(2000 / portTICK_PERIOD_MS);
+            delay_FRTOS(1000);
         }
     }
 }

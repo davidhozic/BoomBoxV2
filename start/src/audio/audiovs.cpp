@@ -27,34 +27,15 @@ TaskHandle_t Breathe_control = NULL;
 **************************************************************************************************************************/
 c mozne_barve;
 castimer mic_sim_timer;
+
 void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
     while (true)
     {
-        /* switch (AUSYS_vars.mic_mode) //MIC machine
+        /*         if (AUSYS_vars.mikrofon_detect == NULL)
         {
-        case Average_volume:
-            int trenutna_vrednost = analogRead(mic_pin);
-            if ((trenutna_vrednost - povprecna_glasnost) > 150 && povprecna_glasnost != 0)
-            {
-                AUSYS_vars.mikrofon_detect = 1;
-            }
-            else
-            {
-                AUSYS_vars.mikrofon_detect = 0;
-            }
-            break;
-
-        case Frequency_mode:
-            if (frekvenca > 0 && frekvenca <= 60)
-            {
-                AUSYS_vars.mikrofon_detect = 1;
-            }
-            else
-            {
-                AUSYS_vars.mikrofon_detect = 0;
-            }
-            break;
+            AUSYS_vars.mikrofon_detect = Average_volume;
+            create_audio_meritve(&AUSYS_vars.mic_mode);
         } */
 
         if (mic_sim_timer.vrednost() > 5000)
@@ -73,25 +54,26 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
             switch (trenutni_audio_mode)
             {
             case NORMAL_FADE: //Prizig in fade izklop
-                deleteALL_tasks();
-                xTaskCreate(fade_task, "normalni fade_create", 70, (void *)&barva_selekt, 1, &fade_control);
+                deleteTask(fade_control);
+                xTaskCreate(fade_task, "normalni fade_create", 64, &barva_selekt, 1, &fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-                deleteALL_tasks();
-                xTaskCreate(Color_Fade_task, "col_fade", 70, (void *)&barva_selekt, 1, &color_fade_control);
+                deleteTask(color_fade_control);
+                xTaskCreate(Color_Fade_task, "col_fade", 64, &barva_selekt, 1, &color_fade_control);
                 break;
 
             case MIXED_FADE:
-                deleteALL_tasks();
-                xTaskCreate(Mesan_fade_task, "color fade with off fade", 70, (void *)&barva_selekt, 1, &Mixed_fade_control);
+                deleteTask(Breathe_control);
+                deleteTask(color_fade_control);
+                xTaskCreate(Fade_Breathe_Task, "breathe fade", 64, &barva_selekt, 1, &Breathe_control);
+                xTaskCreate(Color_Fade_task, "col_fade", 64, &barva_selekt, 1, &color_fade_control);
                 break;
 
             case Fade_Breathe:
                 deleteALL_tasks();
-                xTaskCreate(Fade_Breathe_Task, "breathe fade", 70, (void *)&barva_selekt, 1, &Breathe_control);
+                xTaskCreate(Fade_Breathe_Task, "breathe fade", 80, &barva_selekt, 1, &Breathe_control);
                 break;
-
             case Direct_signal: //Vijolicna barva glede na direktn signal iz AUSYS_vars.mikrofon_detect = 1a
                 unsigned short Signal_level = (float)analogRead(mic_pin) * 255.00 / 1023.00;
                 analogWrite(r_trak, Signal_level); // Direktna povezava AUSYS_vars.mikrofon_detect = 1a na izhod vijolicne barve

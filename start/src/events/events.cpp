@@ -6,12 +6,13 @@
 #include "../audio/includes/audio.h"
 
 #define toggleLCD() Hardware.display_enabled = !(Hardware.display_enabled);
-#define showSeek()                                       \
-    tr_r = mozne_barve.barvni_ptr[evnt_st.menu_seek][0]; \
-    tr_z = mozne_barve.barvni_ptr[evnt_st.menu_seek][1]; \
-    tr_m = mozne_barve.barvni_ptr[evnt_st.menu_seek][2]; \
-    tr_bright = 255;                                     \
-    writeTRAK(); // Prikaze element v seeku ce je scroll aktiven
+#define showSeek()                      \
+    tr_bright = 255;                    \
+    deleteTask(color_fade_control);     \
+    vTaskPrioritySet(event_control, 1); \
+    colorSHIFT(&evnt_st.menu_seek);     \
+    vTaskPrioritySet(event_control, tskIDLE_PRIORITY);
+// Prikaze element v seeku ce je scroll aktiven
 
 void mic_mode_change();
 void button2Events();
@@ -48,8 +49,8 @@ enum states
 
 struct sw2_state_machine_strct
 {
-    unsigned short state = unset;
-    unsigned short menu_seek = TOGGLE_LCD;
+    byte state = unset;
+    byte menu_seek = TOGGLE_LCD;
     castimer state_exit_timer;
     castimer hold_timer;
     unsigned int hold_time = 0;
@@ -101,8 +102,12 @@ void events(void *paramOdTaska)
                 if (evnt_st.state_exit_timer.vrednost() > 6000) // auto izhod iz scrolla
                 {
                     evnt_st.state = unset;
-                    turnOFFstrip();
                     evnt_st.state_exit_timer.ponastavi();
+                    vTaskPrioritySet(event_control, 1);
+                    brightDOWN();
+                    vTaskPrioritySet(event_control, 0);
+                    resumeTASK(audio_system_control);
+                    delay(500);
                 }
 
                 else if (eventSW.vrednost())
@@ -112,8 +117,9 @@ void events(void *paramOdTaska)
 
                     if (evnt_st.hold_time > 1000)
                     {
-                        turnOFFstrip();
-
+                        vTaskPrioritySet(event_control, 1);
+                        brightDOWN(); // Zafada navzdol
+                        vTaskPrioritySet(event_control, 0);
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
                         case TOGGLE_LCD:
@@ -134,6 +140,7 @@ void events(void *paramOdTaska)
                         evnt_st.state = unset;
                         evnt_st.menu_seek = TOGGLE_LCD;
                         evnt_st.longPRESS = true;
+                        delay_FRTOS(500);
                         resumeTASK(audio_system_control);
                     }
                 }
@@ -151,53 +158,6 @@ void events(void *paramOdTaska)
             }
         }
 
-        //////////////////////////////////////    DELETE?   /////////////////////////////////////////////////
-        // {    if (eventSW.vrednost())
-        //     {
-        //         click_event.hold_time = hold_TIMER.vrednost(); // Calls for value to start the timer
-
-        //         if (click_event.hold_time >= 3000 && click_event.hold_time <= 4000)
-        //         {
-        //             audio_mode_change("off");
-        //         }
-        //         Timers.sw2_not_pressed_timer.ponastavi();
-        //     }
-
-        //     else if (click_event.hold_time > 0 && Timers.sw2_not_pressed_timer.vrednost() > 50) //Cas nad 0 in filtriranj preklopov
-        //     {
-        //         hold_TIMER.ponastavi();
-        //         if (click_event.hold_time < 500)
-        //         {
-        //             click_event.press_counter++;
-        //             click_timer.ponastavi(); //Podaljsa casovik
-        //         }
-        //         else if (click_event.hold_time < 2000)
-        //         {
-        //             audio_mode_change("");
-        //         }
-        //         click_event.hold_time = 0;
-        //     }
-
-        //     /********************** CLICK MACHINE **********************/
-
-        //     if (click_event.press_counter > 0)
-        //     {
-        //         if (click_timer.vrednost() > 700)
-        //         { //Start casovnika
-        //             switch (click_event.press_counter)
-        //             {
-        //             case 1:
-        //                 toggleLCD(); // Toggles LCD
-        //                 break;
-
-        //             default:
-        //                 mic_mode_change();
-        //                 break;
-        //             }
-        //             click_event.press_counter = 0;
-        //         }
-        //     }
-        // }
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {

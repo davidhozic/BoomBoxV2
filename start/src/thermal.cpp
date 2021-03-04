@@ -3,7 +3,6 @@
 #include "includes/includes.h"
 #include "audio/includes./audio.h"
 
-
 const unsigned short error_temp = 60;
 void Shutdown();
 extern TaskHandle_t core_handle;
@@ -12,11 +11,12 @@ void thermal(void *paramOdTaska)
 {
   while (true)
   {
-    vTaskDelay(5000/ portTICK_PERIOD_MS);
- 
-     taskENTER_CRITICAL();
+    delay_FRTOS(5);
+
     unsigned int AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_VOLT / 1023.00;
-    Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
+
+    float temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
+    Hardware.Amplifier_temp = temp;
 
     if (Hardware.Amplifier_temp >= error_temp)
     {
@@ -27,7 +27,6 @@ void thermal(void *paramOdTaska)
         Shutdown();
       }
     }
-    taskEXIT_CRITICAL();
     /*   STARO
       if (hlajenjeCas.vrednost() < 300000 && Hardware.Amplifier_temp < 42.00 || napajalnik.vrednost() == 0)
       {

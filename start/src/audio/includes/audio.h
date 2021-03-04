@@ -1,7 +1,7 @@
 
 #ifndef AUDIO_H
 #define AUDIO_H
-
+#include "../../includes/settings.h"
 #include <Arduino_FreeRTOS.h>
 #include <Arduino.h>
 #include "../BARVE/barve.h"
@@ -18,6 +18,10 @@
 #define frekvenca AUSYS_vars.frek
 #define trenutni_audio_mode AUSYS_vars.A_mode
 
+#define brightUP() svetlost_mod_funct(1);
+#define brightDOWN() svetlost_mod_funct(-1);
+#define colorSHIFT(param) color_fade_funct((byte *)param);
+
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;
 extern TaskHandle_t Mixed_fade_control;
@@ -31,6 +35,7 @@ void svetlost_mod_funct(int smer);
 void mic_mode_change();
 void audio_mode_change(char *ch);
 void deleteALL_tasks();
+void create_audio_meritve(uint8_t *mode);
 
 void fade_task(void *B);
 void Color_Fade_task(void *B);
@@ -41,7 +46,7 @@ enum mic_detection_mode
 {
     Average_volume, // Meri povprecno glasnost
     Frequency_mode, // Hardware.frekvenca
-    LENGHT_1
+    LENGHT_1,
 };
 
 enum audio_mode
@@ -58,15 +63,14 @@ enum audio_mode
 
 struct adsys
 {
-    int mic_mode = Average_volume;
+    uint8_t mic_mode = default_mic_mode;
     bool mikrofon_detect = false;
-    byte A_mode = COLOR_FADE;
+    byte A_mode = DEFAULT_Audio_Mode;
     short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
-    int povprecna_glas = 0;
-    int frek = 0;
+    unsigned short povprecna_glas = 0;
+    unsigned short frek = 0;
     short tr_svetlost = 0;
 };
 extern adsys AUSYS_vars;
 
 #endif
-

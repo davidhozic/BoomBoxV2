@@ -13,7 +13,6 @@ void audio_visual(void *p);
 void polnjenje(void *paramOdTaska);
 void events(void *paramOdTaska);
 void mic_mode_change();
-void audio_meritve(void *p);
 /*************************KONEC PROTOTIPOV************************/
 
 /**************************************************
@@ -41,12 +40,11 @@ void setup()
 #endif
   delay(200);
   xTaskCreate(core, "_core", 128, NULL, tskIDLE_PRIORITY, &core_control);
-  xTaskCreate(events, "Events task", 64, NULL, tskIDLE_PRIORITY, &event_control);
+  xTaskCreate(events, "Events task", 70, NULL, tskIDLE_PRIORITY, &event_control);
   xTaskCreate(zaslon, "LVCHRG", 60, NULL, tskIDLE_PRIORITY, &zaslon_control);
   xTaskCreate(thermal, "therm", 60, NULL, tskIDLE_PRIORITY, &thermal_control);
   xTaskCreate(polnjenje, "CHRG", 60, NULL, tskIDLE_PRIORITY, &chrg_control);
-  xTaskCreate(audio_visual, "auvs", 64, NULL, tskIDLE_PRIORITY, &audio_system_control);
-  //xTaskCreate(audio_meritve, "audio_meritve", 64, NULL, 2, &meas_control);
+  xTaskCreate(audio_visual, "auvs", 80, NULL, tskIDLE_PRIORITY, &audio_system_control);
 }
 
 void loop()

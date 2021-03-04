@@ -22,60 +22,65 @@ void deleteALL_tasks()
     deleteTask(color_fade_control);
     deleteTask(Mixed_fade_control);
     deleteTask(Breathe_control);
+    delay_FRTOS(15);
 }
 
 void turnOFFstrip()
 {
-    taskENTER_CRITICAL();
     AUSYS_vars.mikrofon_detect = false;
-    holdALL_tasks();
+    deleteALL_tasks();
     digitalWrite(r_trak, 0);
     digitalWrite(z_trak, 0);
     digitalWrite(m_trak, 0);
-    tr_r = 0;
-    tr_z = 0;
-    tr_m = 0;
     tr_bright = 0;
-    taskEXIT_CRITICAL();
 }
 
 void writeTRAK()
 {
-    taskENTER_CRITICAL();
     analogWrite(r_trak, (float)tr_r * (float)tr_bright / 255.00);
     analogWrite(z_trak, (float)tr_z * (float)tr_bright / 255.00);
     analogWrite(m_trak, (float)tr_m * (float)tr_bright / 255.00);
-    taskEXIT_CRITICAL();
 }
 
 void color_fade_funct(byte *B)
 {
-    short smer[3] = {0, 0, 0};
-    mozne_barve.barvni_ptr[*B][0] >= tr_r ? smer[0] = 1 : smer[0] = -1;
-    mozne_barve.barvni_ptr[*B][1] >= tr_z ? smer[1] = 1 : smer[1] = -1;
-    mozne_barve.barvni_ptr[*B][2] >= tr_m ? smer[2] = 1 : smer[2] = -1;
+    if (Mixed_fade_control == NULL)
+        tr_bright = 255;
+    while (barv_razlika_cond_true)
+    {
+        char smer[3] = {0, 0, 0};
+        mozne_barve.barvni_ptr[*B][0] >= tr_r ? smer[0] = 1 : smer[0] = -1;
+        mozne_barve.barvni_ptr[*B][1] >= tr_z ? smer[1] = 1 : smer[1] = -1;
+        mozne_barve.barvni_ptr[*B][2] >= tr_m ? smer[2] = 1 : smer[2] = -1;
 
-    tr_r = tr_r + (10 * smer[0]);
-    tr_z = tr_z + (10 * smer[1]);
-    tr_m = tr_m + (10 * smer[2]);
+        tr_r = tr_r + (10 * smer[0]);
+        tr_z = tr_z + (10 * smer[1]);
+        tr_m = tr_m + (10 * smer[2]);
 
-    tr_r = tr_r < 0 ? 0 : tr_r;
-    tr_z = tr_z < 0 ? 0 : tr_z;
-    tr_m = tr_m < 0 ? 0 : tr_m;
+        tr_r = tr_r < 0 ? 0 : tr_r;
+        tr_z = tr_z < 0 ? 0 : tr_z;
+        tr_m = tr_m < 0 ? 0 : tr_m;
 
-    tr_r = tr_r > 255 ? 255 : tr_r;
-    tr_z = tr_z > 255 ? 255 : tr_z;
-    tr_m = tr_m > 255 ? 255 : tr_m;
+        tr_r = tr_r > 255 ? 255 : tr_r;
+        tr_z = tr_z > 255 ? 255 : tr_z;
+        tr_m = tr_m > 255 ? 255 : tr_m;
 
-    writeTRAK();
+        writeTRAK();
+        delay(12);
+    }
 }
 
 void svetlost_mod_funct(int smer)
 {
-    tr_bright += 8 * smer; //8 stopenj = priblizno 500ms na fade oz 1000ms na breathe (za polni fade)
-    tr_bright = tr_bright < 0 ? 0 : tr_bright;
-    tr_bright = tr_bright > 255 ? 255 : tr_bright;
-    writeTRAK();
+    #define while_cond (smer > 0 ? tr_bright < 255 : tr_bright > 0)
+
+    while (while_cond)
+    {
+        tr_bright += 8 * smer; //8 stopenj = priblizno 500ms na fade oz 1000ms na breathe (za polni fade)
+        tr_bright = tr_bright < 0 ? 0 : tr_bright;
+        tr_bright = tr_bright > 255 ? 255 : tr_bright;
+        writeTRAK();
+    }
 }
 
 void mic_mode_change() // Switches audio mode ; 1s hold
@@ -88,7 +93,7 @@ void mic_mode_change() // Switches audio mode ; 1s hold
     digitalWrite(r_trak, 1);
     digitalWrite(z_trak, 0);
     digitalWrite(m_trak, 0);
-    vTaskDelay(700 / portTICK_PERIOD_MS);
+    delay_FRTOS(700);
 
     while (ct < (AUSYS_vars.mic_mode + 1) * 2) // n+1 blink = n+1 audio_mode
     {
@@ -96,13 +101,14 @@ void mic_mode_change() // Switches audio mode ; 1s hold
         PORTD ^= (1 << 3);                  //G
         PORTB ^= (1 << 3);                  //B
         delay_switch = 1000 - delay_switch; // Switches between 300ms and 700ms
-        vTaskDelay(delay_switch / portTICK_PERIOD_MS);
+        delay_FRTOS(delay_switch);
         ct++;
     }
 
     PORTB &= ~(1 << 1); //R
     PORTD &= ~(1 << 3); //G
     PORTB &= ~(1 << 3); //B
+    create_audio_meritve(&AUSYS_vars.mic_mode);
     resumeTASK(audio_system_control);
 }
 
@@ -111,7 +117,7 @@ void audio_mode_change(char *ch) // Double click
     holdTASK(audio_system_control);
     turnOFFstrip();
 
-    vTaskDelay(300 / portTICK_PERIOD_MS);
+    delay_FRTOS(300);
 
     if (ch == "off")
         trenutni_audio_mode = OFF_A;
@@ -121,5 +127,8 @@ void audio_mode_change(char *ch) // Double click
 
     else
         trenutni_audio_mode = (trenutni_audio_mode + 1) % audio_mode::LENGTH_2;
-    resumeTASK(audio_system_control);
+
+    deleteALL_tasks();
+    if (trenutni_audio_mode != OFF_A)
+        resumeTASK(audio_system_control);
 }
