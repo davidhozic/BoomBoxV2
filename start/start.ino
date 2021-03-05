@@ -45,7 +45,6 @@ void setup()
   voltage_SEM = xSemaphoreCreateMutex();
   xSemaphoreGive(Thermal_SEM);
   xSemaphoreGive(voltage_SEM);
-
   xTaskCreate(core, "_core", 64, NULL, tskIDLE_PRIORITY, &core_control);
   xTaskCreate(events, "Events task", 80, NULL, 3, &event_control);
   xTaskCreate(zaslon, "LVCHRG", 64, NULL, tskIDLE_PRIORITY, &zaslon_control);
