@@ -27,6 +27,8 @@ void mic_mode_change();
 /**/ TaskHandle_t chrg_control = NULL;         /**/
 /**/ TaskHandle_t thermal_control = NULL;      /**/
 /**/ TaskHandle_t meas_control = NULL;         /**/
+/**/ SemaphoreHandle_t Thermal_SEM = NULL;
+/**/ SemaphoreHandle_t voltage_SEM = NULL;
 /*************************************************/
 
 void setup()
@@ -39,6 +41,12 @@ void setup()
   Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
 #endif
   delay(200);
+
+  Thermal_SEM = xSemaphoreCreateBinary();
+  voltage_SEM = xSemaphoreCreateBinary();
+  xSemaphoreGive(Thermal_SEM);
+  xSemaphoreGive(voltage_SEM);
+
   xTaskCreate(core, "_core", 128, NULL, tskIDLE_PRIORITY, &core_control);
   xTaskCreate(events, "Events task", 70, NULL, tskIDLE_PRIORITY, &event_control);
   xTaskCreate(zaslon, "LVCHRG", 60, NULL, tskIDLE_PRIORITY, &zaslon_control);

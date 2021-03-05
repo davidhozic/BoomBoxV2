@@ -2,21 +2,20 @@
 #include <Arduino_FreeRTOS.h>
 #include "includes/includes.h"
 #include "audio/includes./audio.h"
+#include <semphr.h>
 
 const unsigned short error_temp = 60;
 void Shutdown();
-extern TaskHandle_t core_handle;
 
 void thermal(void *paramOdTaska)
 {
   while (true)
   {
-    delay_FRTOS(5);
+    delay_FRTOS(5000);
 
+    xSemaphoreTake(Thermal_SEM, 2); //Vzame dostop do semaforja, ostali taski morajo cakati ce hocejo dostopati do temperature
     unsigned int AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_VOLT / 1023.00;
-
-    float temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
-    Hardware.Amplifier_temp = temp;
+    Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
 
     if (Hardware.Amplifier_temp >= error_temp)
     {
@@ -27,6 +26,7 @@ void thermal(void *paramOdTaska)
         Shutdown();
       }
     }
+    xSemaphoreGive(Thermal_SEM); //Ostalim da dostop do semaforja, posledicno do temperaturne spremenljivke
     /*   STARO
       if (hlajenjeCas.vrednost() < 300000 && Hardware.Amplifier_temp < 42.00 || napajalnik.vrednost() == 0)
       {

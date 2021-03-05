@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "D:\Documents\Arduino\libraries\FreeRTOS\src\Arduino_FreeRTOS.h"
 #include "settings.h"
+#include <semphr.h>
 
 #ifndef namespaces_H
 #define namespaces_H
@@ -36,6 +37,8 @@ extern TaskHandle_t zaslon_control;
 extern TaskHandle_t chrg_control;
 extern TaskHandle_t thermal_control;
 extern TaskHandle_t meas_control;
+extern SemaphoreHandle_t Thermal_SEM = NULL;
+extern SemaphoreHandle_t voltage_SEM = NULL;
 
 struct hardware_struct
 {

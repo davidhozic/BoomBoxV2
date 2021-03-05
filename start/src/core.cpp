@@ -50,9 +50,9 @@ void core(void *paramOdTaska)
         *                                                                                             * 
         ***********************************************************************************************/
 
-        taskENTER_CRITICAL();
+        xSemaphoreTake(voltage_SEM,2); // Vzame dostop do napetostnega semaforja -> ostali taski ne morajo brati napetosti
         Hardware.napetost = analogRead(vDIV_pin) * (float)Hardware.REF_VOLT / 1023.00;
-        taskEXIT_CRITICAL();
+        xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
 
        
         //----------------------------------------------------------------------------------------------------------------------------------
@@ -73,12 +73,10 @@ void core(void *paramOdTaska)
 
 void Shutdown()
 {
-    taskENTER_CRITICAL();
     PORTB &= ~1;
     PORTD &= ~1; //Izklop
     Hardware.is_Powered_UP = false;
     trenutni_audio_mode = OFF_A;
-    taskEXIT_CRITICAL();
 }
 
 void Power_UP()
