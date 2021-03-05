@@ -10,7 +10,6 @@
 
 VHOD napajalnik(2, 'D', 0);
 VHOD stikalo(4, 'D', 0);
-
 /* ************************** Extenal ************************************ */
 void spanje();
 void Shutdown();
@@ -50,11 +49,20 @@ void core(void *paramOdTaska)
         *                                                                                             * 
         ***********************************************************************************************/
 
-        xSemaphoreTake(voltage_SEM,2); // Vzame dostop do napetostnega semaforja -> ostali taski ne morajo brati napetosti
-        Hardware.napetost = analogRead(vDIV_pin) * (float)Hardware.REF_VOLT / 1023.00;
-        xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
+        if (xSemaphoreTake(voltage_SEM, portMAX_DELAY) == pdTRUE) // Vzame dostop do napetostnega semaforja -> ostali taski ne morajo brati napetosti
+        {
+            unsigned short vReadDelay;
+            Hardware.napetost == 0 ? vReadDelay = 500 : 3000; //Ce napetost ni prebrana cakaj le 500ms, drugace pa 3000ms
 
-       
+            if (Timers.VOLT_timer.vrednost() > vReadDelay)
+            {
+                Timers.VOLT_timer.ponastavi();
+                Hardware.napetost = analogRead(vDIV_pin) * (float)Hardware.REF_mVOLT / 1023.00f;
+            }
+
+            xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
+        }
+
         //----------------------------------------------------------------------------------------------------------------------------------
         //                                               Power UP
         //----------------------------------------------------------------------------------------------------------------------------------
@@ -68,6 +76,7 @@ void core(void *paramOdTaska)
             Shutdown();
             spanje();
         }
+        delay_FRTOS(100);   
     }
 }
 

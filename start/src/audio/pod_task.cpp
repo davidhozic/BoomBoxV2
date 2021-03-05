@@ -23,15 +23,18 @@ void fade_task(void *B) //Prizig na barbi in pocasen izklop
 void Color_Fade_task(void *BA) //Fade iz ene barve v drugo
 {
 
-    colorSHIFT(BA);
+    if (Breathe_control == NULL){
+        tr_bright = 255;
+    }
     
+    colorSHIFT(BA);
     color_fade_control = NULL;
     vTaskDelete(NULL);
 }
 
 void Fade_Breathe_Task(void *B)
 {
-    if (Mixed_fade_control == NULL)
+    if (color_fade_control == NULL)
     {
         tr_r = mozne_barve.barvni_ptr[BARVA][0];
         tr_z = mozne_barve.barvni_ptr[BARVA][1];

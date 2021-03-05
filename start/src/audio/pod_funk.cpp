@@ -16,7 +16,7 @@ void holdALL_tasks() // Zbrise obstojece taske ce obstajajo
     holdTASK(Breathe_control);
 }
 
-void deleteALL_tasks()
+void deleteALL_subAUDIO_tasks()
 {
     deleteTask(fade_control);
     deleteTask(color_fade_control);
@@ -28,7 +28,7 @@ void deleteALL_tasks()
 void turnOFFstrip()
 {
     AUSYS_vars.mikrofon_detect = false;
-    deleteALL_tasks();
+    deleteALL_subAUDIO_tasks();
     digitalWrite(r_trak, 0);
     digitalWrite(z_trak, 0);
     digitalWrite(m_trak, 0);
@@ -66,7 +66,7 @@ void color_fade_funct(byte *B)
         tr_m = tr_m > 255 ? 255 : tr_m;
 
         writeTRAK();
-        delay(12);
+        vTaskDelay(1);
     }
 }
 
@@ -80,20 +80,19 @@ void svetlost_mod_funct(int smer)
         tr_bright = tr_bright < 0 ? 0 : tr_bright;
         tr_bright = tr_bright > 255 ? 255 : tr_bright;
         writeTRAK();
+        vTaskDelay(1);
     }
 }
 
 void mic_mode_change() // Switches audio mode ; 1s hold
 {
-    holdTASK(audio_system_control);
     int ct = 0, delay_switch = 300;
 
     AUSYS_vars.mic_mode = (AUSYS_vars.mic_mode + 1) % mic_detection_mode::LENGHT_1;
 
-    digitalWrite(r_trak, 1);
+    digitalWrite(r_trak, 0);
     digitalWrite(z_trak, 0);
     digitalWrite(m_trak, 0);
-    delay_FRTOS(700);
 
     while (ct < (AUSYS_vars.mic_mode + 1) * 2) // n+1 blink = n+1 audio_mode
     {
@@ -109,15 +108,10 @@ void mic_mode_change() // Switches audio mode ; 1s hold
     PORTD &= ~(1 << 3); //G
     PORTB &= ~(1 << 3); //B
     create_audio_meritve(&AUSYS_vars.mic_mode);
-    resumeTASK(audio_system_control);
 }
 
 void audio_mode_change(char *ch) // Double click
 {
-    holdTASK(audio_system_control);
-    turnOFFstrip();
-
-    delay_FRTOS(300);
 
     if (ch == "off")
         trenutni_audio_mode = OFF_A;
@@ -128,7 +122,5 @@ void audio_mode_change(char *ch) // Double click
     else
         trenutni_audio_mode = (trenutni_audio_mode + 1) % audio_mode::LENGTH_2;
 
-    deleteALL_tasks();
-    if (trenutni_audio_mode != OFF_A)
-        resumeTASK(audio_system_control);
+    deleteALL_subAUDIO_tasks();
 }

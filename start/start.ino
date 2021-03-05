@@ -40,21 +40,17 @@ void setup()
 #if SHRANI_BAT_STAT
   Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
 #endif
-  delay(200);
 
-  Thermal_SEM = xSemaphoreCreateBinary();
-  voltage_SEM = xSemaphoreCreateBinary();
+  Thermal_SEM = xSemaphoreCreateMutex();
+  voltage_SEM = xSemaphoreCreateMutex();
   xSemaphoreGive(Thermal_SEM);
   xSemaphoreGive(voltage_SEM);
 
-  xTaskCreate(core, "_core", 128, NULL, tskIDLE_PRIORITY, &core_control);
-  xTaskCreate(events, "Events task", 70, NULL, tskIDLE_PRIORITY, &event_control);
-  xTaskCreate(zaslon, "LVCHRG", 60, NULL, tskIDLE_PRIORITY, &zaslon_control);
-  xTaskCreate(thermal, "therm", 60, NULL, tskIDLE_PRIORITY, &thermal_control);
-  xTaskCreate(polnjenje, "CHRG", 60, NULL, tskIDLE_PRIORITY, &chrg_control);
-  xTaskCreate(audio_visual, "auvs", 80, NULL, tskIDLE_PRIORITY, &audio_system_control);
+  xTaskCreate(core, "_core", 64, NULL, tskIDLE_PRIORITY, &core_control);
+  xTaskCreate(events, "Events task", 80, NULL, 3, &event_control);
+  xTaskCreate(zaslon, "LVCHRG", 64, NULL, tskIDLE_PRIORITY, &zaslon_control);
+  xTaskCreate(thermal, "therm", 64, NULL, tskIDLE_PRIORITY, &thermal_control);
+  xTaskCreate(polnjenje, "CHRG", 64, NULL, tskIDLE_PRIORITY, &chrg_control);
+  xTaskCreate(audio_visual, "auvs", 80, NULL, 2, &audio_system_control);
 }
 
-void loop()
-{
-}

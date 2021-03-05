@@ -4,29 +4,31 @@
 #include "audio/includes./audio.h"
 #include <semphr.h>
 
-const unsigned short error_temp = 60;
 void Shutdown();
 
 void thermal(void *paramOdTaska)
 {
   while (true)
   {
-    delay_FRTOS(5000);
+    delay_FRTOS(6000);
 
-    xSemaphoreTake(Thermal_SEM, 2); //Vzame dostop do semaforja, ostali taski morajo cakati ce hocejo dostopati do temperature
-    unsigned int AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_VOLT / 1023.00;
-    Hardware.Amplifier_temp = (float)(-0.073) * (float)AMP_Temp_S_Voltage + 192.754;
-
-    if (Hardware.Amplifier_temp >= error_temp)
+    if (xSemaphoreTake(Thermal_SEM, portMAX_DELAY) == true) //Vzame dostop do semaforja, ostali taski morajo cakati ce hocejo dostopati do temperature
     {
-      Hardware.AMP_oheat = true;
-      if (Hardware.is_Powered_UP)
+      float AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_mVOLT / 1023.00f;
+      Hardware.Amplifier_temp = (float)(-0.073f) * (float)AMP_Temp_S_Voltage + 192.754f;
+      xSemaphoreGive(Thermal_SEM); //Ostalim da dostop do semaforja, posledicno
+    }
+    if (xSemaphoreTake(Thermal_SEM, portMAX_DELAY) == pdTRUE)
+    {
+
+      if (Hardware.Amplifier_temp > 60)
       {
-        delay(50);
+        Hardware.AMP_oheat = true;
         Shutdown();
       }
+      xSemaphoreGive(Thermal_SEM);
     }
-    xSemaphoreGive(Thermal_SEM); //Ostalim da dostop do semaforja, posledicno do temperaturne spremenljivke
+
     /*   STARO
       if (hlajenjeCas.vrednost() < 300000 && Hardware.Amplifier_temp < 42.00 || napajalnik.vrednost() == 0)
       {

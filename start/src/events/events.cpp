@@ -9,9 +9,9 @@
 #define showSeek()                      \
     tr_bright = 255;                    \
     deleteTask(color_fade_control);     \
-    vTaskPrioritySet(event_control, 1); \
     colorSHIFT(&evnt_st.menu_seek);     \
     vTaskPrioritySet(event_control, tskIDLE_PRIORITY);
+
 // Prikaze element v seeku ce je scroll aktiven
 
 void mic_mode_change();
@@ -82,11 +82,14 @@ void events(void *paramOdTaska)
                 if (eventSW.vrednost() && evnt_st.hold_timer.vrednost() > 1000)
                 {
                     holdTASK(audio_system_control);
-                    deleteALL_tasks();
+                    deleteALL_subAUDIO_tasks();
                     evnt_st.state = SCROLL;
+                    evnt_st.menu_seek = TOGGLE_LCD;
                     evnt_st.state_exit_timer.ponastavi();
                     evnt_st.hold_timer.ponastavi();
                     turnOFFstrip();
+                    flash_strip();
+                    delay_FRTOS(200);
                     showSeek(); //Prikaze element v seeku
                     evnt_st.longPRESS = true;
                 }
@@ -103,9 +106,10 @@ void events(void *paramOdTaska)
                 {
                     evnt_st.state = unset;
                     evnt_st.state_exit_timer.ponastavi();
-                    vTaskPrioritySet(event_control, 1);
+                    
+                    flash_strip();
                     brightDOWN();
-                    vTaskPrioritySet(event_control, 0);
+                    
                     resumeTASK(audio_system_control);
                     delay(500);
                 }
@@ -117,9 +121,10 @@ void events(void *paramOdTaska)
 
                     if (evnt_st.hold_time > 1000)
                     {
-                        vTaskPrioritySet(event_control, 1);
+                        
+                        flash_strip();
                         brightDOWN(); // Zafada navzdol
-                        vTaskPrioritySet(event_control, 0);
+                        
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
                         case TOGGLE_LCD:
@@ -149,8 +154,9 @@ void events(void *paramOdTaska)
                 {
 
                     if (evnt_st.hold_time < 500)
+                    {
                         evnt_st.menu_seek = (evnt_st.menu_seek + 1) % LENGTH;
-
+                    }
                     evnt_st.hold_timer.ponastavi();
                     evnt_st.hold_time = 0;
                 }
@@ -172,7 +178,7 @@ void events(void *paramOdTaska)
             internal_power_switch_ev();
             delay(20);
         }
-
+        delay_FRTOS(30);
         /*************************************************************************************/
     }
 }

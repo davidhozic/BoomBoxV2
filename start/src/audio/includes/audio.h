@@ -21,6 +21,18 @@
 #define brightUP() svetlost_mod_funct(1);
 #define brightDOWN() svetlost_mod_funct(-1);
 #define colorSHIFT(param) color_fade_funct((byte *)param);
+#define flash_strip()               \
+    for (uint8_t i = 0; i < 5; i++) \
+    {                               \
+        digitalWrite(r_trak, 0);    \
+        digitalWrite(z_trak, 0);    \
+        digitalWrite(m_trak, 0);    \
+        delay_FRTOS(125);           \
+        digitalWrite(r_trak, 0);    \
+        digitalWrite(z_trak, 0);    \
+        digitalWrite(m_trak, 0);    \
+        delay_FRTOS(125);           \
+    }
 
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;
@@ -34,7 +46,7 @@ void color_fade_funct(byte *B);
 void svetlost_mod_funct(int smer);
 void mic_mode_change();
 void audio_mode_change(char *ch);
-void deleteALL_tasks();
+void deleteALL_subAUDIO_tasks();
 void create_audio_meritve(uint8_t *mode);
 
 void fade_task(void *B);
@@ -54,11 +66,10 @@ enum audio_mode
 
     NORMAL_FADE,
     COLOR_FADE,
-    MIXED_FADE,
     Fade_Breathe,
     Direct_signal, //Signal iz AUSYS_vars.mikrofon_detecta -> lucke
     LENGTH_2,
-    OFF_A = -1
+    OFF_A = 999
 };
 
 struct adsys

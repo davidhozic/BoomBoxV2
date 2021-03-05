@@ -18,7 +18,9 @@ void zaslon(void *paramOdTaska)
             if (Hardware.AMP_oheat)
             {
                 delay_FRTOS(250);
-                PORTB ^= (1 << lcd_pb_pin);
+                PORTB |= (1 << lcd_pb_pin);
+                delay_FRTOS(1000);
+                PORTB &= ~(1 << lcd_pb_pin);
             }
 
             else if (napajalnik.vrednost() == 0)
@@ -52,5 +54,6 @@ void zaslon(void *paramOdTaska)
             PORTB &= ~(1 << lcd_pb_pin);
             delay_FRTOS(1000);
         }
+        delay_FRTOS(50);
     }
 }

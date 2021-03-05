@@ -24,7 +24,7 @@
     {                      \
         vTaskDelete(task); \
         task = NULL;       \
-        delay(12);     \
+        vTaskDelay(3);     \
     }
 
 
@@ -37,12 +37,13 @@ extern TaskHandle_t zaslon_control;
 extern TaskHandle_t chrg_control;
 extern TaskHandle_t thermal_control;
 extern TaskHandle_t meas_control;
-extern SemaphoreHandle_t Thermal_SEM = NULL;
-extern SemaphoreHandle_t voltage_SEM = NULL;
+extern SemaphoreHandle_t Thermal_SEM;
+extern SemaphoreHandle_t voltage_SEM;
 
 struct hardware_struct
 {
-    const short REF_VOLT = 5000; //Referenčna napetost na ADC (4.999V - 5.002V)
+    const float REF_mVOLT = 5000.00; //Referenčna napetost na ADC (4.999V - 5.002V)
+    const float REF_VOLT = 5.00;
     bool is_Powered_UP = 0;
     bool PSW = 0;
     bool POLKONC;
