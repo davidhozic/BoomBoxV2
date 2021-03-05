@@ -14,7 +14,6 @@ VHOD stikalo(4, 'D', 0);
 void spanje();
 void Shutdown();
 void Power_UP();
-void turnOFFstrip();
 void events(void *paramOdTaska);
 void audio_visual();
 /* *********************************************************************** */

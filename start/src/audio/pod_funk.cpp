@@ -25,16 +25,6 @@ void deleteALL_subAUDIO_tasks()
     delay_FRTOS(15);
 }
 
-void turnOFFstrip()
-{
-    AUSYS_vars.mikrofon_detect = false;
-    deleteALL_subAUDIO_tasks();
-    digitalWrite(r_trak, 0);
-    digitalWrite(z_trak, 0);
-    digitalWrite(m_trak, 0);
-    tr_bright = 0;
-}
-
 void writeTRAK()
 {
     analogWrite(r_trak, (float)tr_r * (float)tr_bright / 255.00);
@@ -46,16 +36,26 @@ void color_fade_funct(byte *B)
 {
     if (Mixed_fade_control == NULL)
         tr_bright = 255;
-    while (barv_razlika_cond_true)
+    while (tr_r != mozne_barve.barvni_ptr[*B][0] ||  tr_z != mozne_barve.barvni_ptr[*B][1] || tr_m != mozne_barve.barvni_ptr[*B][2]) //Trenutna razlicna od zeljene
     {
         char smer[3] = {0, 0, 0};
         mozne_barve.barvni_ptr[*B][0] >= tr_r ? smer[0] = 1 : smer[0] = -1;
         mozne_barve.barvni_ptr[*B][1] >= tr_z ? smer[1] = 1 : smer[1] = -1;
         mozne_barve.barvni_ptr[*B][2] >= tr_m ? smer[2] = 1 : smer[2] = -1;
 
-        tr_r = tr_r + (10 * smer[0]);
-        tr_z = tr_z + (10 * smer[1]);
-        tr_m = tr_m + (10 * smer[2]);
+        tr_r = tr_r + (5 * smer[0]);
+        tr_z = tr_z + (5 * smer[1]);
+        tr_m = tr_m + (5 * smer[2]);
+
+        //Preveri prenihaj:
+
+        smer[0] == 1 && tr_r > mozne_barve.barvni_ptr[*B][0] ? tr_r = mozne_barve.barvni_ptr[*B][0] : NULL; //Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
+        smer[1] == 1 && tr_z > mozne_barve.barvni_ptr[*B][1] ? tr_z = mozne_barve.barvni_ptr[*B][1] : NULL;
+        smer[2] == 1 && tr_m > mozne_barve.barvni_ptr[*B][2] ? tr_m = mozne_barve.barvni_ptr[*B][2] : NULL;
+
+        smer[0] == -1 && tr_r < mozne_barve.barvni_ptr[*B][0] ? tr_r = mozne_barve.barvni_ptr[*B][0] : NULL;
+        smer[1] == -1 && tr_z < mozne_barve.barvni_ptr[*B][1] ? tr_z = mozne_barve.barvni_ptr[*B][1] : NULL;
+        smer[2] == -1 && tr_m < mozne_barve.barvni_ptr[*B][2] ? tr_m = mozne_barve.barvni_ptr[*B][2] : NULL;
 
         tr_r = tr_r < 0 ? 0 : tr_r;
         tr_z = tr_z < 0 ? 0 : tr_z;
@@ -66,13 +66,13 @@ void color_fade_funct(byte *B)
         tr_m = tr_m > 255 ? 255 : tr_m;
 
         writeTRAK();
-        vTaskDelay(1);
+        delay(5);
     }
 }
 
 void svetlost_mod_funct(int smer)
 {
-    #define while_cond (smer > 0 ? tr_bright < 255 : tr_bright > 0)
+#define while_cond (smer > 0 ? tr_bright < 255 : tr_bright > 0)
 
     while (while_cond)
     {

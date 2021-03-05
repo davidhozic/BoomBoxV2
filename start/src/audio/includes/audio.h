@@ -13,7 +13,6 @@
 #define tr_z AUSYS_vars.TR_BARVA[1]
 #define tr_m AUSYS_vars.TR_BARVA[2]
 #define tr_bright AUSYS_vars.tr_svetlost
-#define barv_razlika_cond_true abs(mozne_barve.barvni_ptr[BARVA][0] - tr_r) > 5 || abs(mozne_barve.barvni_ptr[BARVA][1] - tr_z) > 5 || abs(mozne_barve.barvni_ptr[BARVA][2] - tr_m) > 5
 #define povprecna_glasnost AUSYS_vars.povprecna_glas
 #define frekvenca AUSYS_vars.frek
 #define trenutni_audio_mode AUSYS_vars.A_mode
@@ -21,26 +20,32 @@
 #define brightUP() svetlost_mod_funct(1);
 #define brightDOWN() svetlost_mod_funct(-1);
 #define colorSHIFT(param) color_fade_funct((byte *)param);
-#define flash_strip()               \
-    for (uint8_t i = 0; i < 5; i++) \
-    {                               \
-        digitalWrite(r_trak, 0);    \
-        digitalWrite(z_trak, 0);    \
-        digitalWrite(m_trak, 0);    \
-        delay_FRTOS(125);           \
-        digitalWrite(r_trak, 0);    \
-        digitalWrite(z_trak, 0);    \
-        digitalWrite(m_trak, 0);    \
-        delay_FRTOS(125);           \
+#define flash_strip()          \
+    free(AUSYS_vars.TR_BARVA); \
+    memcpy(AUSYS_vars.TR_BARVA, mozne_barve.barvni_ptr[evnt_st.menu_seek], 3);\
+for (uint8_t i = 0; i < 5; i++)\
+{\
+    digitalWrite(r_trak, 0);\
+    digitalWrite(z_trak, 0);\
+    digitalWrite(m_trak, 0);\
+    delay(125);\
+    digitalWrite(r_trak, 1);\
+    digitalWrite(z_trak, 1);\
+    digitalWrite(m_trak, 1);\
+    delay(125);\
+}
+#define turnOFFstrip()                      \
+    {                                       \
+        AUSYS_vars.mikrofon_detect = false; \
+        deleteALL_subAUDIO_tasks();         \
+        brightDOWN();                       \
     }
-
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;
 extern TaskHandle_t Mixed_fade_control;
 extern TaskHandle_t Breathe_control;
 
 void holdALL_tasks();
-void turnOFFstrip();
 void writeTRAK();
 void color_fade_funct(byte *B);
 void svetlost_mod_funct(int smer);

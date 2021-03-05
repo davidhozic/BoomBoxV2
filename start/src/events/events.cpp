@@ -90,7 +90,6 @@ void events(void *paramOdTaska)
                     turnOFFstrip();
                     flash_strip();
                     delay_FRTOS(200);
-                    showSeek(); //Prikaze element v seeku
                     evnt_st.longPRESS = true;
                 }
 
@@ -111,7 +110,7 @@ void events(void *paramOdTaska)
                     brightDOWN();
                     
                     resumeTASK(audio_system_control);
-                    delay(500);
+                    delay_FRTOS(500);
                 }
 
                 else if (eventSW.vrednost())
