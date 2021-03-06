@@ -6,13 +6,25 @@
 #include "../audio/includes/audio.h"
 
 #define toggleLCD() Hardware.display_enabled = !(Hardware.display_enabled);
-#define showSeek()                      \
-    tr_bright = 255;                    \
-    deleteTask(color_fade_control);     \
-    colorSHIFT(&evnt_st.menu_seek);     \
-    vTaskPrioritySet(event_control, tskIDLE_PRIORITY);
-
+#define showSeek()                  \
+    tr_bright = 255;                \
+    deleteTask(color_fade_control); \
+    colorSHIFT(&evnt_st.menu_seek); \
 // Prikaze element v seeku ce je scroll aktiven
+
+#define auto_exit()                                 \
+    if (evnt_st.state_exit_timer.vrednost() > 6000) \
+    {                                               \
+        evnt_st.state = unset;                      \
+        evnt_st.state_exit_timer.ponastavi();       \
+                                                    \
+        flash_strip(evnt_st.menu_seek);                              \
+        brightDOWN();                               \
+                                                    \
+        resumeTASK(audio_system_control);           \
+        delay_FRTOS(500);                           \
+    }
+// auto izhod iz scrolla
 
 void mic_mode_change();
 void button2Events();
@@ -35,8 +47,8 @@ enum menu_seek
 {
     TOGGLE_LCD,
     MIC_MODE_CH,
-    A_MODE_CH,
-    A_MODE_OFF,
+    STRIP_MD_CHG,
+    STRIP_OFF,
     LENGTH
 };
 
@@ -49,8 +61,8 @@ enum states
 
 struct sw2_state_machine_strct
 {
-    byte state = unset;
-    byte menu_seek = TOGGLE_LCD;
+    uint8_t state = unset;
+    uint8_t menu_seek = TOGGLE_LCD;
     castimer state_exit_timer;
     castimer hold_timer;
     unsigned int hold_time = 0;
@@ -88,7 +100,7 @@ void events(void *paramOdTaska)
                     evnt_st.state_exit_timer.ponastavi();
                     evnt_st.hold_timer.ponastavi();
                     turnOFFstrip();
-                    flash_strip();
+                    flash_strip(evnt_st.menu_seek);
                     delay_FRTOS(200);
                     evnt_st.longPRESS = true;
                 }
@@ -98,42 +110,28 @@ void events(void *paramOdTaska)
 
                 break;
             case SCROLL:
-
-                showSeek();
-
-                if (evnt_st.state_exit_timer.vrednost() > 6000) // auto izhod iz scrolla
-                {
-                    evnt_st.state = unset;
-                    evnt_st.state_exit_timer.ponastavi();
-                    
-                    flash_strip();
-                    brightDOWN();
-                    
-                    resumeTASK(audio_system_control);
-                    delay_FRTOS(500);
-                }
-
-                else if (eventSW.vrednost())
+                auto_exit(); //Macro to auto exit timer
+                if (eventSW.vrednost())
                 {
                     evnt_st.hold_time = evnt_st.hold_timer.vrednost(); //stopa cas pritiska
                     evnt_st.state_exit_timer.ponastavi();
 
                     if (evnt_st.hold_time > 1000)
                     {
-                        
-                        flash_strip();
+
+                        flash_strip(evnt_st.menu_seek);
                         brightDOWN(); // Zafada navzdol
-                        
+
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
                         case TOGGLE_LCD:
                             toggleLCD();
                             break;
-                        case A_MODE_CH:
+                        case STRIP_MD_CHG:
                             audio_mode_change("");
                             break;
 
-                        case A_MODE_OFF:
+                        case STRIP_OFF:
                             audio_mode_change("off");
                             break;
 
@@ -156,6 +154,7 @@ void events(void *paramOdTaska)
                     {
                         evnt_st.menu_seek = (evnt_st.menu_seek + 1) % LENGTH;
                     }
+                    showSeek();
                     evnt_st.hold_timer.ponastavi();
                     evnt_st.hold_time = 0;
                 }

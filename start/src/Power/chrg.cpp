@@ -12,38 +12,36 @@ void polnjenje(void *paramOdTaska)
 
   while (true)
   {
-    if (xSemaphoreTake(voltage_SEM, 2) == pdTRUE)
-    {
-      if (Hardware.napetost >= 4150 && Hardware.POLKONC == 0)
-      {
-        Hardware.POLKONC = 1;
-#if SHRANI_BAT_STAT
-        EEPROM.update(battery_eeprom_addr, Hardware.POLKONC); //Posodobitev EEPROM-a na bajtu 1 z spremenljivko Hardware.POLKONC; Na vsake 5000 pisanj zamenja bajt na katerega piše
-#endif
-      }
+    xSemaphoreTake(voltage_SEM, portMAX_DELAY);
 
-      else if (Hardware.napetost <= 4000 && Hardware.POLKONC) // For charging to continue it needs to discharge atleast 4% after full charge
-      {                                                       //Če se dokonca napolne, se bo polnjenje lahko nadaljevalo šele, ko se baterija izprazne za približno 10% (3V = 0%, 4.2V = 100%, 4.1V = 90% . 3.95V = 80% oz. 10% manj ;  napetost = 0.012 * procent + 3);
-        Hardware.POLKONC = 0;                                 //Poenostavi se spremenljivka, zato da se v zgornjem pogoju vključi polnenje.
-#if SHRANI_BAT_STAT
-        EEPROM.update(battery_eeprom_addr, Hardware.POLKONC);
-#endif
-      }
-      xSemaphoreGive(voltage_SEM);
+    if (Hardware.napetost >= 4150 && Hardware.POLKONC == 0)
+    {
+      Hardware.POLKONC = 1;
+
+      EEPROM.update(battery_eeprom_addr, Hardware.POLKONC); //Posodobitev EEPROM-a na bajtu 1 z spremenljivko Hardware.POLKONC; Na vsake 5000 pisanj zamenja bajt na katerega piše
     }
 
-    if ((Hardware.POLKONC == 1 || Hardware.AMP_oheat || napajalnik.vrednost() == 0) && Hardware.polnjenjeON)
-    {
-      PORTD &= ~(1 << PD6);
-      Hardware.polnjenjeON = false;
+    else if (Hardware.napetost <= 4000 && Hardware.POLKONC)
+    { //Če se dokonca napolne, se bo polnjenje lahko nadaljevalo šele, ko se baterija izprazne za približno 10% (3V = 0%, 4.2V = 100%, 4.1V = 90% . 3.95V = 80% oz. 10% manj ;  napetost = 0.012 * procent + 3);
+      Hardware.POLKONC = 0;
+
+      EEPROM.update(battery_eeprom_addr, Hardware.POLKONC);
     }
 
-    else if (Hardware.POLKONC == 0 && napajalnik.vrednost() && Hardware.AMP_oheat == false && !Hardware.polnjenjeON)
-    {
-      delay_FRTOS(1000);
-      PORTD |= (1 << PD6);
-      Hardware.polnjenjeON = true;
-    }
-    delay_FRTOS(100);
+    xSemaphoreGive(voltage_SEM);
   }
+
+  if ((Hardware.POLKONC == 1 || Hardware.AMP_oheat || napajalnik.vrednost() == 0) && Hardware.polnjenjeON)
+  {
+    writeOUTPUT(PIN6,'D',0);
+    Hardware.polnjenjeON = false;
+  }
+
+  else if (Hardware.POLKONC == 0 && napajalnik.vrednost() && Hardware.AMP_oheat == false && !Hardware.polnjenjeON)
+  {
+    delay_FRTOS(1000);
+    writeOUTPUT(PIN6,'D',1);
+    Hardware.polnjenjeON = true;
+  }
+  delay_FRTOS(100);
 }

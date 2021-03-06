@@ -2,6 +2,7 @@
 #include "includes.h"
 #include "../audio/includes/audio.h"
 
-hardware_struct Hardware;
-timer_struct Timers;
-adsys AUSYS_vars;
+Hardware_t Hardware;
+Timers_t Timers;
+adsys_t AUSYS_vars;
+mozne_barve_t mozne_barve;

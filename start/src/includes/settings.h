@@ -13,13 +13,15 @@
 /*********************************************************                                  
 *                        SPLOSNO                         *
 *********************************************************/
-/**/     #define SHRANI_BAT_STAT     1                /**/
+/**/     #define SHRANI_AUDVS_MODE   1                /**/
 /**/     #define vDIV_pin            A2               /**/
 /**/     #define mic_pin             A0               /**/
 /**/     #define sleep_voltage      3300              /**/
 /**/     #define default_mic_mode   Average_volume    /**/
 /**/     #define DEFAULT_Audio_Mode NORMAL_FADE       /**/ 
 /********************************************************/
+
+
 
 
 #endif

@@ -54,6 +54,6 @@ void zaslon(void *paramOdTaska)
             PORTB &= ~(1 << lcd_pb_pin);
             delay_FRTOS(1000);
         }
-        delay_FRTOS(50);
+        vTaskDelay(3);
     }
 }

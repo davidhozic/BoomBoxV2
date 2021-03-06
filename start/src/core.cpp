@@ -39,7 +39,6 @@ void core(void *paramOdTaska)
         {
             Timers.stikaloOFFtime.ponastavi();
         }
-
         /***********************************************************************************************
         *                                                                                             *
         *                                                                                             *
@@ -81,18 +80,19 @@ void core(void *paramOdTaska)
 
 void Shutdown()
 {
-    PORTB &= ~1;
-    PORTD &= ~1; //Izklop
+    writeOUTPUT(PIN0,'B',0); // izklopi izhod
+    writeOUTPUT(PIN0,'D',0); 
     Hardware.is_Powered_UP = false;
     trenutni_audio_mode = OFF_A;
 }
 
 void Power_UP()
 {
-    delay(20);
-    PORTB |= 1;
+    trenutni_audio_mode = static_cast<audio_mode>(EEPROM.read(audiomode_eeprom_addr));
+    writeOUTPUT(PIN0,'B',1); // izklopi izhod
+    writeOUTPUT(PIN0,'D',1);
     Hardware.is_Powered_UP = true;
-    PORTD |= 1;
-    delay(210);
-    Hardware.display_enabled = true;
 }
+
+
+

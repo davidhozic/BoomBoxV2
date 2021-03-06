@@ -9,6 +9,7 @@ TaskHandle_t fade_control = NULL;
 TaskHandle_t color_fade_control = NULL;
 TaskHandle_t Mixed_fade_control = NULL;
 TaskHandle_t Breathe_control = NULL;
+TaskHandle_t Direct_signal_control = NULL;
 /*******************************************************************/
 
 /**************************************************************************************************************************
@@ -25,32 +26,45 @@ TaskHandle_t Breathe_control = NULL;
 *                                            GLAVNI UPRAVLJALNI SISTEM (TASK)                                             *
 *                                                                                                                         *
 **************************************************************************************************************************/
-c mozne_barve;
+
 castimer mic_sim_timer;
 
 void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
+    bool mikrofon_detect = false;
+    unsigned short prev_random = 0; //Za vecjo nakljucnost
     while (true)
     {
-        /*         if (AUSYS_vars.mikrofon_detect == NULL)
+        /*         xSemaphoreTake(Meritveni_semafor, portMAX_DELAY); // Caka na tem mestu dokler ni semafor na zeleni luci
+        
+        switch (AUSYS_vars.mic_mode)
         {
-            AUSYS_vars.mikrofon_detect = Average_volume;
-            create_audio_meritve(&AUSYS_vars.mic_mode);
-        } */
+        case Average_volume:
+            mikrofon_detect = analogRead(mic_pin) >= povprecna_glasnost + 300 ? 1 : 0;
+            break;
 
-        if (mic_sim_timer.vrednost() > 1000)
+        case Frequency_mode:
+            mikrofon_detect = frekvenca <= 65 ? 1 : 0;
+            break;
+        }
+        xSemaphoreGive(Meritveni_semafor); */
+
+        if (mic_sim_timer.vrednost() > 400)
         {
-            AUSYS_vars.mikrofon_detect = true;
+            mikrofon_detect = true;
             mic_sim_timer.ponastavi();
         }
         else
         {
-            AUSYS_vars.mikrofon_detect = false;
+            mikrofon_detect = false;
         }
 
-        if (Timers.lucke_filter_time.vrednost() > 100 && AUSYS_vars.mikrofon_detect) // AUDIO_M machine
+        if (Timers.lucke_filter_time.vrednost() > 100 && mikrofon_detect) // AUDIO_M machine
         {
-            byte barva_selekt = random(0, LENGHT);
+
+            uint8_t barva_selekt = static_cast<unsigned int>((random(0, 9113) * prev_random) % LENGHT); //Extra nakljucnost
+            prev_random = random(0, analogRead(A4) + millis() % 5000);
+
             switch (trenutni_audio_mode)
             {
             case NORMAL_FADE: //Prizig in fade izklop
@@ -66,17 +80,16 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
                 deleteTask(Breathe_control);
                 xTaskCreate(Fade_Breathe_Task, "breathe fade", 70, &barva_selekt, 2, &Breathe_control);
                 break;
-            case Direct_signal: //Vijolicna barva glede na direktn signal iz AUSYS_vars.mikrofon_detect = 1a
-                unsigned short Signal_level = (float)analogRead(mic_pin) * 255.00 / 1023.00;
-                analogWrite(r_trak, Signal_level); // Direktna povezava AUSYS_vars.mikrofon_detect = 1a na izhod vijolicne barve
-                analogWrite(m_trak, (Signal_level - 50) >= 0 ? Signal_level - 50 : 0);
+            case Direct_signal: //Vijolicna barva glede na direktn signal iz mikrofon_detect = 1a
+                deleteTask(Direct_signal_control);
+                xTaskCreate(Direct_mic_Task, "Direkt na mic", 80, NULL, tskIDLE_PRIORITY, &Direct_signal_control);
+                holdTASK(audio_system_control);
                 break;
-
             case OFF_A:
                 break;
             }
             Timers.lucke_filter_time.ponastavi();
         }
-        delay_FRTOS(30);
+        vTaskDelay(2);
     }
 }

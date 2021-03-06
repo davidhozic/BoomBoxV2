@@ -5,7 +5,13 @@
 #include <Arduino_FreeRTOS.h>
 #include <Arduino.h>
 #include "../BARVE/barve.h"
-#define BARVA *((byte *)B)
+#include <semphr.h>
+
+
+/*********************************/
+/*             Makro             */
+/*********************************/
+#define BARVA *((uint8_t *)B)
 #define r_trak 9
 #define z_trak 3
 #define m_trak 11
@@ -13,51 +19,44 @@
 #define tr_z AUSYS_vars.TR_BARVA[1]
 #define tr_m AUSYS_vars.TR_BARVA[2]
 #define tr_bright AUSYS_vars.tr_svetlost
-#define povprecna_glasnost AUSYS_vars.povprecna_glas
-#define frekvenca AUSYS_vars.frek
-#define trenutni_audio_mode AUSYS_vars.A_mode
-
+#define povprecna_glasnost AUSYS_vars.meritve.povprecna_glas
+#define frekvenca AUSYS_vars.meritve.frek
+#define trenutni_audio_mode AUSYS_vars.STRIP_MODE
 #define brightUP() svetlost_mod_funct(1);
 #define brightDOWN() svetlost_mod_funct(-1);
-#define colorSHIFT(param) color_fade_funct((byte *)param);
-#define flash_strip()          \
-    free(AUSYS_vars.TR_BARVA); \
-    memcpy(AUSYS_vars.TR_BARVA, mozne_barve.barvni_ptr[evnt_st.menu_seek], 3);\
-for (uint8_t i = 0; i < 5; i++)\
-{\
-    digitalWrite(r_trak, 0);\
-    digitalWrite(z_trak, 0);\
-    digitalWrite(m_trak, 0);\
-    delay(125);\
-    digitalWrite(r_trak, 1);\
-    digitalWrite(z_trak, 1);\
-    digitalWrite(m_trak, 1);\
-    delay(125);\
-}
-#define turnOFFstrip()                      \
-    {                                       \
-        AUSYS_vars.mikrofon_detect = false; \
-        deleteALL_subAUDIO_tasks();         \
-        brightDOWN();                       \
-    }
+#define colorSHIFT(param) color_fade_funct((uint8_t *)param);
+#define turnOFFstrip()          \
+    deleteALL_subAUDIO_tasks(); \
+    brightDOWN();
+/********************************************************************/
+
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;
 extern TaskHandle_t Mixed_fade_control;
 extern TaskHandle_t Breathe_control;
-
+extern SemaphoreHandle_t Meritveni_semafor;
+extern TaskHandle_t Direct_signal_control;
+/*********************************************/
+/*         Prototipi pomoznih funkcij        */
+/*********************************************/
 void holdALL_tasks();
 void writeTRAK();
-void color_fade_funct(byte *B);
+void color_fade_funct(uint8_t *B);
 void svetlost_mod_funct(int smer);
 void mic_mode_change();
 void audio_mode_change(char *ch);
 void deleteALL_subAUDIO_tasks();
-void create_audio_meritve(uint8_t *mode);
+void flash_strip(uint8_t x);
+/*********************************************/
 
+/*********************************************/
+/*             Prototipi taskov              */
+/*********************************************/
 void fade_task(void *B);
 void Color_Fade_task(void *B);
 void Fade_Breathe_Task(void *B);
-void Mesan_fade_task(void *b);
+void Direct_mic_Task(void*);
+/*********************************************/
 
 enum mic_detection_mode
 {
@@ -68,25 +67,28 @@ enum mic_detection_mode
 
 enum audio_mode
 {
-
     NORMAL_FADE,
     COLOR_FADE,
     Fade_Breathe,
-    Direct_signal, //Signal iz AUSYS_vars.mikrofon_detecta -> lucke
+    Direct_signal, //Signal iz mikrofon_detecta -> lucke
     LENGTH_2,
-    OFF_A = 999
+    OFF_A
 };
 
-struct adsys
+struct adsys_t
 {
-    uint8_t mic_mode = default_mic_mode;
-    bool mikrofon_detect = false;
-    byte A_mode = DEFAULT_Audio_Mode;
+    mic_detection_mode mic_mode = Average_volume;
+    audio_mode STRIP_MODE = NORMAL_FADE;
     short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
-    unsigned short povprecna_glas = 0;
-    unsigned short frek = 0;
+
+    struct Meritve_t
+    {
+        unsigned short povprecna_glas = 0;
+        unsigned short frek = 0;
+    } meritve;
+
     short tr_svetlost = 0;
 };
-extern adsys AUSYS_vars;
+extern adsys_t AUSYS_vars;
 
 #endif

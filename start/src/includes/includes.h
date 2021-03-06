@@ -24,9 +24,8 @@
     {                      \
         vTaskDelete(task); \
         task = NULL;       \
-        vTaskDelay(3);     \
+        vTaskDelay(1);     \
     }
-
 
 #define delay_FRTOS(x) vTaskDelay(pdMS_TO_TICKS(x))
 
@@ -40,7 +39,7 @@ extern TaskHandle_t meas_control;
 extern SemaphoreHandle_t Thermal_SEM;
 extern SemaphoreHandle_t voltage_SEM;
 
-struct hardware_struct
+struct Hardware_t
 {
     const float REF_mVOLT = 5000.00; //Referenčna napetost na ADC (4.999V - 5.002V)
     const float REF_VOLT = 5.00;
@@ -53,9 +52,9 @@ struct hardware_struct
     float Amplifier_temp = 0;
     unsigned int napetost = 0;
 };
-extern hardware_struct Hardware;
+extern Hardware_t Hardware;
 
-struct timer_struct
+struct Timers_t
 {
     castimer stikaloCAS;
     castimer lucke_filter_time;
@@ -69,6 +68,10 @@ struct timer_struct
     castimer average_v_timer;
     castimer frek_meassurement_t;
 };
-extern timer_struct Timers;
+extern Timers_t Timers;
+
+/*  Prototipi  */
+
+void writeOUTPUT(unsigned char pin, char port, bool value); // writeOUTPUT(uint8_t pin, char port, bool value)
 
 #endif

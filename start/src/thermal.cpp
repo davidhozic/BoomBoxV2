@@ -12,22 +12,18 @@ void thermal(void *paramOdTaska)
   {
     delay_FRTOS(6000);
 
-    if (xSemaphoreTake(Thermal_SEM, portMAX_DELAY) == true) //Vzame dostop do semaforja, ostali taski morajo cakati ce hocejo dostopati do temperature
-    {
-      float AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_mVOLT / 1023.00f;
-      Hardware.Amplifier_temp = (float)(-0.073f) * (float)AMP_Temp_S_Voltage + 192.754f;
-      xSemaphoreGive(Thermal_SEM); //Ostalim da dostop do semaforja, posledicno
-    }
-    if (xSemaphoreTake(Thermal_SEM, portMAX_DELAY) == pdTRUE)
-    {
+    xSemaphoreTake(Thermal_SEM, portMAX_DELAY); //Vzame dostop do semaforja, ostali taski morajo cakati ce hocejo dostopati do temperature
 
-      if (Hardware.Amplifier_temp > 60)
-      {
-        Hardware.AMP_oheat = true;
-        Shutdown();
-      }
-      xSemaphoreGive(Thermal_SEM);
+    float AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_mVOLT / 1023.00f;
+    Hardware.Amplifier_temp = (float)(-0.073f) * (float)AMP_Temp_S_Voltage + 192.754f;
+
+    if (Hardware.Amplifier_temp > 60)
+    {
+      Hardware.AMP_oheat = true;
+      Shutdown();
     }
+
+    xSemaphoreGive(Thermal_SEM);
 
     /*   STARO
       if (hlajenjeCas.vrednost() < 300000 && Hardware.Amplifier_temp < 42.00 || napajalnik.vrednost() == 0)

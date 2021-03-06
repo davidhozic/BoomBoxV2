@@ -23,10 +23,11 @@ void fade_task(void *B) //Prizig na barbi in pocasen izklop
 void Color_Fade_task(void *BA) //Fade iz ene barve v drugo
 {
 
-    if (Breathe_control == NULL){
+    if (Breathe_control == NULL)
+    {
         tr_bright = 255;
     }
-    
+
     colorSHIFT(BA);
     color_fade_control = NULL;
     vTaskDelete(NULL);
@@ -48,5 +49,13 @@ void Fade_Breathe_Task(void *B)
     vTaskDelete(NULL);
 }
 
-
-
+void Direct_mic_Task(void *)
+{
+    tr_bright = 255;
+    while (1)
+    {
+        tr_bright = static_cast<float>(analogRead(mic_pin) * 255 / 1023);
+        writeTRAK();
+        delay(5);
+    }
+}

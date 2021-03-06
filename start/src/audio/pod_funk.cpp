@@ -32,11 +32,28 @@ void writeTRAK()
     analogWrite(m_trak, (float)tr_m * (float)tr_bright / 255.00);
 }
 
-void color_fade_funct(byte *B)
+void flash_strip(uint8_t x) //Utripanje (Izhod iz scroll stata / menjava mikrofona)
+{
+    free(AUSYS_vars.TR_BARVA);
+    memcpy(AUSYS_vars.TR_BARVA, mozne_barve.barvni_ptr[x], 3);
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        digitalWrite(r_trak, 0);
+        digitalWrite(z_trak, 0);
+        digitalWrite(m_trak, 0);
+        delay(125);
+        analogWrite(r_trak, 255);
+        analogWrite(z_trak, 255);
+        analogWrite(m_trak, 255);
+        delay(125);
+    }
+}
+
+void color_fade_funct(uint8_t *B)
 {
     if (Mixed_fade_control == NULL)
         tr_bright = 255;
-    while (tr_r != mozne_barve.barvni_ptr[*B][0] ||  tr_z != mozne_barve.barvni_ptr[*B][1] || tr_m != mozne_barve.barvni_ptr[*B][2]) //Trenutna razlicna od zeljene
+    while (tr_r != mozne_barve.barvni_ptr[*B][0] || tr_z != mozne_barve.barvni_ptr[*B][1] || tr_m != mozne_barve.barvni_ptr[*B][2]) //Trenutna razlicna od zeljene
     {
         char smer[3] = {0, 0, 0};
         mozne_barve.barvni_ptr[*B][0] >= tr_r ? smer[0] = 1 : smer[0] = -1;
@@ -86,31 +103,17 @@ void svetlost_mod_funct(int smer)
 
 void mic_mode_change() // Switches audio mode ; 1s hold
 {
-    int ct = 0, delay_switch = 300;
+    int ct = 0;
 
-    AUSYS_vars.mic_mode = (AUSYS_vars.mic_mode + 1) % mic_detection_mode::LENGHT_1;
+    AUSYS_vars.mic_mode = static_cast<mic_detection_mode>(static_cast<int>(AUSYS_vars.mic_mode) + 1 % mic_detection_mode::LENGHT_1);
 
-    digitalWrite(r_trak, 0);
-    digitalWrite(z_trak, 0);
-    digitalWrite(m_trak, 0);
+    flash_strip(AUSYS_vars.mic_mode);
 
-    while (ct < (AUSYS_vars.mic_mode + 1) * 2) // n+1 blink = n+1 audio_mode
-    {
-        PORTB ^= (1 << 1);                  //R
-        PORTD ^= (1 << 3);                  //G
-        PORTB ^= (1 << 3);                  //B
-        delay_switch = 1000 - delay_switch; // Switches between 300ms and 700ms
-        delay_FRTOS(delay_switch);
-        ct++;
-    }
-
-    PORTB &= ~(1 << 1); //R
-    PORTD &= ~(1 << 3); //G
-    PORTB &= ~(1 << 3); //B
-    create_audio_meritve(&AUSYS_vars.mic_mode);
+    delay_FRTOS(500);
+    brightDOWN();
 }
 
-void audio_mode_change(char *ch) // Double click
+void audio_mode_change(char *ch)
 {
 
     if (ch == "off")
@@ -120,7 +123,7 @@ void audio_mode_change(char *ch) // Double click
         trenutni_audio_mode = NORMAL_FADE;
 
     else
-        trenutni_audio_mode = (trenutni_audio_mode + 1) % audio_mode::LENGTH_2;
-
+        trenutni_audio_mode = static_cast<audio_mode>(static_cast<int>((trenutni_audio_mode + 1) % audio_mode::LENGTH_2));
+    EEPROM.update(audiomode_eeprom_addr, trenutni_audio_mode);
     deleteALL_subAUDIO_tasks();
 }
