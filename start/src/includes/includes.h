@@ -58,15 +58,13 @@ struct Timers_t
 {
     castimer stikaloCAS;
     castimer lucke_filter_time;
-    castimer audio_timer;
     castimer LCD_timer;
     castimer stikaloOFFtime;
     castimer VOLT_timer;
-    castimer brightness_timer;
-    castimer color_timer;
     castimer SW2_off_timer;
     castimer average_v_timer;
     castimer frek_meassurement_t;
+    castimer VU_meter_timer;
 };
 extern Timers_t Timers;
 

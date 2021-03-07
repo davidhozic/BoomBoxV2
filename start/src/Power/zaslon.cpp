@@ -15,22 +15,14 @@ void zaslon(void *paramOdTaska)
     {
         if (Hardware.display_enabled)
         {
-            if (Hardware.AMP_oheat)
-            {
-                delay_FRTOS(250);
-                PORTB |= (1 << lcd_pb_pin);
-                delay_FRTOS(1000);
-                PORTB &= ~(1 << lcd_pb_pin);
-            }
-
-            else if (napajalnik.vrednost() == 0)
+            if (napajalnik.vrednost() == 0)
             {
                 if (Timers.LCD_timer.vrednost() >= 9000 || !Hardware.is_Powered_UP)
                 {
                     Timers.LCD_timer.ponastavi();
                     PORTB &= ~(1 << lcd_pb_pin);
                 }
-                else if (Hardware.is_Powered_UP && Timers.LCD_timer.vrednost() > 6000)
+                else if (Timers.LCD_timer.vrednost() > 6000)
                 { //Prižig vsakih 6s za 3s, če zunanje napajanje ni priključeno
                     PORTB |= (1 << lcd_pb_pin);
                 }
@@ -52,8 +44,8 @@ void zaslon(void *paramOdTaska)
         else
         {
             PORTB &= ~(1 << lcd_pb_pin);
-            delay_FRTOS(1000);
+            holdTASK(zaslon_control); //Resuma se v eventih
         }
-        vTaskDelay(3);
+        delay_FRTOS(200);
     }
 }

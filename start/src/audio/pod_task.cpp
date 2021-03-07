@@ -6,56 +6,38 @@
 *                                                         FADE TASKI                                                      *
 *                                                                                                                         *
 **************************************************************************************************************************/
-void fade_task(void *B) //Prizig na barbi in pocasen izklop
+void fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 {
-
     tr_bright = 255;
-    tr_r = mozne_barve.barvni_ptr[BARVA][0];
-    tr_z = mozne_barve.barvni_ptr[BARVA][1];
-    tr_m = mozne_barve.barvni_ptr[BARVA][2];
+    nastavi_barve(BARVA);
 
-    brightDOWN();
+    brightDOWN(15);
 
     fade_control = NULL;
     vTaskDelete(NULL);
 }
 
-void Color_Fade_task(void *BA) //Fade iz ene barve v drugo
+void Color_Fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 
-    if (Breathe_control == NULL)
-    {
+    if (Breathe_control == NULL) // Ce diha on ne sme nastaviti svetlosti,
+    {                            // saj jo nastavlja dihalni task
         tr_bright = 255;
     }
 
-    colorSHIFT(BA);
+    colorSHIFT(BARVA); //prehod iz ene barve v drugo
     color_fade_control = NULL;
     vTaskDelete(NULL);
 }
 
-void Fade_Breathe_Task(void *B)
+void Fade_Breathe_Task(void *BARVA)
 {
     if (color_fade_control == NULL)
     {
-        tr_r = mozne_barve.barvni_ptr[BARVA][0];
-        tr_z = mozne_barve.barvni_ptr[BARVA][1];
-        tr_m = mozne_barve.barvni_ptr[BARVA][2];
+        nastavi_barve(BARVA);
     }
-    brightUP();
-    brightDOWN();
-
-    tr_bright = 0;
+    brightUP(7);
+    brightDOWN(7);
     Breathe_control = NULL;
     vTaskDelete(NULL);
-}
-
-void Direct_mic_Task(void *)
-{
-    tr_bright = 255;
-    while (1)
-    {
-        tr_bright = static_cast<float>(analogRead(mic_pin) * 255 / 1023);
-        writeTRAK();
-        delay(5);
-    }
 }

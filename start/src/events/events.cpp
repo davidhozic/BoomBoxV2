@@ -6,10 +6,9 @@
 #include "../audio/includes/audio.h"
 
 #define toggleLCD() Hardware.display_enabled = !(Hardware.display_enabled);
-#define showSeek()                  \
-    tr_bright = 255;                \
-    deleteTask(color_fade_control); \
-    colorSHIFT(&evnt_st.menu_seek); \
+#define showSeek()   \
+    tr_bright = 255; \
+    colorSHIFT(&evnt_st.menu_seek);
 // Prikaze element v seeku ce je scroll aktiven
 
 #define auto_exit()                                 \
@@ -18,45 +17,35 @@
         evnt_st.state = unset;                      \
         evnt_st.state_exit_timer.ponastavi();       \
                                                     \
-        flash_strip(evnt_st.menu_seek);                              \
-        brightDOWN();                               \
+        flash_strip();                              \
+        tr_bright = 255;                            \
+        brightDOWN(15);                             \
                                                     \
         resumeTASK(audio_system_control);           \
         delay_FRTOS(500);                           \
     }
 // auto izhod iz scrolla
 
-void mic_mode_change();
-void button2Events();
 void Shutdown();
 void external_power_switch_ev();
 void internal_power_switch_ev();
-void audio_mode_change(char *ch);
+void strip_mode_chg(char *ch);
 extern VHOD napajalnik;
 VHOD eventSW(4, 'B', 0);
 
-/* struct click_event_structure
-{
-    unsigned int hold_time = 0;
-    bool double_click = false;
-    bool click = true;
-    unsigned short press_counter = 0;
-} click_event; */
-
-enum menu_seek
+enum menu_seek_t
 {
     TOGGLE_LCD,
-    MIC_MODE_CH,
     STRIP_MD_CHG,
     STRIP_OFF,
-    LENGTH
+    menu_seek_LEN //dolzina
 };
 
-enum states
+enum states_t
 {
     unset,
     SCROLL,
-    LLENGTH
+    states_len //dolzina
 };
 
 struct sw2_state_machine_strct
@@ -90,17 +79,20 @@ void events(void *paramOdTaska)
         {
             switch (evnt_st.state)
             {
+                /***************************************************************************/
+                /*                           NE-NASTAVLJEN STATE                           */
+                /***************************************************************************/
+
             case unset:
-                if (eventSW.vrednost() && evnt_st.hold_timer.vrednost() > 1000)
+                if (evnt_st.hold_timer.vrednost() > 1000)
                 {
-                    holdTASK(audio_system_control);
-                    deleteALL_subAUDIO_tasks();
                     evnt_st.state = SCROLL;
                     evnt_st.menu_seek = TOGGLE_LCD;
                     evnt_st.state_exit_timer.ponastavi();
                     evnt_st.hold_timer.ponastavi();
                     turnOFFstrip();
-                    flash_strip(evnt_st.menu_seek);
+                    flash_strip();
+                    showSeek();
                     delay_FRTOS(200);
                     evnt_st.longPRESS = true;
                 }
@@ -109,6 +101,11 @@ void events(void *paramOdTaska)
                     evnt_st.hold_timer.ponastavi();
 
                 break;
+
+                /***************************************************************************/
+                /*                               SCROLL STATE                              */
+                /***************************************************************************/
+
             case SCROLL:
                 auto_exit(); //Macro to auto exit timer
                 if (eventSW.vrednost())
@@ -118,66 +115,62 @@ void events(void *paramOdTaska)
 
                     if (evnt_st.hold_time > 1000)
                     {
-
-                        flash_strip(evnt_st.menu_seek);
-                        brightDOWN(); // Zafada navzdol
-
+                        flash_strip();
                         switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
                         case TOGGLE_LCD:
-                            toggleLCD();
+                            toggleLCD(); //Task se blocka v zaslon tasku
+                            if (Hardware.display_enabled)
+                                resumeTASK(zaslon_control);
                             break;
                         case STRIP_MD_CHG:
-                            audio_mode_change("");
+                            strip_mode_chg("");
                             break;
-
                         case STRIP_OFF:
-                            audio_mode_change("off");
+                            strip_mode_chg("off");
                             break;
-
-                        case MIC_MODE_CH:
-                            mic_mode_change();
-                            break;
+                            evnt_st.state = unset;
+                            evnt_st.menu_seek = TOGGLE_LCD;
+                            evnt_st.longPRESS = true;
+                            tr_bright = 255;
+                            brightDOWN(15); // Zafada navzdol
+                            delay_FRTOS(500);
+                            resumeTASK(audio_system_control);
                         }
-                        evnt_st.state = unset;
-                        evnt_st.menu_seek = TOGGLE_LCD;
-                        evnt_st.longPRESS = true;
-                        delay_FRTOS(500);
-                        resumeTASK(audio_system_control);
                     }
-                }
 
-                else if (evnt_st.hold_time > 0)
-                {
-
-                    if (evnt_st.hold_time < 500)
+                    else if (evnt_st.hold_time > 0)
                     {
-                        evnt_st.menu_seek = (evnt_st.menu_seek + 1) % LENGTH;
+
+                        if (evnt_st.hold_time < 500) //Kratek pritisk
+                        {
+                            evnt_st.menu_seek = (evnt_st.menu_seek + 1) % menu_seek_LEN;
+                        }
+                        showSeek();
+                        evnt_st.hold_timer.ponastavi();
+                        evnt_st.hold_time = 0;
                     }
-                    showSeek();
-                    evnt_st.hold_timer.ponastavi();
-                    evnt_st.hold_time = 0;
+                    break;
                 }
-                break;
             }
-        }
 
-        /******************************** POWER SWITCH EVENTS ********************************/
-        if (napajalnik.vrednost() && Hardware.PSW == false)
-        {
-            delay(20);
-            external_power_switch_ev();
-            delay(20);
-        }
+            /******************************** POWER SWITCH EVENTS ********************************/
+            if (napajalnik.vrednost() && Hardware.PSW == false)
+            {
+                delay(20);
+                external_power_switch_ev();
+                delay(20);
+            }
 
-        else if (napajalnik.vrednost() == 0 && Hardware.PSW)
-        {
-            delay(20);
-            internal_power_switch_ev();
-            delay(20);
+            else if (napajalnik.vrednost() == 0 && Hardware.PSW)
+            {
+                delay(20);
+                internal_power_switch_ev();
+                delay(20);
+            }
+            delay_FRTOS(30);
+            /*************************************************************************************/
         }
-        delay_FRTOS(30);
-        /*************************************************************************************/
     }
 }
 
