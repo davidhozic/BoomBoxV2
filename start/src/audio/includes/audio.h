@@ -10,9 +10,9 @@
 /*********************************/
 /*             Makro             */
 /*********************************/
-#define r_trak 9
-#define z_trak 3
-#define m_trak 11
+#define r_trak 23
+#define z_trak 24
+#define m_trak 25
 #define tr_r AUSYS_vars.TR_BARVA[0]
 #define tr_z AUSYS_vars.TR_BARVA[1]
 #define tr_m AUSYS_vars.TR_BARVA[2]
@@ -23,7 +23,7 @@
 #define colorSHIFT(index_barve) color_fade_funct((uint8_t *)index_barve);
 #define cr_fade_tsk(funct, name, barv, control) \
     deleteTask(control);                        \
-    xTaskCreate(funct, name, 64, &barv, 3, &control)
+    xTaskCreate(funct, name, 128, &barv, 3, &control)
 #define turnOFFstrip()              \
     holdTASK(audio_system_control); \
     deleteALL_subAUDIO_tasks();     \
@@ -33,6 +33,7 @@
     tr_z = mozne_barve.barvni_ptr[*((uint8_t *)x)][1]; \
     tr_m = mozne_barve.barvni_ptr[*((uint8_t *)x)][2];
 /********************************************************************/
+
 
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;

@@ -1,3 +1,4 @@
+
 #include <Arduino_FreeRTOS.h>
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src\EEPROM.h"
 #include "Vhod.h"
@@ -32,8 +33,9 @@ void mic_mode_change();
 
 void setup()
 {
-  DDRD = 0b11101001;
-  DDRB = 0b00001111;
+  DDRE |= 1;
+  DDRH |= 1 << 3 | 1 << 4 | 1 << 5;
+  DDRB |= 0b11110000;
 
   writeOUTPUT(4, 'B', 1); // PULL up
   Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
@@ -41,10 +43,10 @@ void setup()
   xSemaphoreGive(voltage_SEM); /*   (GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja)  */
 
   trenutni_audio_mode = OFF_A;
-  xTaskCreate(core, "_core", 64, NULL, tskIDLE_PRIORITY, &core_control);
-  xTaskCreate(events, "Events task", 80, NULL, 3, &event_control);
-  xTaskCreate(zaslon, "LVCHRG", 64, NULL, tskIDLE_PRIORITY, &zaslon_control);
-  xTaskCreate(thermal, "therm", 64, NULL, 1, &thermal_control);
-  xTaskCreate(polnjenje, "CHRG", 64, NULL, tskIDLE_PRIORITY, &chrg_control);
-  xTaskCreate(audio_visual, "auvs", 80, NULL, 2, &audio_system_control);
+  xTaskCreate(core, "_core", 256, NULL, tskIDLE_PRIORITY, &core_control);
+  xTaskCreate(events, "Events task", 256, NULL, 3, &event_control);
+  xTaskCreate(zaslon, "LVCHRG", 256, NULL, tskIDLE_PRIORITY, &zaslon_control);
+  xTaskCreate(thermal, "therm", 256, NULL, 1, &thermal_control);
+  xTaskCreate(polnjenje, "CHRG", 256, NULL, tskIDLE_PRIORITY, &chrg_control);
+  xTaskCreate(audio_visual, "auvs", 256, NULL, 2, &audio_system_control);
 }

@@ -59,28 +59,27 @@ void core(void *paramOdTaska)
             xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
         }
 
-       // (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && 
         //----------------------------------------------------------------------------------------------------------------------------------
         //                                               Power UP
         //----------------------------------------------------------------------------------------------------------------------------------
-        if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && !Hardware.is_Powered_UP)
+        if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && !Hardware.is_Powered_UP)
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
             Power_UP();
         }
 
         if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
         {
-            //Shutdown();
-            //spanje();
+            Shutdown();
+            spanje();
         }
-        delay_FRTOS(200);   
+        delay_FRTOS(200);
     }
 }
 
 void Shutdown()
 {
-    writeOUTPUT(PIN0,'B',0); // izklopi izhod
-    writeOUTPUT(PIN0,'D',0); 
+    writeOUTPUT(_12V_line, 'B', 0); // izklopi izhod
+    writeOUTPUT(main_mosfet_pin, 'H', 0);
     Hardware.is_Powered_UP = false;
     trenutni_audio_mode = OFF_A;
 }
@@ -88,10 +87,7 @@ void Shutdown()
 void Power_UP()
 {
     trenutni_audio_mode = EEPROM.read(audiomode_eeprom_addr);
-    writeOUTPUT(PIN0,'B',1); // izklopi izhod
-    writeOUTPUT(PIN0,'D',1);
+    writeOUTPUT(_12V_line, 'B', 1); // izklopi izhod
+    writeOUTPUT(main_mosfet_pin, 'H', 1);
     Hardware.is_Powered_UP = true;
 }
-
-
-
