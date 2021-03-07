@@ -49,10 +49,8 @@ void core(void *paramOdTaska)
 
         if (xSemaphoreTake(voltage_SEM, portMAX_DELAY) == pdTRUE) // Vzame dostop do napetostnega semaforja -> ostali taski ne morajo brati napetosti
         {
-            unsigned short vReadDelay;
-            Hardware.napetost == 0 ? vReadDelay = 500 : 3000; //Ce napetost ni prebrana cakaj le 500ms, drugace pa 3000ms
 
-            if (Timers.VOLT_timer.vrednost() > vReadDelay)
+            if (Timers.VOLT_timer.vrednost() > 500)
             {
                 Timers.VOLT_timer.ponastavi();
                 Hardware.napetost = analogRead(vDIV_pin) * (float)Hardware.REF_mVOLT / 1023.00f;
@@ -61,20 +59,21 @@ void core(void *paramOdTaska)
             xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
         }
 
+       // (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && 
         //----------------------------------------------------------------------------------------------------------------------------------
         //                                               Power UP
         //----------------------------------------------------------------------------------------------------------------------------------
-        if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && !Hardware.is_Powered_UP)
+        if (Timers.stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && !Hardware.is_Powered_UP)
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
             Power_UP();
         }
 
         if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
         {
-            Shutdown();
-            spanje();
+            //Shutdown();
+            //spanje();
         }
-        delay_FRTOS(100);   
+        delay_FRTOS(200);   
     }
 }
 
@@ -88,7 +87,7 @@ void Shutdown()
 
 void Power_UP()
 {
-    trenutni_audio_mode = static_cast<audio_mode>(EEPROM.read(audiomode_eeprom_addr));
+    trenutni_audio_mode = EEPROM.read(audiomode_eeprom_addr);
     writeOUTPUT(PIN0,'B',1); // izklopi izhod
     writeOUTPUT(PIN0,'D',1);
     Hardware.is_Powered_UP = true;

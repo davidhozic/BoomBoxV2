@@ -27,7 +27,6 @@ void mic_mode_change();
 /**/ TaskHandle_t chrg_control = NULL;         /**/
 /**/ TaskHandle_t thermal_control = NULL;      /**/
 /**/ TaskHandle_t meas_control = NULL;         /**/
-/**/ SemaphoreHandle_t Thermal_SEM = NULL;
 /**/ SemaphoreHandle_t voltage_SEM = NULL;
 /*************************************************/
 
@@ -38,16 +37,14 @@ void setup()
 
   writeOUTPUT(4, 'B', 1); // PULL up
   Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
-  Thermal_SEM = xSemaphoreCreateMutex();
   voltage_SEM = xSemaphoreCreateMutex();
-  xSemaphoreGive(Thermal_SEM); /* Semafor za prepecitev dostopa do spremenljivke iz vec taskov naenkrat  */
   xSemaphoreGive(voltage_SEM); /*   (GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja)  */
 
   trenutni_audio_mode = OFF_A;
   xTaskCreate(core, "_core", 64, NULL, tskIDLE_PRIORITY, &core_control);
-  xTaskCreate(events, "Events task", 64, NULL, 3, &event_control);
+  xTaskCreate(events, "Events task", 80, NULL, 3, &event_control);
   xTaskCreate(zaslon, "LVCHRG", 64, NULL, tskIDLE_PRIORITY, &zaslon_control);
   xTaskCreate(thermal, "therm", 64, NULL, 1, &thermal_control);
   xTaskCreate(polnjenje, "CHRG", 64, NULL, tskIDLE_PRIORITY, &chrg_control);
-  xTaskCreate(audio_visual, "auvs", 64, NULL, 2, &audio_system_control);
+  xTaskCreate(audio_visual, "auvs", 80, NULL, 2, &audio_system_control);
 }

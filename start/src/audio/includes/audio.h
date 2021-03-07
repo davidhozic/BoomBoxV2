@@ -21,6 +21,9 @@
 #define brightUP(cas_na_krog) svetlost_mod_funct(1, cas_na_krog);
 #define brightDOWN(cas_na_krog) svetlost_mod_funct(-1, cas_na_krog);
 #define colorSHIFT(index_barve) color_fade_funct((uint8_t *)index_barve);
+#define cr_fade_tsk(funct, name, barv, control) \
+    deleteTask(control);                        \
+    xTaskCreate(funct, name, 64, &barv, 3, &control)
 #define turnOFFstrip()              \
     holdTASK(audio_system_control); \
     deleteALL_subAUDIO_tasks();     \
@@ -47,7 +50,7 @@ void mic_mode_change();
 void strip_mode_chg(char *ch);
 void deleteALL_subAUDIO_tasks();
 void flash_strip();
-uint16_t AVG_Volume_Meri();
+int AVG_Volume_Meri();
 /*********************************************/
 
 /*********************************************/
@@ -58,7 +61,7 @@ void Color_Fade_task(void *B);
 void Fade_Breathe_Task(void *B);
 /*********************************************/
 
-enum audio_mode
+enum strip_mode_enum_t
 {
     NORMAL_FADE,
     COLOR_FADE,

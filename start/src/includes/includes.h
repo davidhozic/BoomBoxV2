@@ -36,7 +36,6 @@ extern TaskHandle_t zaslon_control;
 extern TaskHandle_t chrg_control;
 extern TaskHandle_t thermal_control;
 extern TaskHandle_t meas_control;
-extern SemaphoreHandle_t Thermal_SEM;
 extern SemaphoreHandle_t voltage_SEM;
 
 struct Hardware_t

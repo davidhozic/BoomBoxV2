@@ -33,17 +33,19 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
     bool mikrofon_detect = false;
     bool mikrofon_det_prejsnja = false;
     unsigned short prev_random = 0; //Za vecjo nakljucnost
-    uint8_t povprecna_glasnost = 0;
+    uint16_t povprecna_glasnost = 0;
 
     while (true)
     {
-        uint16_t checkPVP = AVG_Volume_Meri(); // Izmeri povprecje
+        taskENTER_CRITICAL();
+        int checkPVP = AVG_Volume_Meri(); // Izmeri povprecje
         povprecna_glasnost = checkPVP != 0 ? checkPVP : povprecna_glasnost;
         mikrofon_detect = analogRead(mic_pin) >= (povprecna_glasnost + 80) && povprecna_glasnost != 0 ? true : false;
+        taskEXIT_CRITICAL();
 
-        if (mikrofon_detect && mikrofon_detect != mikrofon_det_prejsnja) // AUDIO_M machine
+        if (Timers.lucke_filter_time.vrednost() > 100 && mikrofon_detect ) // AUDIO_M machine
         {
-            mikrofon_det_prejsnja = mikrofon_detect;
+            Timers.lucke_filter_time.ponastavi();
             uint8_t barva_selekt = (random(0, 55) * prev_random) % LENGHT; //Extra nakljucnost
             prev_random = random(0, analogRead(A4) + millis() % 5000);
 
@@ -51,18 +53,15 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
             {
 
             case NORMAL_FADE: //Prizig in fade izklop
-                deleteTask(fade_control);
-                xTaskCreate(fade_task, "normalni fade_create", 46, &barva_selekt, 2, &fade_control);
+                cr_fade_tsk(fade_task, "Normal Fade", barva_selekt, fade_control);
                 break;
 
             case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-                deleteTask(color_fade_control);
-                xTaskCreate(Color_Fade_task, "col_fade", 46, &barva_selekt, 2, &color_fade_control);
+                cr_fade_tsk(Color_Fade_task, "Color shift", barva_selekt, color_fade_control);
                 break;
 
-            case Fade_Breathe:  //Dihalni nacin
-                deleteTask(Breathe_control);
-                xTaskCreate(Fade_Breathe_Task, "breathe fade", 46, &barva_selekt, 3, &Breathe_control);
+            case Fade_Breathe: //Dihalni nacin
+                cr_fade_tsk(Fade_Breathe_Task, "Breathe Fade", barva_selekt, Breathe_control);
                 break;
 
             case OFF_A:

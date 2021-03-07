@@ -107,7 +107,7 @@ void strip_mode_chg(char *ch)
         trenutni_audio_mode = NORMAL_FADE;
 
     else
-        trenutni_audio_mode = ++trenutni_audio_mode % audio_mode::LENGTH_2;
+        trenutni_audio_mode = ++trenutni_audio_mode % strip_mode_enum_t::LENGTH_2;
     EEPROM.write(audiomode_eeprom_addr, trenutni_audio_mode);
     deleteALL_subAUDIO_tasks();
 }

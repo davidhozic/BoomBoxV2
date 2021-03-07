@@ -12,8 +12,6 @@ void thermal(void *paramOdTaska)
   {
     delay_FRTOS(6000);
 
-    xSemaphoreTake(Thermal_SEM, portMAX_DELAY); //Vzame dostop do semaforja, ostali taski morajo cakati ce hocejo dostopati do temperature
-
     float AMP_Temp_S_Voltage = (float)analogRead(A1) * Hardware.REF_mVOLT / 1023.00f;
     Hardware.Amplifier_temp = (float)(-0.073f) * (float)AMP_Temp_S_Voltage + 192.754f;
 
@@ -23,7 +21,6 @@ void thermal(void *paramOdTaska)
       Shutdown();
     }
 
-    xSemaphoreGive(Thermal_SEM);
 
     /*   STARO
       if (hlajenjeCas.vrednost() < 300000 && Hardware.Amplifier_temp < 42.00 || napajalnik.vrednost() == 0)
