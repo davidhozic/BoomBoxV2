@@ -3,9 +3,9 @@
 #include "../includes/includes.h"
 #include "includes/audio.h"
 /*************************** task nadzor  **************************/
-TaskHandle_t fade_control = NULL;
-TaskHandle_t color_fade_control = NULL;
-TaskHandle_t Breathe_control = NULL;
+TaskHandle_t fade_control ;
+TaskHandle_t color_fade_control;
+TaskHandle_t Breathe_control ;
 /*******************************************************************/
 
 /**************************************************************************************************************************
@@ -47,6 +47,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
             {
 
             case NORMAL_FADE: //Prizig in fade izklop
+			    deleteTask(fade_control);                        
                 cr_fade_tsk(fade_task, "Normal Fade", barva_selekt, fade_control);
                 break;
 

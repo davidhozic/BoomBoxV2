@@ -86,7 +86,6 @@ void events(void *paramOdTaska)
 {
     while (true)
     {
-
         /******************************************** SWITCH 2 EVENTS ****************************************/
 
         if (eventSW.vrednost())

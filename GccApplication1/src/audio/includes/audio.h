@@ -20,7 +20,8 @@
 #define colorSHIFT(index_barve) color_fade_funct((uint8_t *)index_barve);
 #define cr_fade_tsk(funct, name, barv, control) \
     deleteTask(control);                        \
-    xTaskCreate(funct, name, 128, &barv, 3, &control)
+    xTaskCreate(funct, name, 128, &barv, 3, &control);
+
 #define turnOFFstrip()              \
     holdTASK(audio_system_control); \
     deleteALL_subAUDIO_tasks();     \
