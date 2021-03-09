@@ -3,6 +3,9 @@
         {
             "name": "Win32",
             "includePath": [
+                "C:\\Users\\McHea\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
+                "C:\\Users\\McHea\\AppData\\Local\\Programs\\Microsoft VS Code\\libraries\\**",
+                "C:\\Users\\McHea\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.4\\**",
                 "D:\\Documents\\Arduino\\libraries\\PinChangeInterrupt\\src",
                 "D:\\Documents\\Arduino\\libraries\\FreeRTOS\\src",
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
@@ -11,9 +14,7 @@
                 "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**"
             ],
-            "forcedInclude": [
-                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
-            ],
+            "forcedInclude": [],
             "defines": [
                 "USBCON"
             ],
