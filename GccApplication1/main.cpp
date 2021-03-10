@@ -1,4 +1,4 @@
-#define  F_CPU 16000000UL
+#define  F_CPU 16000000
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
 #include "src/includes/includes.h"
@@ -38,11 +38,10 @@ DDRB |= 0b11110000;
 /************************/
 /* Nastavitev Timerja */
 
-TCCR5A = 0b00000010;
-TCCR5B = (1 << CS50);
-OCR5A = 16000;
-TIMSK5 = (1 << OCIE5A);
-
+TCCR0A = 1 << WGM01;
+TCCR4B = (1 << CS01) | (1 << CS00) ;
+OCR0A = 250;
+TIMSK0 = (1 << OCIE0A);
 /************************/
 ADMUX = (1 << REFS0) | (1 << 0b00000011) | (1 << ADLAR); //Nastavi referenco za napetost
 ADCSRA |= (1 << ADEN);                                   //Vklop adc in zacetek konverzije

@@ -1,4 +1,4 @@
-#include <Arduino_FreeRTOS.h>
+#include <FreeRTOS.h>
 
 // define two tasks for Blink & AnalogRead
 void TaskBlink( void *pvParameters );

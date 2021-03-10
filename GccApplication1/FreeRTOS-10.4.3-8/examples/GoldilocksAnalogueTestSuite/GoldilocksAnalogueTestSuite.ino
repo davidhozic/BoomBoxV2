@@ -16,7 +16,7 @@
 // INSTALLATION OF THE 4 FOLLOWING LIBRARIES REQUIRED!
 
 // From Library: FreeRTOS
-#include <Arduino_FreeRTOS.h>
+#include <FreeRTOS.h>
 #include <semphr.h>
 
 // From Library: AVR Real Time Clock Library

@@ -2,7 +2,7 @@
 
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
-#include <Arduino_FreeRTOS.h>
+#include <FreeRTOS.h>
 #include "includes/includes.h"
 #include "audio/includes/audio.h"
 VHOD napajalnik(2, 'D', 0);
@@ -16,11 +16,9 @@ void audio_visual();
 
 void core(void *paramOdTaska)
 {
-
 	while (true)
 	{
-		if (stikalo.vrednost() == 0 && Timers.stikaloOFFtime.vrednost() > 30)
-		{
+		if (stikalo.vrednost() == 0 && Timers.stikaloOFFtime.vrednost() > 30)	{
 			if (Hardware.is_Powered_UP)
 			{
 				Shutdown();
@@ -62,7 +60,7 @@ void core(void *paramOdTaska)
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
-		if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0 && !Hardware.is_Powered_UP) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
+		if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0 && Hardware.is_Powered_UP) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
 		{
 			Shutdown();
 		}

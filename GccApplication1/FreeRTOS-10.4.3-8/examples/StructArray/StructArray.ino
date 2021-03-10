@@ -4,7 +4,7 @@
  */
 
 // Include Arduino FreeRTOS library
-#include <Arduino_FreeRTOS.h>
+#include <FreeRTOS.h>
 
 // Include queue support
 #include <queue.h>

@@ -5,7 +5,7 @@
 
 
 // Include Arduino FreeRTOS library
-#include <Arduino_FreeRTOS.h>
+#include <FreeRTOS.h>
 
 // Include semaphore supoport
 #include <semphr.h>
