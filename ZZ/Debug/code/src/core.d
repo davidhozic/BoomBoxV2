@@ -30,7 +30,8 @@ code/src/core.d code/src/core.o: ../code/src/core.cpp \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  ../code/src/audio/includes/audio.h \
  c:\boomboxv2\zz\code\src\includes\settings.h \
- ../code/src/audio/includes/../BARVE/barve.h
+ ../code/src/audio/includes/../BARVE/barve.h \
+ ../code/src/Hardware\ Functions/EEPROM/EEPROM.h
 
 ../code/castimer/castimer.h:
 
@@ -101,3 +102,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 c:\boomboxv2\zz\code\src\includes\settings.h:
 
 ../code/src/audio/includes/../BARVE/barve.h:
+
+../code/src/Hardware\ Functions/EEPROM/EEPROM.h:

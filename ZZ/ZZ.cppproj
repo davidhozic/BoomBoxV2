@@ -179,6 +179,7 @@
     <Folder Include="code\src\audio\includes\" />
     <Folder Include="code\src\events\" />
     <Folder Include="code\src\Hardware Functions\" />
+    <Folder Include="code\src\Hardware Functions\EEPROM" />
     <Folder Include="code\src\includes\" />
     <Folder Include="code\src\Power\" />
     <Folder Include="code\VHOD\" />
@@ -301,7 +302,13 @@
     <Compile Include="code\src\events\events.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\src\Hardware Functions\writeOUTPUT.cpp">
+    <Compile Include="code\src\Hardware Functions\EEPROM\eeprom.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\src\Hardware Functions\EEPROM\EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\src\Hardware Functions\outputs.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\src\includes\includes.h">

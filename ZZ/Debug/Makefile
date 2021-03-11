@@ -43,6 +43,7 @@ SUBDIRS :=  \
 ../code/src/audio/includes/ \
 ../code/src/events/ \
 ../code/src/Hardware\ Functions/ \
+../code/src/Hardware\ Functions/EEPROM \
 ../code/src/includes/ \
 ../code/src/Power/ \
 ../code/VHOD/
@@ -68,7 +69,8 @@ C_SRCS +=  \
 ../code/src/audio/pod_task.cpp \
 ../code/src/core.cpp \
 ../code/src/events/events.cpp \
-../code/src/Hardware\ Functions/writeOUTPUT.cpp \
+../code/src/Hardware\ Functions/EEPROM/eeprom.cpp \
+../code/src/Hardware\ Functions/outputs.cpp \
 ../code/src/includes/structs.cpp \
 ../code/src/Power/chrg.cpp \
 ../code/src/Power/zaslon.cpp \
@@ -101,7 +103,8 @@ code/src/audio/pod_funk.o \
 code/src/audio/pod_task.o \
 code/src/core.o \
 code/src/events/events.o \
-code/src/Hardware\ Functions/writeOUTPUT.o \
+code/src/Hardware\ Functions/EEPROM/eeprom.o \
+code/src/Hardware\ Functions/outputs.o \
 code/src/includes/structs.o \
 code/src/Power/chrg.o \
 code/src/Power/zaslon.o \
@@ -127,7 +130,8 @@ code/src/audio/pod_funk.o \
 code/src/audio/pod_task.o \
 code/src/core.o \
 code/src/events/events.o \
-"code/src/Hardware Functions/writeOUTPUT.o" \
+"code/src/Hardware Functions/EEPROM/eeprom.o" \
+"code/src/Hardware Functions/outputs.o" \
 code/src/includes/structs.o \
 code/src/Power/chrg.o \
 code/src/Power/zaslon.o \
@@ -153,7 +157,8 @@ code/src/audio/pod_funk.d \
 code/src/audio/pod_task.d \
 code/src/core.d \
 code/src/events/events.d \
-code/src/Hardware\ Functions/writeOUTPUT.d \
+code/src/Hardware\ Functions/EEPROM/eeprom.d \
+code/src/Hardware\ Functions/outputs.d \
 code/src/includes/structs.d \
 code/src/Power/chrg.d \
 code/src/Power/zaslon.d \
@@ -179,7 +184,8 @@ code/src/audio/pod_funk.d \
 code/src/audio/pod_task.d \
 code/src/core.d \
 code/src/events/events.d \
-"code/src/Hardware Functions/writeOUTPUT.d" \
+"code/src/Hardware Functions/EEPROM/eeprom.d" \
+"code/src/Hardware Functions/outputs.d" \
 code/src/includes/structs.d \
 code/src/Power/chrg.d \
 code/src/Power/zaslon.d \
@@ -326,7 +332,14 @@ code/src/events/events.o: ../code/src/events/events.cpp
 	@echo Finished building: $<
 	
 
-code/src/Hardware\ Functions/writeOUTPUT.o: ../code/src/Hardware\ Functions/writeOUTPUT.cpp
+code/src/Hardware\ Functions/EEPROM/eeprom.o: ../code/src/Hardware\ Functions/EEPROM/eeprom.cpp
+	@echo Building file: $<
+	@echo Invoking: AVR8/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include" -I"../code" -I"../code/FreeRTOS-10.4.3-8/src"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega2560 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+code/src/Hardware\ Functions/outputs.o: ../code/src/Hardware\ Functions/outputs.cpp
 	@echo Building file: $<
 	@echo Invoking: AVR8/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include" -I"../code" -I"../code/FreeRTOS-10.4.3-8/src"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega2560 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

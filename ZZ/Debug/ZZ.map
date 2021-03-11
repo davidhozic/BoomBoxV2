@@ -330,9 +330,12 @@ Discarded input sections
  .text          0x00000000        0x0 code/src/events/events.o
  .data          0x00000000        0x0 code/src/events/events.o
  .bss           0x00000000        0x0 code/src/events/events.o
- .text          0x00000000        0x0 code/src/Hardware Functions/writeOUTPUT.o
- .data          0x00000000        0x0 code/src/Hardware Functions/writeOUTPUT.o
- .bss           0x00000000        0x0 code/src/Hardware Functions/writeOUTPUT.o
+ .text          0x00000000        0x0 code/src/Hardware Functions/EEPROM/eeprom.o
+ .data          0x00000000        0x0 code/src/Hardware Functions/EEPROM/eeprom.o
+ .bss           0x00000000        0x0 code/src/Hardware Functions/EEPROM/eeprom.o
+ .text          0x00000000        0x0 code/src/Hardware Functions/outputs.o
+ .data          0x00000000        0x0 code/src/Hardware Functions/outputs.o
+ .bss           0x00000000        0x0 code/src/Hardware Functions/outputs.o
  .text          0x00000000        0x0 code/src/includes/structs.o
  .data          0x00000000        0x0 code/src/includes/structs.o
  .bss           0x00000000        0x0 code/src/includes/structs.o
@@ -579,7 +582,8 @@ LOAD code/src/audio/pod_funk.o
 LOAD code/src/audio/pod_task.o
 LOAD code/src/core.o
 LOAD code/src/events/events.o
-LOAD code/src/Hardware Functions/writeOUTPUT.o
+LOAD code/src/Hardware Functions/EEPROM/eeprom.o
+LOAD code/src/Hardware Functions/outputs.o
 LOAD code/src/includes/structs.o
 LOAD code/src/Power/chrg.o
 LOAD code/src/Power/zaslon.o
@@ -696,7 +700,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x4262
+.text           0x00000000     0x4300
  *(.vectors)
  .vectors       0x00000000       0xe4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
                 0x00000000                __vector_default
@@ -1034,189 +1038,195 @@ END GROUP
  .text.__vector_21
                 0x00002664       0x50 code/main.o
                 0x00002664                __vector_21
- .text.main     0x000026b4      0x114 code/main.o
+ .text.main     0x000026b4      0x12a code/main.o
                 0x000026b4                main
  .text._Z12audio_visualPv
-                0x000027c8      0x19e code/src/audio/audiovs.o
-                0x000027c8                _Z12audio_visualPv
+                0x000027de      0x19e code/src/audio/audiovs.o
+                0x000027de                _Z12audio_visualPv
  .text._Z15AVG_Volume_Meriv
-                0x00002966       0xce code/src/audio/meritve.o
-                0x00002966                _Z15AVG_Volume_Meriv
+                0x0000297c       0xce code/src/audio/meritve.o
+                0x0000297c                _Z15AVG_Volume_Meriv
  .text._Z24deleteALL_subAUDIO_tasksv
-                0x00002a34       0x6a code/src/audio/pod_funk.o
-                0x00002a34                _Z24deleteALL_subAUDIO_tasksv
+                0x00002a4a       0x6a code/src/audio/pod_funk.o
+                0x00002a4a                _Z24deleteALL_subAUDIO_tasksv
  .text._Z9writeTRAKv
-                0x00002a9e       0xf6 code/src/audio/pod_funk.o
-                0x00002a9e                _Z9writeTRAKv
+                0x00002ab4       0xf6 code/src/audio/pod_funk.o
+                0x00002ab4                _Z9writeTRAKv
  .text._Z11flash_stripv
-                0x00002b94       0x74 code/src/audio/pod_funk.o
-                0x00002b94                _Z11flash_stripv
+                0x00002baa       0x74 code/src/audio/pod_funk.o
+                0x00002baa                _Z11flash_stripv
  .text._Z16color_fade_functPh
-                0x00002c08      0x248 code/src/audio/pod_funk.o
-                0x00002c08                _Z16color_fade_functPh
+                0x00002c1e      0x248 code/src/audio/pod_funk.o
+                0x00002c1e                _Z16color_fade_functPh
  .text._Z18svetlost_mod_functch
-                0x00002e50       0x7a code/src/audio/pod_funk.o
-                0x00002e50                _Z18svetlost_mod_functch
+                0x00002e66       0x86 code/src/audio/pod_funk.o
+                0x00002e66                _Z18svetlost_mod_functch
  .text._Z14strip_mode_chgPc
-                0x00002eca       0x5c code/src/audio/pod_funk.o
-                0x00002eca                _Z14strip_mode_chgPc
+                0x00002eec       0x6c code/src/audio/pod_funk.o
+                0x00002eec                _Z14strip_mode_chgPc
  .text._Z9fade_taskPv
-                0x00002f26       0x92 code/src/audio/pod_task.o
-                0x00002f26                _Z9fade_taskPv
+                0x00002f58       0x92 code/src/audio/pod_task.o
+                0x00002f58                _Z9fade_taskPv
  .text._Z15Color_Fade_taskPv
-                0x00002fb8       0x2c code/src/audio/pod_task.o
-                0x00002fb8                _Z15Color_Fade_taskPv
+                0x00002fea       0x2c code/src/audio/pod_task.o
+                0x00002fea                _Z15Color_Fade_taskPv
  .text._Z17Fade_Breathe_TaskPv
-                0x00002fe4       0x9a code/src/audio/pod_task.o
-                0x00002fe4                _Z17Fade_Breathe_TaskPv
+                0x00003016       0x9a code/src/audio/pod_task.o
+                0x00003016                _Z17Fade_Breathe_TaskPv
  .text._Z41__static_initialization_and_destruction_0ii
-                0x0000307e       0x32 code/src/core.o
+                0x000030b0       0x32 code/src/core.o
  .text._Z8Shutdownv
-                0x000030b0       0x22 code/src/core.o
-                0x000030b0                _Z8Shutdownv
+                0x000030e2       0x22 code/src/core.o
+                0x000030e2                _Z8Shutdownv
  .text._Z8Power_UPv
-                0x000030d2       0x18 code/src/core.o
-                0x000030d2                _Z8Power_UPv
+                0x00003104       0x2c code/src/core.o
+                0x00003104                _Z8Power_UPv
  .text._Z4corePv
-                0x000030ea      0x158 code/src/core.o
-                0x000030ea                _Z4corePv
+                0x00003130      0x154 code/src/core.o
+                0x00003130                _Z4corePv
  .text._GLOBAL__sub_I_napajalnik
-                0x00003242        0xc code/src/core.o
+                0x00003284        0xc code/src/core.o
  .text._Z41__static_initialization_and_destruction_0ii
-                0x0000324e       0x2e code/src/events/events.o
+                0x00003290       0x2e code/src/events/events.o
  .text._Z4exitv
-                0x0000327c       0x68 code/src/events/events.o
-                0x0000327c                _Z4exitv
+                0x000032be       0x68 code/src/events/events.o
+                0x000032be                _Z4exitv
  .text._Z24external_power_switch_evv
-                0x000032e4       0x3a code/src/events/events.o
-                0x000032e4                _Z24external_power_switch_evv
+                0x00003326       0x3a code/src/events/events.o
+                0x00003326                _Z24external_power_switch_evv
  .text._Z24internal_power_switch_evv
-                0x0000331e       0x38 code/src/events/events.o
-                0x0000331e                _Z24internal_power_switch_evv
+                0x00003360       0x38 code/src/events/events.o
+                0x00003360                _Z24internal_power_switch_evv
  .text._Z6eventsPv
-                0x00003356      0x260 code/src/events/events.o
-                0x00003356                _Z6eventsPv
+                0x00003398      0x260 code/src/events/events.o
+                0x00003398                _Z6eventsPv
  .text._GLOBAL__sub_I_evnt_st
-                0x000035b6        0xc code/src/events/events.o
+                0x000035f8        0xc code/src/events/events.o
+ .text._ZN8EEPROM_t4pisiEhj
+                0x00003604       0x32 code/src/Hardware Functions/EEPROM/eeprom.o
+                0x00003604                _ZN8EEPROM_t4pisiEhj
+ .text._ZN8EEPROM_t4beriEj
+                0x00003636       0x26 code/src/Hardware Functions/EEPROM/eeprom.o
+                0x00003636                _ZN8EEPROM_t4beriEj
  .text._Z6pwmOFFhc
-                0x000035c2       0x64 code/src/Hardware Functions/writeOUTPUT.o
-                0x000035c2                _Z6pwmOFFhc
+                0x0000365c       0x64 code/src/Hardware Functions/outputs.o
+                0x0000365c                _Z6pwmOFFhc
  .text._Z11writeOUTPUThcb
-                0x00003626       0xc0 code/src/Hardware Functions/writeOUTPUT.o
-                0x00003626                _Z11writeOUTPUThcb
+                0x000036c0       0xc0 code/src/Hardware Functions/outputs.o
+                0x000036c0                _Z11writeOUTPUThcb
  .text._Z10readANALOGh
-                0x000036e6       0x24 code/src/Hardware Functions/writeOUTPUT.o
-                0x000036e6                _Z10readANALOGh
+                0x00003780       0x24 code/src/Hardware Functions/outputs.o
+                0x00003780                _Z10readANALOGh
  .text._Z8writePWMhch
-                0x0000370a       0x68 code/src/Hardware Functions/writeOUTPUT.o
-                0x0000370a                _Z8writePWMhch
+                0x000037a4       0x68 code/src/Hardware Functions/outputs.o
+                0x000037a4                _Z8writePWMhch
  .text._Z41__static_initialization_and_destruction_0ii
-                0x00003772       0xe0 code/src/includes/structs.o
+                0x0000380c       0xe4 code/src/includes/structs.o
  .text._GLOBAL__sub_I_Hardware
-                0x00003852        0xc code/src/includes/structs.o
+                0x000038f0        0xc code/src/includes/structs.o
  .text._Z9polnjenjePv
-                0x0000385e       0xd6 code/src/Power/chrg.o
-                0x0000385e                _Z9polnjenjePv
+                0x000038fc       0xd6 code/src/Power/chrg.o
+                0x000038fc                _Z9polnjenjePv
  .text._Z6zaslonPv
-                0x00003934       0xd2 code/src/Power/zaslon.o
-                0x00003934                _Z6zaslonPv
+                0x000039d2       0xd2 code/src/Power/zaslon.o
+                0x000039d2                _Z6zaslonPv
  .text._Z7thermalPv
-                0x00003a06       0x64 code/src/thermal.o
-                0x00003a06                _Z7thermalPv
+                0x00003aa4       0x64 code/src/thermal.o
+                0x00003aa4                _Z7thermalPv
  .text._ZN4VHOD8vrednostEv
-                0x00003a6a       0x8e code/VHOD/vhod.o
-                0x00003a6a                _ZN4VHOD8vrednostEv
+                0x00003b08       0x8e code/VHOD/vhod.o
+                0x00003b08                _ZN4VHOD8vrednostEv
  .text._ZN4VHOD11fallingEdgeEv
-                0x00003af8       0x20 code/VHOD/vhod.o
-                0x00003af8                _ZN4VHOD11fallingEdgeEv
+                0x00003b96       0x20 code/VHOD/vhod.o
+                0x00003b96                _ZN4VHOD11fallingEdgeEv
  .text.avr-libc.fplib
-                0x00003b18        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(addsf3.o)
-                0x00003b18                __subsf3
-                0x00003b1a                __addsf3
+                0x00003bb6        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(addsf3.o)
+                0x00003bb6                __subsf3
+                0x00003bb8                __addsf3
  .text.avr-libc.fplib
-                0x00003b22       0xc0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(addsf3x.o)
-                0x00003b3c                __addsf3x
+                0x00003bc0       0xc0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(addsf3x.o)
+                0x00003bda                __addsf3x
  .text.avr-libc.fplib
-                0x00003be2        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(divsf3.o)
-                0x00003be2                __divsf3
+                0x00003c80        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(divsf3.o)
+                0x00003c80                __divsf3
  .text.avr-libc.fplib
-                0x00003be6       0xcc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(divsf3x.o)
-                0x00003bfc                __divsf3x
-                0x00003c00                __divsf3_pse
+                0x00003c84       0xcc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(divsf3x.o)
+                0x00003c9a                __divsf3x
+                0x00003c9e                __divsf3_pse
  .text.avr-libc.fplib
-                0x00003cb2       0x58 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fixunssfsi.o)
-                0x00003cb2                __fixunssfsi
+                0x00003d50       0x58 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fixunssfsi.o)
+                0x00003d50                __fixunssfsi
  .text.avr-libc.fplib
-                0x00003d0a       0x7a c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(floatsisf.o)
-                0x00003d0a                __floatunsisf
-                0x00003d0e                __floatsisf
+                0x00003da8       0x7a c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(floatsisf.o)
+                0x00003da8                __floatunsisf
+                0x00003dac                __floatsisf
  .text.avr-libc.fplib
-                0x00003d84        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_inf.o)
-                0x00003d84                __fp_inf
+                0x00003e22        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_inf.o)
+                0x00003e22                __fp_inf
  .text.avr-libc.fplib
-                0x00003d90        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_nan.o)
-                0x00003d90                __fp_nan
+                0x00003e2e        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_nan.o)
+                0x00003e2e                __fp_nan
  .text.avr-libc.fplib
-                0x00003d96        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_pscA.o)
-                0x00003d96                __fp_pscA
+                0x00003e34        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_pscA.o)
+                0x00003e34                __fp_pscA
  .text.avr-libc.fplib
-                0x00003da4        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_pscB.o)
-                0x00003da4                __fp_pscB
+                0x00003e42        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_pscB.o)
+                0x00003e42                __fp_pscB
  .text.avr-libc.fplib
-                0x00003db2       0x22 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_round.o)
-                0x00003db2                __fp_round
+                0x00003e50       0x22 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_round.o)
+                0x00003e50                __fp_round
  .text.avr-libc.fplib
-                0x00003dd4       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_split3.o)
-                0x00003dd4                __fp_split3
-                0x00003de4                __fp_splitA
+                0x00003e72       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_split3.o)
+                0x00003e72                __fp_split3
+                0x00003e82                __fp_splitA
  .text.avr-libc.fplib
-                0x00003e18        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_zero.o)
-                0x00003e18                __fp_zero
-                0x00003e1a                __fp_szero
+                0x00003eb6        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_zero.o)
+                0x00003eb6                __fp_zero
+                0x00003eb8                __fp_szero
  .text.avr-libc.fplib
-                0x00003e26        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(gesf2.o)
-                0x00003e26                __gesf2
-                0x00003e26                __gtsf2
+                0x00003ec4        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(gesf2.o)
+                0x00003ec4                __gesf2
+                0x00003ec4                __gtsf2
  .text.avr-libc.fplib
-                0x00003e2e        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(mulsf3.o)
-                0x00003e2e                __mulsf3
+                0x00003ecc        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(mulsf3.o)
+                0x00003ecc                __mulsf3
  .text.avr-libc.fplib
-                0x00003e32       0xc2 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(mulsf3x.o)
-                0x00003e46                __mulsf3x
-                0x00003e4a                __mulsf3_pse
+                0x00003ed0       0xc2 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(mulsf3x.o)
+                0x00003ee4                __mulsf3x
+                0x00003ee8                __mulsf3_pse
  .text.avr-libc.fplib
-                0x00003ef4       0x48 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_cmp.o)
-                0x00003ef4                __fp_cmp
+                0x00003f92       0x48 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libm.a(fp_cmp.o)
+                0x00003f92                __fp_cmp
  .text.libgcc.div
-                0x00003f3c       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_divmodhi4.o)
-                0x00003f3c                _div
-                0x00003f3c                __divmodhi4
+                0x00003fda       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_divmodhi4.o)
+                0x00003fda                _div
+                0x00003fda                __divmodhi4
  .text.libgcc.div
-                0x00003f62       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodsi4.o)
-                0x00003f62                __udivmodsi4
- .text.libgcc   0x00003fa6       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_tablejump2.o)
-                0x00003fa6                __tablejump2__
+                0x00004000       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodsi4.o)
+                0x00004000                __udivmodsi4
+ .text.libgcc   0x00004044       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_tablejump2.o)
+                0x00004044                __tablejump2__
  .text.libgcc.mul
-                0x00003fb6       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_umulhisi3.o)
-                0x00003fb6                __umulhisi3
+                0x00004054       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_umulhisi3.o)
+                0x00004054                __umulhisi3
  .text.libgcc.div
-                0x00003fd4       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodhi4.o)
-                0x00003fd4                __udivmodhi4
+                0x00004072       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_udivmodhi4.o)
+                0x00004072                __udivmodhi4
  .text.avr-libc
-                0x00003ffc      0x242 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(malloc.o)
-                0x00003ffc                malloc
-                0x0000412c                free
+                0x0000409a      0x242 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(malloc.o)
+                0x0000409a                malloc
+                0x000041ca                free
  .text.avr-libc
-                0x0000423e       0x12 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
-                0x0000423e                memcpy
+                0x000042dc       0x12 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(memcpy.o)
+                0x000042dc                memcpy
  .text.avr-libc
-                0x00004250        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(memset.o)
-                0x00004250                memset
-                0x0000425e                . = ALIGN (0x2)
+                0x000042ee        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(memset.o)
+                0x000042ee                memset
+                0x000042fc                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000425e        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
-                0x0000425e                _exit
-                0x0000425e                exit
+ .fini9         0x000042fc        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
+                0x000042fc                _exit
+                0x000042fc                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -1235,11 +1245,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000425e        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
+ .fini0         0x000042fc        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr6\libgcc.a(_exit.o)
  *(.fini0)
-                0x00004262                _etext = .
+                0x00004300                _etext = .
 
-.data           0x00800200       0x62 load address 0x00004262
+.data           0x00800200       0x62 load address 0x00004300
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800200        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(malloc.o)
@@ -1258,22 +1268,21 @@ END GROUP
  .rodata.str1.1
                 0x0080020c        0x8 code/FreeRTOS-10.4.3-8/src/timers.o
  .rodata.str1.1
-                0x00800214       0x24 code/main.o
-                                 0x29 (size before relaxing)
+                0x00800214       0x25 code/main.o
+                                 0x2a (size before relaxing)
  .rodata.str1.1
-                0x00800238       0x25 code/src/audio/audiovs.o
+                0x00800239       0x25 code/src/audio/audiovs.o
  .rodata.str1.1
-                0x0080025d        0x4 code/src/audio/pod_funk.o
+                0x0080025e        0x4 code/src/audio/pod_funk.o
  .rodata.str1.1
-                0x00800261        0x4 code/src/events/events.o
+                0x00800262        0x4 code/src/events/events.o
                                   0x5 (size before relaxing)
  *(.gnu.linkonce.r*)
                 0x00800266                . = ALIGN (0x2)
- *fill*         0x00800261        0x1 
-                0x00800262                _edata = .
-                0x00800262                PROVIDE (__data_end, .)
+                0x00800266                _edata = .
+                0x00800266                PROVIDE (__data_end, .)
 
-.bss            0x00800262     0x1155
+.bss            0x00800262     0x1156
                 0x00800262                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
@@ -1394,30 +1403,32 @@ END GROUP
                 0x00801324                eventSW
  .bss.evnt_st   0x0080132d        0xf code/src/events/events.o
                 0x0080132d                evnt_st
+ .bss.EEPROM    0x0080133c        0x1 code/src/includes/structs.o
+                0x0080133c                EEPROM
  .bss.mozne_barve
-                0x0080133c       0x28 code/src/includes/structs.o
-                0x0080133c                mozne_barve
+                0x0080133d       0x28 code/src/includes/structs.o
+                0x0080133d                mozne_barve
  .bss.AUSYS_vars
-                0x00801364        0xa code/src/includes/structs.o
-                0x00801364                AUSYS_vars
- .bss.Timers    0x0080136e       0x2d code/src/includes/structs.o
-                0x0080136e                Timers
- .bss.Hardware  0x0080139b       0x18 code/src/includes/structs.o
-                0x0080139b                Hardware
+                0x00801365        0xa code/src/includes/structs.o
+                0x00801365                AUSYS_vars
+ .bss.Timers    0x0080136f       0x2d code/src/includes/structs.o
+                0x0080136f                Timers
+ .bss.Hardware  0x0080139c       0x18 code/src/includes/structs.o
+                0x0080139c                Hardware
  *(COMMON)
- COMMON         0x008013b3        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(malloc.o)
-                0x008013b3                __brkval
-                0x008013b5                __flp
-                0x008013b7                PROVIDE (__bss_end, .)
-                0x00004262                __data_load_start = LOADADDR (.data)
-                0x000042c4                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x008013b4        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr6\libc.a(malloc.o)
+                0x008013b4                __brkval
+                0x008013b6                __flp
+                0x008013b8                PROVIDE (__bss_end, .)
+                0x00004300                __data_load_start = LOADADDR (.data)
+                0x00004362                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x008013b7        0x0
+.noinit         0x008013b8        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x008013b7                _end = .
-                0x008013b7                PROVIDE (__heap_start, .)
+                0x008013b8                _end = .
+                0x008013b8                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -1474,7 +1485,8 @@ END GROUP
  .comment       0x00000030       0x31 code/src/audio/pod_task.o
  .comment       0x00000030       0x31 code/src/core.o
  .comment       0x00000030       0x31 code/src/events/events.o
- .comment       0x00000030       0x31 code/src/Hardware Functions/writeOUTPUT.o
+ .comment       0x00000030       0x31 code/src/Hardware Functions/EEPROM/eeprom.o
+ .comment       0x00000030       0x31 code/src/Hardware Functions/outputs.o
  .comment       0x00000030       0x31 code/src/includes/structs.o
  .comment       0x00000030       0x31 code/src/Power/chrg.o
  .comment       0x00000030       0x31 code/src/Power/zaslon.o
@@ -1502,7 +1514,7 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x760
+.debug_aranges  0x00000000      0x788
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x28 code/castimer/castimer.o
@@ -1535,22 +1547,24 @@ END GROUP
  .debug_aranges
                 0x00000628       0x48 code/src/events/events.o
  .debug_aranges
-                0x00000670       0x38 code/src/Hardware Functions/writeOUTPUT.o
+                0x00000670       0x28 code/src/Hardware Functions/EEPROM/eeprom.o
  .debug_aranges
-                0x000006a8       0x28 code/src/includes/structs.o
+                0x00000698       0x38 code/src/Hardware Functions/outputs.o
  .debug_aranges
-                0x000006d0       0x20 code/src/Power/chrg.o
+                0x000006d0       0x28 code/src/includes/structs.o
  .debug_aranges
-                0x000006f0       0x20 code/src/Power/zaslon.o
+                0x000006f8       0x20 code/src/Power/chrg.o
  .debug_aranges
-                0x00000710       0x20 code/src/thermal.o
+                0x00000718       0x20 code/src/Power/zaslon.o
  .debug_aranges
-                0x00000730       0x30 code/VHOD/vhod.o
+                0x00000738       0x20 code/src/thermal.o
+ .debug_aranges
+                0x00000758       0x30 code/VHOD/vhod.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0xa5d8
+.debug_info     0x00000000     0xa9d3
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_info    0x00000bbc      0x207 code/castimer/castimer.o
@@ -1561,21 +1575,22 @@ END GROUP
  .debug_info    0x000030c7     0x229b code/FreeRTOS-10.4.3-8/src/tasks.o
  .debug_info    0x00005362     0x1040 code/FreeRTOS-10.4.3-8/src/timers.o
  .debug_info    0x000063a2      0x25e code/FreeRTOS-10.4.3-8/src/variantHooks.o
- .debug_info    0x00006600      0x55d code/main.o
- .debug_info    0x00006b5d      0x5ad code/src/audio/audiovs.o
- .debug_info    0x0000710a      0x24d code/src/audio/meritve.o
- .debug_info    0x00007357      0x6b6 code/src/audio/pod_funk.o
- .debug_info    0x00007a0d      0x35c code/src/audio/pod_task.o
- .debug_info    0x00007d69      0x7b8 code/src/core.o
- .debug_info    0x00008521      0xce0 code/src/events/events.o
- .debug_info    0x00009201      0x1c9 code/src/Hardware Functions/writeOUTPUT.o
- .debug_info    0x000093ca      0x54a code/src/includes/structs.o
- .debug_info    0x00009914      0x3d4 code/src/Power/chrg.o
- .debug_info    0x00009ce8      0x4bb code/src/Power/zaslon.o
- .debug_info    0x0000a1a3      0x216 code/src/thermal.o
- .debug_info    0x0000a3b9      0x21f code/VHOD/vhod.o
+ .debug_info    0x00006600      0x5a5 code/main.o
+ .debug_info    0x00006ba5      0x5ad code/src/audio/audiovs.o
+ .debug_info    0x00007152      0x24d code/src/audio/meritve.o
+ .debug_info    0x0000739f      0x7ca code/src/audio/pod_funk.o
+ .debug_info    0x00007b69      0x35c code/src/audio/pod_task.o
+ .debug_info    0x00007ec5      0x842 code/src/core.o
+ .debug_info    0x00008707      0xce0 code/src/events/events.o
+ .debug_info    0x000093e7      0x19e code/src/Hardware Functions/EEPROM/eeprom.o
+ .debug_info    0x00009585      0x1c9 code/src/Hardware Functions/outputs.o
+ .debug_info    0x0000974e      0x5c1 code/src/includes/structs.o
+ .debug_info    0x00009d0f      0x3d4 code/src/Power/chrg.o
+ .debug_info    0x0000a0e3      0x4bb code/src/Power/zaslon.o
+ .debug_info    0x0000a59e      0x216 code/src/thermal.o
+ .debug_info    0x0000a7b4      0x21f code/VHOD/vhod.o
 
-.debug_abbrev   0x00000000     0x2dfb
+.debug_abbrev   0x00000000     0x3013
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0xb1a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_abbrev  0x00000b1a      0x126 code/castimer/castimer.o
@@ -1586,21 +1601,22 @@ END GROUP
  .debug_abbrev  0x000012f9      0x2b7 code/FreeRTOS-10.4.3-8/src/tasks.o
  .debug_abbrev  0x000015b0      0x28c code/FreeRTOS-10.4.3-8/src/timers.o
  .debug_abbrev  0x0000183c      0x12f code/FreeRTOS-10.4.3-8/src/variantHooks.o
- .debug_abbrev  0x0000196b      0x161 code/main.o
- .debug_abbrev  0x00001acc      0x1da code/src/audio/audiovs.o
- .debug_abbrev  0x00001ca6      0x154 code/src/audio/meritve.o
- .debug_abbrev  0x00001dfa      0x1b4 code/src/audio/pod_funk.o
- .debug_abbrev  0x00001fae      0x135 code/src/audio/pod_task.o
- .debug_abbrev  0x000020e3      0x264 code/src/core.o
- .debug_abbrev  0x00002347      0x2e1 code/src/events/events.o
- .debug_abbrev  0x00002628       0xe2 code/src/Hardware Functions/writeOUTPUT.o
- .debug_abbrev  0x0000270a      0x1a6 code/src/includes/structs.o
- .debug_abbrev  0x000028b0      0x187 code/src/Power/chrg.o
- .debug_abbrev  0x00002a37      0x19c code/src/Power/zaslon.o
- .debug_abbrev  0x00002bd3      0x115 code/src/thermal.o
- .debug_abbrev  0x00002ce8      0x113 code/VHOD/vhod.o
+ .debug_abbrev  0x0000196b      0x18b code/main.o
+ .debug_abbrev  0x00001af6      0x1da code/src/audio/audiovs.o
+ .debug_abbrev  0x00001cd0      0x154 code/src/audio/meritve.o
+ .debug_abbrev  0x00001e24      0x252 code/src/audio/pod_funk.o
+ .debug_abbrev  0x00002076      0x135 code/src/audio/pod_task.o
+ .debug_abbrev  0x000021ab      0x290 code/src/core.o
+ .debug_abbrev  0x0000243b      0x2e1 code/src/events/events.o
+ .debug_abbrev  0x0000271c       0xf1 code/src/Hardware Functions/EEPROM/eeprom.o
+ .debug_abbrev  0x0000280d       0xe2 code/src/Hardware Functions/outputs.o
+ .debug_abbrev  0x000028ef      0x1d9 code/src/includes/structs.o
+ .debug_abbrev  0x00002ac8      0x187 code/src/Power/chrg.o
+ .debug_abbrev  0x00002c4f      0x19c code/src/Power/zaslon.o
+ .debug_abbrev  0x00002deb      0x115 code/src/thermal.o
+ .debug_abbrev  0x00002f00      0x113 code/VHOD/vhod.o
 
-.debug_line     0x00000000     0x5581
+.debug_line     0x00000000     0x582c
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1fa C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_line    0x000001fa      0x116 code/castimer/castimer.o
@@ -1611,21 +1627,22 @@ END GROUP
  .debug_line    0x000017d2     0x1674 code/FreeRTOS-10.4.3-8/src/tasks.o
  .debug_line    0x00002e46      0x626 code/FreeRTOS-10.4.3-8/src/timers.o
  .debug_line    0x0000346c      0x248 code/FreeRTOS-10.4.3-8/src/variantHooks.o
- .debug_line    0x000036b4      0x212 code/main.o
- .debug_line    0x000038c6      0x2a3 code/src/audio/audiovs.o
- .debug_line    0x00003b69      0x156 code/src/audio/meritve.o
- .debug_line    0x00003cbf      0x4df code/src/audio/pod_funk.o
- .debug_line    0x0000419e      0x1b7 code/src/audio/pod_task.o
- .debug_line    0x00004355      0x315 code/src/core.o
- .debug_line    0x0000466a      0x52e code/src/events/events.o
- .debug_line    0x00004b98      0x247 code/src/Hardware Functions/writeOUTPUT.o
- .debug_line    0x00004ddf      0x17b code/src/includes/structs.o
- .debug_line    0x00004f5a      0x205 code/src/Power/chrg.o
- .debug_line    0x0000515f      0x1ea code/src/Power/zaslon.o
- .debug_line    0x00005349      0x125 code/src/thermal.o
- .debug_line    0x0000546e      0x113 code/VHOD/vhod.o
+ .debug_line    0x000036b4      0x24a code/main.o
+ .debug_line    0x000038fe      0x2a3 code/src/audio/audiovs.o
+ .debug_line    0x00003ba1      0x156 code/src/audio/meritve.o
+ .debug_line    0x00003cf7      0x589 code/src/audio/pod_funk.o
+ .debug_line    0x00004280      0x1b7 code/src/audio/pod_task.o
+ .debug_line    0x00004437      0x34d code/src/core.o
+ .debug_line    0x00004784      0x52e code/src/events/events.o
+ .debug_line    0x00004cb2      0x15e code/src/Hardware Functions/EEPROM/eeprom.o
+ .debug_line    0x00004e10      0x244 code/src/Hardware Functions/outputs.o
+ .debug_line    0x00005054      0x1b1 code/src/includes/structs.o
+ .debug_line    0x00005205      0x205 code/src/Power/chrg.o
+ .debug_line    0x0000540a      0x1ea code/src/Power/zaslon.o
+ .debug_line    0x000055f4      0x125 code/src/thermal.o
+ .debug_line    0x00005719      0x113 code/VHOD/vhod.o
 
-.debug_frame    0x00000000     0x144c
+.debug_frame    0x00000000     0x149c
  *(.debug_frame)
  .debug_frame   0x00000000       0x40 code/castimer/castimer.o
  .debug_frame   0x00000040       0xfc code/FreeRTOS-10.4.3-8/src/heap_4.o
@@ -1642,14 +1659,15 @@ END GROUP
  .debug_frame   0x000011b8       0x5c code/src/audio/pod_task.o
  .debug_frame   0x00001214       0x64 code/src/core.o
  .debug_frame   0x00001278       0x74 code/src/events/events.o
- .debug_frame   0x000012ec       0x64 code/src/Hardware Functions/writeOUTPUT.o
- .debug_frame   0x00001350       0x34 code/src/includes/structs.o
- .debug_frame   0x00001384       0x24 code/src/Power/chrg.o
- .debug_frame   0x000013a8       0x24 code/src/Power/zaslon.o
- .debug_frame   0x000013cc       0x24 code/src/thermal.o
- .debug_frame   0x000013f0       0x5c code/VHOD/vhod.o
+ .debug_frame   0x000012ec       0x50 code/src/Hardware Functions/EEPROM/eeprom.o
+ .debug_frame   0x0000133c       0x64 code/src/Hardware Functions/outputs.o
+ .debug_frame   0x000013a0       0x34 code/src/includes/structs.o
+ .debug_frame   0x000013d4       0x24 code/src/Power/chrg.o
+ .debug_frame   0x000013f8       0x24 code/src/Power/zaslon.o
+ .debug_frame   0x0000141c       0x24 code/src/thermal.o
+ .debug_frame   0x00001440       0x5c code/VHOD/vhod.o
 
-.debug_str      0x00000000     0x2cd6
+.debug_str      0x00000000     0x2d55
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_str     0x000003e6      0x220 code/castimer/castimer.o
@@ -1668,34 +1686,36 @@ END GROUP
                                 0x81e (size before relaxing)
  .debug_str     0x000021f1       0xe9 code/FreeRTOS-10.4.3-8/src/variantHooks.o
                                 0x2d8 (size before relaxing)
- .debug_str     0x000022da      0x15e code/main.o
-                                0x410 (size before relaxing)
- .debug_str     0x00002438      0x1c3 code/src/audio/audiovs.o
+ .debug_str     0x000022da      0x16e code/main.o
+                                0x420 (size before relaxing)
+ .debug_str     0x00002448      0x1f6 code/src/audio/audiovs.o
                                 0x4ef (size before relaxing)
- .debug_str     0x000025fb       0x4d code/src/audio/meritve.o
+ .debug_str     0x0000263e       0x4d code/src/audio/meritve.o
                                 0x2fc (size before relaxing)
- .debug_str     0x00002648      0x174 code/src/audio/pod_funk.o
-                                0x4ce (size before relaxing)
- .debug_str     0x000027bc       0x88 code/src/audio/pod_task.o
+ .debug_str     0x0000268b      0x174 code/src/audio/pod_funk.o
+                                0x55c (size before relaxing)
+ .debug_str     0x000027ff       0x88 code/src/audio/pod_task.o
                                 0x360 (size before relaxing)
- .debug_str     0x00002844      0x174 code/src/core.o
-                                0x5bb (size before relaxing)
- .debug_str     0x000029b8      0x1a3 code/src/events/events.o
+ .debug_str     0x00002887      0x174 code/src/core.o
+                                0x606 (size before relaxing)
+ .debug_str     0x000029fb      0x1a3 code/src/events/events.o
                                 0x836 (size before relaxing)
- .debug_str     0x00002b5b       0x42 code/src/Hardware Functions/writeOUTPUT.o
-                                0x228 (size before relaxing)
- .debug_str     0x00002b9d       0x74 code/src/includes/structs.o
-                                0x494 (size before relaxing)
- .debug_str     0x00002c11       0x34 code/src/Power/chrg.o
+ .debug_str     0x00002b9e       0x40 code/src/Hardware Functions/EEPROM/eeprom.o
+                                0x1fc (size before relaxing)
+ .debug_str     0x00002bde       0x3e code/src/Hardware Functions/outputs.o
+                                0x224 (size before relaxing)
+ .debug_str     0x00002c1c       0x74 code/src/includes/structs.o
+                                0x4e0 (size before relaxing)
+ .debug_str     0x00002c90       0x34 code/src/Power/chrg.o
                                 0x3ae (size before relaxing)
- .debug_str     0x00002c45       0x3b code/src/Power/zaslon.o
+ .debug_str     0x00002cc4       0x3b code/src/Power/zaslon.o
                                 0x495 (size before relaxing)
- .debug_str     0x00002c80       0x40 code/src/thermal.o
+ .debug_str     0x00002cff       0x40 code/src/thermal.o
                                 0x2b5 (size before relaxing)
- .debug_str     0x00002cc0       0x16 code/VHOD/vhod.o
+ .debug_str     0x00002d3f       0x16 code/VHOD/vhod.o
                                 0x230 (size before relaxing)
 
-.debug_loc      0x00000000     0x68ef
+.debug_loc      0x00000000     0x6a3e
  *(.debug_loc)
  .debug_loc     0x00000000       0x57 code/castimer/castimer.o
  .debug_loc     0x00000057      0x4be code/FreeRTOS-10.4.3-8/src/heap_4.o
@@ -1712,10 +1732,11 @@ END GROUP
  .debug_loc     0x00006228       0xf0 code/src/audio/pod_task.o
  .debug_loc     0x00006318       0xa0 code/src/core.o
  .debug_loc     0x000063b8      0x293 code/src/events/events.o
- .debug_loc     0x0000664b      0x16e code/src/Hardware Functions/writeOUTPUT.o
- .debug_loc     0x000067b9       0x26 code/src/includes/structs.o
- .debug_loc     0x000067df       0x1e code/src/thermal.o
- .debug_loc     0x000067fd       0xf2 code/VHOD/vhod.o
+ .debug_loc     0x0000664b      0x14f code/src/Hardware Functions/EEPROM/eeprom.o
+ .debug_loc     0x0000679a      0x16e code/src/Hardware Functions/outputs.o
+ .debug_loc     0x00006908       0x26 code/src/includes/structs.o
+ .debug_loc     0x0000692e       0x1e code/src/thermal.o
+ .debug_loc     0x0000694c       0xf2 code/VHOD/vhod.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -1735,7 +1756,7 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x6b8
+.debug_ranges   0x00000000      0x6d0
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x18 code/castimer/castimer.o
  .debug_ranges  0x00000018       0x48 code/FreeRTOS-10.4.3-8/src/heap_4.o
@@ -1752,12 +1773,13 @@ END GROUP
  .debug_ranges  0x000005a0       0x20 code/src/audio/pod_task.o
  .debug_ranges  0x000005c0       0x30 code/src/core.o
  .debug_ranges  0x000005f0       0x38 code/src/events/events.o
- .debug_ranges  0x00000628       0x28 code/src/Hardware Functions/writeOUTPUT.o
- .debug_ranges  0x00000650       0x18 code/src/includes/structs.o
- .debug_ranges  0x00000668       0x10 code/src/Power/chrg.o
- .debug_ranges  0x00000678       0x10 code/src/Power/zaslon.o
- .debug_ranges  0x00000688       0x10 code/src/thermal.o
- .debug_ranges  0x00000698       0x20 code/VHOD/vhod.o
+ .debug_ranges  0x00000628       0x18 code/src/Hardware Functions/EEPROM/eeprom.o
+ .debug_ranges  0x00000640       0x28 code/src/Hardware Functions/outputs.o
+ .debug_ranges  0x00000668       0x18 code/src/includes/structs.o
+ .debug_ranges  0x00000680       0x10 code/src/Power/chrg.o
+ .debug_ranges  0x00000690       0x10 code/src/Power/zaslon.o
+ .debug_ranges  0x000006a0       0x10 code/src/thermal.o
+ .debug_ranges  0x000006b0       0x20 code/VHOD/vhod.o
 
 .debug_macro
  *(.debug_macro)

@@ -68,7 +68,7 @@ enum strip_mode_enum_t
 
 struct adsys_t
 {
-    unsigned short STRIP_MODE = NORMAL_FADE;
+    unsigned short STRIP_MODE = OFF_A;
     short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
     short tr_svetlost = 0;
 };

@@ -38,7 +38,9 @@ code\src\core.cpp
 
 code\src\events\events.cpp
 
-code\src\Hardware Functions\writeOUTPUT.cpp
+code\src\Hardware Functions\EEPROM\eeprom.cpp
+
+code\src\Hardware Functions\outputs.cpp
 
 code\src\includes\structs.cpp
 

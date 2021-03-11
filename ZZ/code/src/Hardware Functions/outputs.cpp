@@ -28,16 +28,29 @@ void pwmOFF(uint8_t pin, char port)
 	{
 		case 'B':
 		switch (pin)
-		{
+		{	
 			case 4:
-			TCCR2A &= ~(1 << COM2A1) & ~(1 << COM2A0); //Izklop primerjalnika
+				TCCR2A &= ~(1 << COM2A1); //izklopi komparator
+				if ( (TCCR2A & (1 << COM2B1)) == 0  ){ //Ce je tudi primerjalnik B izklopljen se izklopi
+					TCCR2B = 0;
+					TCNT2 = 0;
+				}
 			break;
+			
 			case 5:
-			TCCR1A &= ~(1 << COM1A1) & ~(1 << COM1A0);
-			break;
+				TCCR1A &= ~(1 << COM1A1); //izklopi komparator
+				if ( (TCCR1A & (1 << COM1B1)) == 0  ){ //Ce je tudi primerjalnik B izklopljen se izklopi
+					TCCR1B = 0;
+					TCNT1 = 0;
+				}
 			case 6:
-			TCCR1A &= ~(1 << COM1B1) & ~(1 << COM1B0);
+				TCCR1A &= ~(1 << COM1B1); //izklopi komparator
+				if ( (TCCR1A & (1 << COM1A1)) == 0  ){ //Ce je tudi primerjalnik B izklopljen se izklopi
+					TCCR1B = 0;
+					TCNT1 = 0;
+				}
 			break;
+			
 		}
 		break;
 
@@ -46,16 +59,19 @@ void pwmOFF(uint8_t pin, char port)
 	}
 }
 
+
+
+
 uint16_t readANALOG(uint8_t pin)
 {
-	taskENTER_CRITICAL(); //Dokler bere ta pin, ne sme brati ostalih
 	ADSCSRA |= (1 << ADSC); //Start konverzija
 	while (ADCSRA & (1 << ADSC)){
 		
 		vTaskDelay(1);
 		
 	} //Dokler se bit ne resetira
-	taskEXIT_CRITICAL();
+	
+	/* DODAJ */
 	return ADCH;
 }
 
@@ -66,23 +82,25 @@ void writePWM(uint8_t pin, char port, uint8_t vrednost)
 	{
 		case 'B':
 		DDRB = DDRB | (0b00000001 << pin); //Nastavi na output
-		switch (pin)
-		{
+		switch (pin){
 			case 4:
-			TCCR2A = 1 << WGM22 || 1 << WGM20 || 1 << COM2A1; //Fast PWM, izklopi izhod po komparatorju
-			TCCR2B = (1 << CS20);                                       // Delilnik frekvence
-			OCR2A = vrednost;                                 //Nastavi se primerjalnik
+				TCCR2A = (1 << WGM21) | (1 << WGM20) | (1 << COM2A1); //fast pwm non inverted
+				TCCR2B = (1 << CS20); //brez prescalrja
+				OCR2A = vrednost;		//vrednost kjer se izhod ugasne
 			break;
+			
 			case 5:
-			TCCR1A = 1 << WGM12 || 1 << WGM10 || 1 << COM1A1;
-			TCCR2B = (1 << CS20);
-			OCR1A = vrednost; //Nastavi se primerjalnik
+				TCCR1A = (1 << COM1A1) | (1 << WGM10) | (1 << WGM12);
+				TCCR1B = (1 << CS10);
+				OCR1A = vrednost;
 			break;
+			
 			case 6:
-			TCCR1A = (1 << 0) | (1 << 3) | (1 << COM1B1);
-			TCCR2B = (1 << CS20);
-			OCR1B = vrednost;
+				TCCR1A = (1 << COM1B1) | (1 << WGM10) | (1 << WGM12);
+				TCCR1B = (1 << CS10);
+				OCR1B = vrednost;
 			break;
+			
 		}
 
 		break;

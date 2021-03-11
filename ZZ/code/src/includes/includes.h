@@ -69,6 +69,9 @@ struct Timers_t
 };
 extern Timers_t Timers;
 
+
+
+
 /*  Prototipi  */
 
 void writeOUTPUT(unsigned char pin, char port, bool value); // writeOUTPUT(uint8_t pin, char port, bool value)

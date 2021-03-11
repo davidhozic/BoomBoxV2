@@ -3,6 +3,7 @@
 #include "../includes/includes.h"
 #include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h"
 #include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h"
+#include "src/Hardware Functions/EEPROM/EEPROM.h"
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *
@@ -79,7 +80,7 @@ void color_fade_funct(uint8_t *BARVA)
 
 void svetlost_mod_funct(char smer, uint8_t cas_krog)
 {
-
+	_delay_ms(200);
     while (smer > 0 ? tr_bright < 255 : tr_bright > 0)
     {
         tr_bright += 8 * smer;
@@ -100,6 +101,6 @@ void strip_mode_chg(char *ch)
 
     else
         trenutni_audio_mode = ++trenutni_audio_mode % LENGTH_2;
-    //EEPROM.write(audiomode_eeprom_addr, trenutni_audio_mode);
+	EEPROM.pisi(audiomode_eeprom_addr, trenutni_audio_mode);
     deleteALL_subAUDIO_tasks();
 }

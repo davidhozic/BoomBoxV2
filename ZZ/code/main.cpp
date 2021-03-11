@@ -1,10 +1,10 @@
+
 #define F_CPU 16000000UL
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
 #include "src/includes/includes.h"
 #include "src/audio/includes/audio.h"
-
-
+#include "src/Hardware Functions/EEPROM/EEPROM.h"
 #include <avr/io.h>
 #include "avr/interrupt.h"
 /*************************PROTOTIPI TASKOV************************/
@@ -30,6 +30,8 @@ void mic_mode_change();
 /**/ TaskHandle_t thermal_control = NULL;       /**/
 /**/ SemaphoreHandle_t voltage_SEM = NULL; /**/ // Preprecuje da bi dva taska dostopala do napetosti naenkrat
 /*************************************************/
+
+
 void init()
 {
 
@@ -60,9 +62,8 @@ DIDR1 = 0b11111100; //Isto samo za ostale
 
 
 ISR (TIMER0_COMPA_vect){
-
-Hardware.timeFROMboot += 1;
-TCNT0 = 0;
+Hardware.timeFROMboot +=1; //Belezi cas od zagona krmilnika (Timer 0)
+TCNT0 = 0;				   //Reset timerja, drugace bodo zamiki enaki overflowu casu
 }
 
 
@@ -70,19 +71,18 @@ int main()
 {
 
 init();
-
 writeOUTPUT(4, 'B', 1); // PULL up
-//Hardware.POLKONC = EEPROM.read(battery_eeprom_addr);
+EEPROM.pisi(0,battery_eeprom_addr);
+Hardware.POLKONC = EEPROM.beri(battery_eeprom_addr);
 voltage_SEM = xSemaphoreCreateMutex();
 xSemaphoreGive(voltage_SEM); /*   (GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja)  */
 
-trenutni_audio_mode = OFF_A;
 xTaskCreate(core, "_core", 256, NULL, tskIDLE_PRIORITY, &core_control);
 xTaskCreate(events, "Events task", 256, NULL, 3, &event_control);
 xTaskCreate(zaslon, "LVCHRG", 256, NULL, tskIDLE_PRIORITY, &zaslon_control);
 xTaskCreate(thermal, "therm", 256, NULL, 1, &thermal_control);
 xTaskCreate(polnjenje, "CHRG", 256, NULL, tskIDLE_PRIORITY, &chrg_control);
-xTaskCreate(audio_visual, "auvs", 256, NULL, 2, &audio_system_control);
+xTaskCreate(audio_visual, "AUSYS", 256, NULL, 2, &audio_system_control);
 
 vTaskStartScheduler();
 return 0;

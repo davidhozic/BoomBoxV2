@@ -5,6 +5,7 @@
 #include <FreeRTOS.h>
 #include "includes/includes.h"
 #include "audio/includes/audio.h"
+#include "src/Hardware Functions/EEPROM/EEPROM.h"
 VHOD napajalnik(2, 'D', 0);
 VHOD stikalo(4, 'D', 0);
 /* ************************** Extenal ************************************ */
@@ -41,8 +42,7 @@ void core(void *paramOdTaska)
 		*                                                                                             *
 		***********************************************************************************************/
 
-		if (xSemaphoreTake(voltage_SEM, portMAX_DELAY) == pdTRUE) // Vzame dostop do napetostnega semaforja -> ostali taski ne morajo brati napetosti
-		{
+			xSemaphoreTake(voltage_SEM, portMAX_DELAY); 
 
 			if (Timers.VOLT_timer.vrednost() > 500)
 			{
@@ -51,7 +51,7 @@ void core(void *paramOdTaska)
 			}
 
 			xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
-		}
+		
 
 		//----------------------------------------------------------------------------------------------------------------------------------
 		//                                               Power UP
@@ -78,7 +78,7 @@ void Shutdown()
 
 void Power_UP()
 {
-	// trenutni_audio_mode = EEPROM.read(audiomode_eeprom_addr);
+	trenutni_audio_mode = EEPROM.beri(audiomode_eeprom_addr);
 	writeOUTPUT(_12V_line, 'B', 1); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, 'H', 1);
 	Hardware.is_Powered_UP = true;

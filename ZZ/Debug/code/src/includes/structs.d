@@ -31,7 +31,8 @@ code/src/includes/structs.d code/src/includes/structs.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  ../code/src/includes/../audio/includes/audio.h \
  c:\boomboxv2\zz\code\src\includes\settings.h \
- c:\boomboxv2\zz\code\src\audio\barve\barve.h
+ c:\boomboxv2\zz\code\src\audio\barve\barve.h \
+ ../code/src/Hardware\ Functions/EEPROM/EEPROM.h
 
 ../code/src/includes/includes.h:
 
@@ -100,3 +101,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 c:\boomboxv2\zz\code\src\includes\settings.h:
 
 c:\boomboxv2\zz\code\src\audio\barve\barve.h:
+
+../code/src/Hardware\ Functions/EEPROM/EEPROM.h:
