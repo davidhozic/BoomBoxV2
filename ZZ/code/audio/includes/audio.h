@@ -66,12 +66,20 @@ enum strip_mode_enum_t
     OFF_A
 };
 
-struct adsys_t
+enum mic_mode_enum_t{
+	AVG_VOL,
+	POTENCIOMETER,
+	mic_enum_len
+};
+
+typedef struct
 {
     unsigned short STRIP_MODE = OFF_A;
     short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
     short tr_svetlost = 0;
-};
+	unsigned short MIC_MODE = POTENCIOMETER;
+}adsys_t;
+
 extern adsys_t AUSYS_vars;
 
 #endif

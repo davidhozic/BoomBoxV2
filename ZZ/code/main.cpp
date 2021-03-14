@@ -14,7 +14,6 @@ void zaslon(void *paramOdTaska);
 void audio_visual(void *p);
 void polnjenje(void *paramOdTaska);
 void events(void *paramOdTaska);
-void mic_mode_change();
 /*************************KONEC PROTOTIPOV************************/
 
 /**************************************************

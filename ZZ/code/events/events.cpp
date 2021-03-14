@@ -21,6 +21,7 @@ enum menu_seek_scroll_t
     TOGGLE_LCD,
     STRIP_MD_CHG,
     STRIP_OFF,
+	MIC_MD_CHG,
     menu_seek_LEN //dolzina
 };
 
@@ -147,6 +148,12 @@ void events(void *paramOdTaska)
                             strip_mode_chg("off");
                             exit();
                             break;
+							
+						case MIC_MD_CHG:
+							AUSYS_vars.MIC_MODE = ++AUSYS_vars.MIC_MODE % mic_enum_len;
+							exit();
+						break;	
+							
                         }
                         evnt_st.hold_timer.ponastavi();
                     }

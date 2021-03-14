@@ -1,0 +1,34 @@
+ZZ/ZZ.cppproj
+ZZ/.vs/ZZ/v14/.atsuo
+ZZ/Debug/Makefile
+ZZ/Debug/ZZ.elf
+ZZ/Debug/ZZ.hex
+ZZ/Debug/ZZ.lss
+ZZ/Debug/ZZ.map
+ZZ/Debug/ZZ.srec
+ZZ/Debug/code/main.d
+ZZ/Debug/code/main.o
+ZZ/Debug/code/src/core.d
+ZZ/Debug/code/src/core.o
+ZZ/Debug/code/src/thermal.d
+ZZ/Debug/code/src/thermal.o
+ZZ/Debug/code/src/audio/audiovs.d
+ZZ/Debug/code/src/audio/audiovs.o
+ZZ/Debug/code/src/audio/meritve.d
+ZZ/Debug/code/src/audio/meritve.o
+ZZ/Debug/code/src/audio/pod_funk.d
+ZZ/Debug/code/src/audio/pod_funk.o
+ZZ/Debug/code/src/audio/pod_task.d
+ZZ/Debug/code/src/audio/pod_task.o
+ZZ/Debug/code/src/events/events.d
+ZZ/Debug/code/src/events/events.o
+ZZ/Debug/code/src/Hardware Functions/outputs.d
+ZZ/Debug/code/src/Hardware Functions/outputs.o
+ZZ/Debug/code/src/Hardware Functions/EEPROM/eeprom.d
+ZZ/Debug/code/src/Hardware Functions/EEPROM/eeprom.o
+ZZ/Debug/code/src/includes/structs.d
+ZZ/Debug/code/src/includes/structs.o
+ZZ/Debug/code/src/Power/chrg.d
+ZZ/Debug/code/src/Power/chrg.o
+ZZ/Debug/code/src/Power/zaslon.d
+ZZ/Debug/code/src/Power/zaslon.o

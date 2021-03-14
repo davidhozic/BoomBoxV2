@@ -29,14 +29,14 @@
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <EraseKey />
     <AsfFrameworkConfig>
-      <framework-data xmlns="">
+      <framework-data>
         <options />
         <configurations />
         <files />
         <documentation help="" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.50.0" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.42.0" />
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
@@ -170,25 +170,48 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="code\" />
+    <Folder Include="code\audio\" />
+    <Folder Include="code\audio\BARVE\" />
+    <Folder Include="code\audio\includes\" />
     <Folder Include="code\castimer\" />
+    <Folder Include="code\events\" />
     <Folder Include="code\FreeRTOS-10.4.3-8\" />
     <Folder Include="code\FreeRTOS-10.4.3-8\src\" />
-    <Folder Include="code\src\" />
-    <Folder Include="code\src\audio\" />
-    <Folder Include="code\src\audio\BARVE\" />
-    <Folder Include="code\src\audio\includes\" />
-    <Folder Include="code\src\events\" />
-    <Folder Include="code\src\Hardware Functions\" />
-    <Folder Include="code\src\Hardware Functions\EEPROM" />
-    <Folder Include="code\src\includes\" />
-    <Folder Include="code\src\Power\" />
+    <Folder Include="code\Hardware Functions\" />
+    <Folder Include="code\Hardware Functions\EEPROM\" />
+    <Folder Include="code\includes\" />
+    <Folder Include="code\Power\" />
     <Folder Include="code\VHOD\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\audio\audiovs.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\audio\BARVE\barve.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\audio\includes\audio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\audio\meritve.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\audio\pod_funk.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\audio\pod_task.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="code\castimer\castimer.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\castimer\castimer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\core.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\events\events.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\FreeRTOS-10.4.3-8\src\atomic.h">
@@ -275,58 +298,34 @@
     <Compile Include="code\FreeRTOS-10.4.3-8\src\variantHooks.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="code\Hardware Functions\EEPROM\eeprom.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\Hardware Functions\EEPROM\EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\Hardware Functions\outputs.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\includes\includes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\includes\settings.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\includes\structs.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="code\main.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\src\audio\audiovs.cpp">
+    <Compile Include="code\Power\chrg.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\src\audio\BARVE\barve.h">
+    <Compile Include="code\Power\zaslon.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\src\audio\includes\audio.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\audio\meritve.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\audio\pod_funk.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\audio\pod_task.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\core.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\events\events.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\Hardware Functions\EEPROM\eeprom.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\Hardware Functions\EEPROM\EEPROM.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\Hardware Functions\outputs.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\includes\includes.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\includes\settings.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\includes\structs.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\Power\chrg.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\Power\zaslon.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\src\thermal.cpp">
+    <Compile Include="code\thermal.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\VHOD\vhod.cpp">

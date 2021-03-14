@@ -30,7 +30,7 @@ code/main.d code/main.o: ../code/main.cpp ../code/VHOD/Vhod.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  ../code/src/audio/includes/audio.h \
- c:\boomboxv2\zz\code\src\includes\settings.h \
+ ../code/src/audio/includes/../../includes/settings.h \
  ../code/src/audio/includes/../BARVE/barve.h \
  ../code/src/Hardware\ Functions/EEPROM/EEPROM.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h
@@ -103,7 +103,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 ../code/src/audio/includes/audio.h:
 
-c:\boomboxv2\zz\code\src\includes\settings.h:
+../code/src/audio/includes/../../includes/settings.h:
 
 ../code/src/audio/includes/../BARVE/barve.h:
 

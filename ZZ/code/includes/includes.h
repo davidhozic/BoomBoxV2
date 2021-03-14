@@ -64,8 +64,7 @@ struct Timers_t
     castimer VOLT_timer;
     castimer SW2_off_timer;
     castimer average_v_timer;
-    castimer frek_meassurement_t;
-    castimer VU_meter_timer;
+    castimer mic_ref_timer;
 };
 extern Timers_t Timers;
 
