@@ -199,7 +199,7 @@
     <Compile Include="code\audio\meritve.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\audio\pod_funk.cpp">
+    <Compile Include="code\audio\pod_funk.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\audio\pod_task.cpp">
@@ -209,9 +209,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\castimer\castimer.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\core\sleep.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\core\core.cpp">
@@ -317,6 +314,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\Hardware Functions\outputs.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\Hardware Functions\sleep.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\includes\includes.h">

@@ -80,7 +80,7 @@ void vApplicationIdleHook( void )
 void prvSetMainLedOn( void ) 
 {
 
-#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) // Arduino Mega with 2560
+#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) 
     DDRB  |= _BV(DDB7);
     PORTB |= _BV(PORTB7);       // Main (red PB7) LED on. Main LED on.
 
@@ -88,11 +88,11 @@ void prvSetMainLedOn( void )
     DDRB  |= _BV(DDB7);
     PORTB |= _BV(PORTB7);       // Main (red PB7) LED on. Main LED on.
 
-#elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) // assume we're using an Arduino Uno with 328p
+#elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) 
     DDRB  |= _BV(DDB5);
     PORTB |= _BV(PORTB5);       // Main (red PB5) LED on. Main LED on.
 
-#elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) // assume we're using an Arduino Leonardo with 32u4
+#elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) 
     DDRC  |= _BV(DDC7);
     PORTC |= _BV(PORTC7);       // Main (red PC7) LED on. Main LED on.
 
@@ -112,10 +112,10 @@ void prvBlinkMainLed( void )
 #elif defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega1284PA__) // Seeed Goldilocks with 1284p
         PINB  |= _BV(PINB7);       // Main (red PB7) LED toggle.
 
-#elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) // assume we're using an Arduino Uno with 328p
+#elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) 
         PINB  |= _BV(PINB5);       // Main (red PB5) LED toggle.
 
-#elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) // assume we're using an Arduino Leonardo with 32u4
+#elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__) 
         PINC  |= _BV(PINC7);       // Main (red PC7) LED toggle.
 
 #endif

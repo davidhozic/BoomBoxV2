@@ -153,7 +153,6 @@ void events(void *paramOdTaska)
 							AUSYS_vars.MIC_MODE = ++AUSYS_vars.MIC_MODE % mic_enum_len;
 							exit();
 						break;	
-							
                         }
                         evnt_st.hold_timer.ponastavi();
                     }

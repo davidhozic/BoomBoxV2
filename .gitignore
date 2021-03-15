@@ -32,3 +32,11 @@ ZZ/Debug/code/src/Power/chrg.d
 ZZ/Debug/code/src/Power/chrg.o
 ZZ/Debug/code/src/Power/zaslon.d
 ZZ/Debug/code/src/Power/zaslon.o
+.vscode/launch.json
+.vscode/tasks.json
+ZZ/Debug/makedep.mk
+ZZ/Debug/Makefile
+ZZ/Debug/code/src/Hardware Functions/writeOUTPUT.d
+ZZ/Debug/code/src/Hardware Functions/writeOUTPUT.o
+ZZ/Release/makedep.mk
+ZZ/Release/Makefile

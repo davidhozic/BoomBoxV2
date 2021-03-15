@@ -27,6 +27,7 @@
 	#define btr_chr_pin					5			//PH
 	#define _12V_line					7			//PB
 	#define BAT_LCD_pin					0			//PE	
+	#define napajalnik_pin				1           //PK
 /********************************************************/
 
 

@@ -10,7 +10,6 @@
 *                                                                                                                         *
 **************************************************************************************************************************/
 
-
 void holdALL_tasks() // Zbrise obstojece taske ce obstajajo
 {
 	holdTASK(fade_control);
@@ -39,13 +38,13 @@ void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 	memcpy(AUSYS_vars.TR_BARVA, mozne_barve.barvni_ptr[BELA], 3);
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		writeOUTPUT(r_trak,'B', 0);
-		writeOUTPUT(z_trak,'B', 0);
-		writeOUTPUT(m_trak,'B', 0);
+		writeOUTPUT(r_trak, 'B', 0);
+		writeOUTPUT(z_trak, 'B', 0);
+		writeOUTPUT(m_trak, 'B', 0);
 		delay_FRTOS(125);
-		writeOUTPUT(r_trak,'B', 1);
-		writeOUTPUT(z_trak,'B', 1);
-		writeOUTPUT(m_trak,'B', 1);
+		writeOUTPUT(r_trak, 'B', 1);
+		writeOUTPUT(z_trak, 'B', 1);
+		writeOUTPUT(m_trak, 'B', 1);
 		delay_FRTOS(125);
 	}
 }
@@ -94,14 +93,14 @@ void svetlost_mod_funct(char smer, uint8_t cas_krog)
 void strip_mode_chg(char *ch)
 {
 	if (ch == "off")
-	trenutni_audio_mode = OFF_A;
+		trenutni_audio_mode = OFF_A;
 
 	else if (trenutni_audio_mode == OFF_A)
-	trenutni_audio_mode = NORMAL_FADE;
+		trenutni_audio_mode = NORMAL_FADE;
 
 	else
-	trenutni_audio_mode = ++trenutni_audio_mode % LENGTH_2;
+		trenutni_audio_mode = ++trenutni_audio_mode % LENGTH_2;
+
 	EEPROM.pisi(audiomode_eeprom_addr, trenutni_audio_mode);
 	deleteALL_subAUDIO_tasks();
 }
-
