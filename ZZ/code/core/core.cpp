@@ -5,7 +5,7 @@
 #include <FreeRTOS.h>
 #include "includes/includes.h"
 #include "audio/includes/audio.h"
-#include "src/Hardware Functions/EEPROM/EEPROM.h"
+#include "Hardware Functions/EEPROM/EEPROM.h"
 VHOD napajalnik(2, 'D', 0);
 VHOD stikalo(4, 'D', 0);
 /* ************************** Extenal ************************************ */

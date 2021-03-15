@@ -3,7 +3,7 @@
 #include "../includes/includes.h"
 #include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h"
 #include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h"
-#include "src/Hardware Functions/EEPROM/EEPROM.h"
+#include "Hardware Functions/EEPROM/EEPROM.h"
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *

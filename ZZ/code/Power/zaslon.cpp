@@ -1,7 +1,7 @@
 
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
-#include "src/includes/includes.h"
+#include "includes/includes.h"
 
 const int lcd_pb_pin = 2;
 extern VHOD napajalnik;

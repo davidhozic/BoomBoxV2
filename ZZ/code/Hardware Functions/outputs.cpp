@@ -1,6 +1,6 @@
 
 #include "avr/io.h"
-#include "src/includes/includes.h"
+#include "includes/includes.h"
 #define ADSCSRA _SFR_MEM8(0xE0)
 
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)

@@ -28,3 +28,4 @@ struct mozne_barve_t
 extern mozne_barve_t mozne_barve;
 
 #endif
+

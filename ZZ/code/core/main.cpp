@@ -1,10 +1,9 @@
 
-#define F_CPU 16000000UL
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
-#include "src/includes/includes.h"
-#include "src/audio/includes/audio.h"
-#include "src/Hardware Functions/EEPROM/EEPROM.h"
+#include "includes/includes.h"
+#include "audio/includes/audio.h"
+#include "Hardware Functions/EEPROM/EEPROM.h"
 #include <avr/io.h>
 #include "avr/interrupt.h"
 /*************************PROTOTIPI TASKOV************************/
