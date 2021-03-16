@@ -70,7 +70,6 @@ int main()
 
 init();
 writeOUTPUT(4, 'B', 1); // PULL up
-EEPROM.pisi(0,battery_eeprom_addr);
 Hardware.POLKONC = EEPROM.beri(battery_eeprom_addr);
 voltage_SEM = xSemaphoreCreateMutex();
 xSemaphoreGive(voltage_SEM); /*   (GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja)  */
