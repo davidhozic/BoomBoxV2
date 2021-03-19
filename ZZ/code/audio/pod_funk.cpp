@@ -4,6 +4,7 @@
 #include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h"
 #include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h"
 #include "Hardware Functions/EEPROM/EEPROM.h"
+
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *
@@ -22,7 +23,7 @@ void deleteALL_subAUDIO_tasks()
 	deleteTask(fade_control);
 	deleteTask(color_fade_control);
 	deleteTask(Breathe_control);
-	delay_FRTOS(15);
+	vTaskDelay(15);
 }
 
 void writeTRAK()
@@ -34,18 +35,16 @@ void writeTRAK()
 
 void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 {
-	free(AUSYS_vars.TR_BARVA);
-	memcpy(AUSYS_vars.TR_BARVA, mozne_barve.barvni_ptr[BELA], 3);
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		writeOUTPUT(r_trak, 'B', 0);
 		writeOUTPUT(z_trak, 'B', 0);
 		writeOUTPUT(m_trak, 'B', 0);
-		delay_FRTOS(125);
+		vTaskDelay(125);
 		writeOUTPUT(r_trak, 'B', 1);
 		writeOUTPUT(z_trak, 'B', 1);
 		writeOUTPUT(m_trak, 'B', 1);
-		delay_FRTOS(125);
+		vTaskDelay(125);
 	}
 }
 
@@ -73,33 +72,35 @@ void color_fade_funct(uint8_t *BARVA)
 		smer[2] == -1 && tr_m < mozne_barve.barvni_ptr[*BARVA][2] ? tr_m = mozne_barve.barvni_ptr[*BARVA][2] : NULL;
 
 		writeTRAK();
-		delay_FRTOS(5);
+		vTaskDelay(5);
 	}
 }
 
 void svetlost_mod_funct(char smer, uint8_t cas_krog)
 {
-	_delay_ms(200);
 	while (smer > 0 ? tr_bright < 255 : tr_bright > 0)
 	{
 		tr_bright += 8 * smer;
 		tr_bright = tr_bright < 0 ? 0 : tr_bright;
 		tr_bright = tr_bright > 255 ? 255 : tr_bright;
 		writeTRAK();
-		delay_FRTOS(cas_krog);
+		vTaskDelay(cas_krog);
 	}
 }
 
-void strip_mode_chg(char *ch)
+
+
+
+void strip_mode_chg(char* ch)
 {
-	if (ch == "off")
+	if (strcmp(ch,"off"))
 		trenutni_audio_mode = OFF_A;
 
 	else if (trenutni_audio_mode == OFF_A)
 		trenutni_audio_mode = NORMAL_FADE;
 
 	else
-		trenutni_audio_mode = ++trenutni_audio_mode % LENGTH_2;
+		trenutni_audio_mode = (trenutni_audio_mode + 1) % LENGTH_2;
 
 	EEPROM.pisi(audiomode_eeprom_addr, trenutni_audio_mode);
 	deleteALL_subAUDIO_tasks();

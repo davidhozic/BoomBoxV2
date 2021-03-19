@@ -56,7 +56,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			Timers.lucke_filter_time.ponastavi();
 			static uint8_t barva_selekt = 0;
 			barva_selekt += 1 % LENGHT;
-			switch (trenutni_audio_mode)
+			switch (AUSYS_vars.STRIP_MODE)
 			{
 
 			case NORMAL_FADE: //Prizig in fade izklop

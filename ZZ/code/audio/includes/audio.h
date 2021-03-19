@@ -4,6 +4,7 @@
 #include "../../includes/settings.h"
 #include "../BARVE/barve.h"
 #include "FreeRTOS.h"
+#include "task.h"
 /*********************************/
 /*             Makro             */
 /*********************************/
@@ -32,15 +33,52 @@
     tr_m = mozne_barve.barvni_ptr[*((uint8_t *)x)][2];
 /********************************************************************/
 
+
+/*********************************************/
+/*			  TASK CONTROL FREERTOS          */
+/*********************************************/
+
 extern TaskHandle_t fade_control;
 extern TaskHandle_t color_fade_control;
 extern TaskHandle_t Breathe_control;
+
+/*********************************************/
+/*			 ENUM,STRUCT DEFINICIJE          */
+/*********************************************/
+
+enum strip_mode_enum_t
+{
+	NORMAL_FADE,
+	COLOR_FADE,
+	Fade_Breathe,
+	LENGTH_2,
+	OFF_A
+};
+
+enum mic_mode_enum_t{
+	AVG_VOL,
+	POTENCIOMETER,
+	mic_enum_len
+};
+
+ typedef struct 
+{
+	unsigned short STRIP_MODE;
+	short TR_BARVA[3];
+	short tr_svetlost;
+	unsigned short MIC_MODE;
+	unsigned char zrebana_barva;
+}adsys_t;
+
+extern adsys_t AUSYS_vars;
+
+
 /*********************************************/
 /*         Prototipi pomoznih funkcij        */
 /*********************************************/
 void holdALL_tasks();
 void writeTRAK();
-void color_fade_funct(uint8_t *B);
+void color_fade_funct(uint8_t *BARVA);
 void svetlost_mod_funct(char smer, uint8_t cas_krog);
 void mic_mode_change();
 void strip_mode_chg(char *ch);
@@ -57,29 +95,6 @@ void Color_Fade_task(void *B);
 void Fade_Breathe_Task(void *B);
 /*********************************************/
 
-enum strip_mode_enum_t
-{
-    NORMAL_FADE,
-    COLOR_FADE,
-    Fade_Breathe,
-    LENGTH_2,
-    OFF_A
-};
 
-enum mic_mode_enum_t{
-	AVG_VOL,
-	POTENCIOMETER,
-	mic_enum_len
-};
-
-typedef struct
-{
-    unsigned short STRIP_MODE = OFF_A;
-    short TR_BARVA[3] = {0, 0, 0}; //Trenutna barva traku RGB
-    short tr_svetlost = 0;
-	unsigned short MIC_MODE = POTENCIOMETER;
-}adsys_t;
-
-extern adsys_t AUSYS_vars;
 
 #endif

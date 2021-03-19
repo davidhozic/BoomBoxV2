@@ -38,7 +38,7 @@ enum states_t
 /******************************************************************************************/
 /*                                  SPREMENLJIVKE EVENTOV                                 */
 /******************************************************************************************/
-struct sw2_state_machine_strct
+struct event_struct_t
 {
     uint8_t state = unset;
     uint8_t menu_seek = TOGGLE_LCD;
@@ -46,9 +46,11 @@ struct sw2_state_machine_strct
     castimer hold_timer;
     unsigned int hold_time = 0;
     bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
-} evnt_st;
+};
 
-VHOD eventSW(4, 'B', 0);
+event_struct_t event_struct;
+
+VHOD eventSW(5, 'G', 0);
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
@@ -59,24 +61,24 @@ VHOD eventSW(4, 'B', 0);
 
 #define show_scroll_Seek() \
     tr_bright = 255;       \
-    colorSHIFT(&evnt_st.menu_seek);
+    colorSHIFT(&event_struct.menu_seek);
 // Prikaze element v seeku ce je scroll aktiven
 
 void exit()
 {
-    evnt_st.state = unset;
-    evnt_st.menu_seek = TOGGLE_LCD;
-    evnt_st.longPRESS = true;
+    event_struct.state = unset;
+    event_struct.menu_seek = TOGGLE_LCD;
+    event_struct.longPRESS = true;
     flash_strip();
-    evnt_st.state_exit_timer.ponastavi();
+    event_struct.state_exit_timer.ponastavi();
     tr_bright = 255;
     brightDOWN(15);
-    delay_FRTOS(500);
+    vTaskDelay(500);
     resumeTASK(audio_system_control);
 }
 
 #define check_auto_exit()                           \
-    if (evnt_st.state_exit_timer.vrednost() > 6000) \
+    if (event_struct.state_exit_timer.vrednost() > 6000) \
     {                                               \
         exit();                                     \
     }
@@ -95,32 +97,32 @@ void events(void *paramOdTaska)
         }
         else if (Timers.SW2_off_timer.vrednost() > 50)
         {
-            evnt_st.longPRESS = false;
+            event_struct.longPRESS = false;
         }
         //
         //State machine
-        if (Hardware.is_Powered_UP && !evnt_st.longPRESS)
+        if (Hardware.is_Powered_UP && !event_struct.longPRESS)
         {
-            switch (evnt_st.state)
+            switch (event_struct.state)
             {
 
             case unset:
-                if (evnt_st.hold_timer.vrednost() > 1000)
+                if (event_struct.hold_timer.vrednost() > 1000)
                 {
-                    evnt_st.state = SCROLL;
-                    evnt_st.menu_seek = TOGGLE_LCD;
-                    evnt_st.state_exit_timer.ponastavi();
-                    evnt_st.hold_timer.ponastavi();
+                    event_struct.state = SCROLL;
+                    event_struct.menu_seek = TOGGLE_LCD;
+                    event_struct.state_exit_timer.ponastavi();
+                    event_struct.hold_timer.ponastavi();
                     turnOFFstrip();
                     flash_strip();
                     show_scroll_Seek();
-                    delay_FRTOS(200);
-                    evnt_st.longPRESS = true;
+                    vTaskDelay(200);
+                    event_struct.longPRESS = true;
                 }
 
                 else if (!eventSW.vrednost())
                 {
-                    evnt_st.hold_timer.ponastavi();
+                    event_struct.hold_timer.ponastavi();
                 }
                 break;
 
@@ -128,13 +130,13 @@ void events(void *paramOdTaska)
                 check_auto_exit(); //Macro to auto exit timer
                 if (eventSW.vrednost())
                 {
-                    evnt_st.hold_time = evnt_st.hold_timer.vrednost(); //stopa cas pritiska
-                    evnt_st.state_exit_timer.ponastavi();
+                    event_struct.hold_time = event_struct.hold_timer.vrednost(); //stopa cas pritiska
+                    event_struct.state_exit_timer.ponastavi();
 
-                    if (evnt_st.hold_time > 1000)
+                    if (event_struct.hold_time > 1000)
                     {
-                        evnt_st.longPRESS = true;
-                        switch (evnt_st.menu_seek) //Glede na trenutni menu seek nekaj izvede
+                        event_struct.longPRESS = true;
+                        switch (event_struct.menu_seek) //Glede na trenutni menu seek nekaj izvede
                         {
                         case TOGGLE_LCD:
                             toggleLCD(); //Task Zaslon se blocka v zaslon tasku
@@ -150,24 +152,24 @@ void events(void *paramOdTaska)
                             break;
 							
 						case MIC_MD_CHG:
-							AUSYS_vars.MIC_MODE = ++AUSYS_vars.MIC_MODE % mic_enum_len;
+							AUSYS_vars.MIC_MODE = (AUSYS_vars.MIC_MODE + 1) % mic_enum_len;
 							exit();
 						break;	
                         }
-                        evnt_st.hold_timer.ponastavi();
+                        event_struct.hold_timer.ponastavi();
                     }
                 }
 
-                else if (evnt_st.hold_time > 0)
+                else if (event_struct.hold_time > 0)
                 {
 
-                    if (evnt_st.hold_time < 500) //Kratek pritisk
+                    if (event_struct.hold_time < 500) //Kratek pritisk
                     {
-                        evnt_st.menu_seek = (evnt_st.menu_seek + 1) % menu_seek_LEN;
+                        event_struct.menu_seek = (event_struct.menu_seek + 1) % menu_seek_LEN;
                     }
                     show_scroll_Seek();
-                    evnt_st.hold_timer.ponastavi();
-                    evnt_st.hold_time = 0;
+                    event_struct.hold_timer.ponastavi();
+                    event_struct.hold_time = 0;
                 }
                 break;
             }
@@ -176,20 +178,22 @@ void events(void *paramOdTaska)
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {
-            _delay_ms(20);
+            vTaskDelay(20);
             external_power_switch_ev();
-            _delay_ms(20);
+            vTaskDelay(20);
         }
 
         else if (napajalnik.vrednost() == 0 && Hardware.PSW)
         {
-            _delay_ms(20);
+            vTaskDelay(20);
             internal_power_switch_ev();
-            _delay_ms(20);
+            vTaskDelay(20);
         }
-        delay_FRTOS(30);
+        vTaskDelay(50);
         /*************************************************************************************/
-    }
+		// END WHILE
+	}
+	// TASK END
 }
 
 void external_power_switch_ev()

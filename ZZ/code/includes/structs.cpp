@@ -6,7 +6,5 @@
 
 Hardware_t Hardware;
 Timers_t Timers;
-adsys_t AUSYS_vars;
-mozne_barve_t mozne_barve;
 EEPROM_t EEPROM;
 

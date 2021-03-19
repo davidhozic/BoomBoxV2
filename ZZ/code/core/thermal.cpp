@@ -10,7 +10,7 @@ void thermal(void *paramOdTaska)
 {
   while (true)
   {
-    delay_FRTOS(6000);
+    vTaskDelay(6000);
 
     float AMP_Temp_S_Voltage = (float)readANALOG(1) * Hardware.REF_mVOLT / 1023.00f;
     Hardware.Amplifier_temp = (float)(-0.073f) * (float)AMP_Temp_S_Voltage + 192.754f;

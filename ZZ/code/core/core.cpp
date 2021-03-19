@@ -6,8 +6,8 @@
 #include "includes/includes.h"
 #include "audio/includes/audio.h"
 #include "Hardware Functions/EEPROM/EEPROM.h"
-VHOD napajalnik(2, 'D', 0);
-VHOD stikalo(4, 'D', 0);
+VHOD napajalnik(0, 'K', 0);
+VHOD stikalo(1, 'K', 0);
 /* ************************** Extenal ************************************ */
 void Shutdown();
 void Power_UP();
@@ -15,6 +15,7 @@ void events(void *paramOdTaska);
 void audio_visual();
 void spanje();
 /* *********************************************************************** */
+
 
 void core(void *paramOdTaska)
 {
@@ -43,12 +44,14 @@ void core(void *paramOdTaska)
 		*                                                                                             *
 		***********************************************************************************************/
 
-			xSemaphoreTake(voltage_SEM, portMAX_DELAY); 
+			
 
 			if (Timers.VOLT_timer.vrednost() > 500)
 			{
+				xSemaphoreTake(voltage_SEM, portMAX_DELAY); 
+				Hardware.napetost = readANALOG(vDIV_pin) * 5000.00f/1023.00f;
 				Timers.VOLT_timer.ponastavi();
-				Hardware.napetost = readANALOG(vDIV_pin) * (float)Hardware.REF_mVOLT / 1023.00f;
+
 			}
 
 			xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
@@ -61,12 +64,13 @@ void core(void *paramOdTaska)
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
-		if (Hardware.napetost <= sleep_voltage && napajalnik.vrednost() == 0 && Hardware.napetost != 0 ) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
+		
+		if (Hardware.napetost <= sleep_voltage && !napajalnik.vrednost() && Hardware.napetost > 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
 		{
 			spanje();
 			Shutdown();
 		}
-		delay_FRTOS(100);
+		vTaskDelay(100);
 	}
 }
 

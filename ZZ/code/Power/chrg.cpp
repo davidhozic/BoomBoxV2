@@ -37,10 +37,10 @@ void polnjenje(void *paramOdTaska)
 
 		else if (Hardware.POLKONC == 0 && napajalnik.vrednost() && Hardware.AMP_oheat == false && !Hardware.polnjenjeON)
 		{
-			delay_FRTOS(1000);
+			vTaskDelay(1000);
 			writeOUTPUT(PIN6,'D',1);
 			Hardware.polnjenjeON = true;
 		}
-		delay_FRTOS(100);
+		vTaskDelay(100);
 	}
 }

@@ -28,7 +28,7 @@
         vTaskDelay(1);     \
     }
 
-#define delay_FRTOS(x) vTaskDelay(x / portTICK_PERIOD_MS);
+
 
 extern TaskHandle_t core_control;
 extern TaskHandle_t event_control;
@@ -50,7 +50,7 @@ struct Hardware_t
     bool AMP_oheat = 0;
     bool display_enabled = 1;
     float Amplifier_temp = 0;
-    unsigned int napetost = 0;
+    float napetost = 0;
     uint32_t timeFROMboot = 0;
 };
 extern Hardware_t Hardware;
@@ -76,7 +76,7 @@ extern Timers_t Timers;
 void writeOUTPUT(unsigned char pin, char port, bool value); // writeOUTPUT(uint8_t pin, char port, bool value)
 void writePWM(uint8_t pin, char port, uint8_t vrednost);
 void pwmOFF(uint8_t pin, char port);
-uint16_t readANALOG(uint8_t pin);
+unsigned short readANALOG(uint8_t pin);
 
 
 #endif

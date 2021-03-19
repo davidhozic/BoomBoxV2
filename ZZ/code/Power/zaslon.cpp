@@ -28,14 +28,14 @@ void zaslon(void *paramOdTaska)
 
             else if (Hardware.polnjenjeON)
             {                     //Če je zunanje napajanje priključeno in baterije niso napolnjene, zaslon utripa
-                delay_FRTOS(500); //1Hz utripanje
+                vTaskDelay(500); //1Hz utripanje
                 PORTB = PORTB ^ 0b00000100;
                 Timers.LCD_timer.ponastavi();
             }
             else // Ce je napajalnik izkljucen in se ne polni, potem 3s gori
             {
                 PORTB |= (1 << lcd_pb_pin);
-                delay_FRTOS(3000);
+                vTaskDelay(3000);
                 Hardware.display_enabled = false;
             }
         }
@@ -44,6 +44,6 @@ void zaslon(void *paramOdTaska)
             PORTB &= ~(1 << lcd_pb_pin);
             holdTASK(zaslon_control); //Resuma se v eventih
         }
-        delay_FRTOS(200);
+        vTaskDelay(200);
     }
 }
