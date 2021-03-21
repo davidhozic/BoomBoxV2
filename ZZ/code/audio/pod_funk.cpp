@@ -23,7 +23,7 @@ void deleteALL_subAUDIO_tasks()
 	deleteTask(fade_control);
 	deleteTask(color_fade_control);
 	deleteTask(Breathe_control);
-	vTaskDelay(15);
+	delayFREERTOS(15);
 }
 
 void writeTRAK()
@@ -40,11 +40,11 @@ void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 		writeOUTPUT(r_trak, 'B', 0);
 		writeOUTPUT(z_trak, 'B', 0);
 		writeOUTPUT(m_trak, 'B', 0);
-		vTaskDelay(125);
+		delayFREERTOS(125);
 		writeOUTPUT(r_trak, 'B', 1);
 		writeOUTPUT(z_trak, 'B', 1);
 		writeOUTPUT(m_trak, 'B', 1);
-		vTaskDelay(125);
+		delayFREERTOS(125);
 	}
 }
 
@@ -72,7 +72,7 @@ void color_fade_funct(uint8_t *BARVA)
 		smer[2] == -1 && tr_m < mozne_barve.barvni_ptr[*BARVA][2] ? tr_m = mozne_barve.barvni_ptr[*BARVA][2] : NULL;
 
 		writeTRAK();
-		vTaskDelay(5);
+		delayFREERTOS(5);
 	}
 }
 
@@ -84,7 +84,7 @@ void svetlost_mod_funct(char smer, uint8_t cas_krog)
 		tr_bright = tr_bright < 0 ? 0 : tr_bright;
 		tr_bright = tr_bright > 255 ? 255 : tr_bright;
 		writeTRAK();
-		vTaskDelay(cas_krog);
+		delayFREERTOS(cas_krog);
 	}
 }
 

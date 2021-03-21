@@ -33,45 +33,45 @@ void events(void *paramOdTaska);
 
 void init()
 {
+	
+	DDRE = 1;
+	DDRH = 1 << PH3 | 1 << PH4 | 1 << PH5;
+	DDRB = 1 << PB7 | 1 << PB6 | 1 << PB5 | 1 << PB4;
+	/************************/
+	/* Nastavitev Timerja Za Sistemski cas*/
 
-DDRE |= 1;
-DDRH |= 1 << PH3 | 1 << PH4 | 1 << PH5;
-DDRB |= 0b11110000;
-/************************/
-/* Nastavitev Timerja */
+	TCCR3A  = 0;
+	TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;	// Clear timer on compare match
+	OCR3A	= 249;									// Output compare match na 249 tickov (1ms)
+	TIMSK3	= 1 << OCIE3A;							// Vklopi output compare match ISR
 
-TCCR3A  = 0;
-TCCR3B = 1 << WGM32 | 1 << CS31 | 1 << CS30;
-OCR3A = 250; 
-TIMSK3 = 1 << OCIE3A;
+	/************************/
+	ADMUX   = (1 << REFS0);							// Izberi
+	ADCSRA |= (1 << ADEN);                          // Vklop adc in zacetek konverzije
+	ADCSRA |= (1 << ADSC);
 
-/************************/
-ADMUX = (1 << REFS0);
-ADCSRA |= (1 << ADEN);                                   //Vklop adc in zacetek konverzije
-ADCSRA |= (1 << ADSC);
+	writeOUTPUT(4, 'B', 1);							// PULL UP
+	Hardware.POLKONC = EEPROM.beri(battery_eeprom_addr);
+	voltage_SEM = xSemaphoreCreateMutex();
+	xSemaphoreGive(voltage_SEM);					// GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja
+
+	xTaskCreate(core, "_core", 256, NULL, 1, &core_control);
+	xTaskCreate(events, "Events task", 256, NULL, 3, &event_control);
+	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &zaslon_control);
+	xTaskCreate(thermal, "therm", 256, NULL, 3, &thermal_control);
+	xTaskCreate(polnjenje, "CHRG", 256, NULL, 1, &chrg_control);
+	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 2, &audio_system_control);
+	sei();
+	vTaskStartScheduler();
 }
 
 
 ISR (TIMER3_COMPA_vect){
-Hardware.timeFROMboot +=1; //Belezi cas od zagona krmilnika (Timer 0)
-TCNT3 = 0;
+Hardware.timeFROMboot +=1;					// Belezi cas od zagona krmilnika (Timer 0)
 }
 
 int main()
 {
 init();
-writeOUTPUT(4, 'B', 1); // PULL up
-Hardware.POLKONC = EEPROM.beri(battery_eeprom_addr);
-voltage_SEM = xSemaphoreCreateMutex();
-xSemaphoreGive(voltage_SEM); /*   (GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja)  */
-
-xTaskCreate(core, "_core", 256, NULL, tskIDLE_PRIORITY, &core_control);
-xTaskCreate(events, "Events task", 256, NULL, 3, &event_control);
-xTaskCreate(zaslon, "LVCHRG", 256, NULL, tskIDLE_PRIORITY, &zaslon_control);
-xTaskCreate(thermal, "therm", 256, NULL, 1, &thermal_control);
-xTaskCreate(polnjenje, "CHRG", 256, NULL, tskIDLE_PRIORITY, &chrg_control);
-xTaskCreate(audio_visual, "AUSYS", 256, NULL, 2, &audio_system_control);
-
-vTaskStartScheduler();
 return 0;
 }

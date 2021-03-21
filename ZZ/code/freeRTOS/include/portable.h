@@ -207,6 +207,8 @@ void vPortEndScheduler( void ) PRIVILEGED_FUNCTION;
                                     uint32_t ulStackDepth ) PRIVILEGED_FUNCTION;
 #endif
 
+
+
 /* *INDENT-OFF* */
 #ifdef __cplusplus
     }

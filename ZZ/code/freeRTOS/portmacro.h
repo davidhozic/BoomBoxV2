@@ -94,9 +94,6 @@ typedef uint8_t                     UBaseType_t;
 
 
 
-#define portUSE_TIMER0                          /* use the 8-bit Timer0 for xTaskIncrementTick */
-
-
 
 #define portSTACK_GROWTH            ( -1 )
 
@@ -105,10 +102,10 @@ typedef uint8_t                     UBaseType_t;
  * but 120 kHz at 5V DC and 25 degrees is actually more accurate,
  * from data sheet.
  */
-#if defined( portUSE_WDTO )
+#if ( port_SLICING_USE_TIMERS == 0 )
 #define portTICK_PERIOD_MS          ( (TickType_t) _BV( portUSE_WDTO + 4 ) )
 #else
-#define portTICK_PERIOD_MS          ( (TickType_t) 1000 / configTICK_RATE_HZ )
+#define portTICK_PERIOD_MS          ( (float)1000/configTICK_RATE_HZ )
 #endif
 
 #define portBYTE_ALIGNMENT          1

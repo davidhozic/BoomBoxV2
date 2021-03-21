@@ -20,7 +20,8 @@ void spanje();
 void core(void *paramOdTaska)
 {
 	while (true)
-	{
+	{ 
+
 		if (stikalo.vrednost() == 0 && Timers.stikaloOFFtime.vrednost() > 30)	{
 			if (Hardware.is_Powered_UP)
 			{
@@ -70,7 +71,7 @@ void core(void *paramOdTaska)
 			spanje();
 			Shutdown();
 		}
-		vTaskDelay(100);
+		delayFREERTOS(10);
 	}
 }
 

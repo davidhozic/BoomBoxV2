@@ -11,11 +11,11 @@
 #define r_trak 4 // PB port
 #define z_trak 5
 #define m_trak 6
-#define tr_r AUSYS_vars.TR_BARVA[0]
-#define tr_z AUSYS_vars.TR_BARVA[1]
-#define tr_m AUSYS_vars.TR_BARVA[2]
-#define tr_bright AUSYS_vars.tr_svetlost
-#define trenutni_audio_mode AUSYS_vars.STRIP_MODE
+#define tr_r Audio_vars.TR_BARVA[0]
+#define tr_z Audio_vars.TR_BARVA[1]
+#define tr_m Audio_vars.TR_BARVA[2]
+#define tr_bright Audio_vars.tr_svetlost
+#define trenutni_audio_mode Audio_vars.STRIP_MODE
 #define brightUP(cas_na_krog) svetlost_mod_funct(1, cas_na_krog);
 #define brightDOWN(cas_na_krog) svetlost_mod_funct(-1, cas_na_krog);
 #define colorSHIFT(index_barve) color_fade_funct((uint8_t *)index_barve);
@@ -68,9 +68,9 @@ enum mic_mode_enum_t{
 	short tr_svetlost;
 	unsigned short MIC_MODE;
 	unsigned char zrebana_barva;
-}adsys_t;
+}audio_t;
 
-extern adsys_t AUSYS_vars;
+extern audio_t Audio_vars;
 
 
 /*********************************************/

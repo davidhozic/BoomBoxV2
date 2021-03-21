@@ -51,14 +51,21 @@
 #define configUSE_TIMER_INSTANCE 0
 #define configUSE_PREEMPTION 1
 
-/* NOTE: You can choose the following clock frequencies (Hz):
-20000000, 10000000, 5000000, 2000000. 
-For other frequency values, update clock_config.h with your own settings. */
-#define configCPU_CLOCK_HZ 16000000
 
-#define configTICK_RATE_HZ 1000				// NE SPREMINJAJ! 1000Hz = 1ms na tick, v vTaskDelay so napisane kar direktne vrednosti v milisekundah, spreminjanje tega pokvari cas
+/*		FreeRTOS tick generation	*/
+#define configCPU_CLOCK_HZ (16000000UL)
+#define configTICK_RATE_HZ (4000)				
+#define configTICK_PRESCALER (64)   // 1, 8, 64, 256 or 1024
+
+
+#define port_SLICING_USE_TIMERS		1   // If this option is off, WDT will  be used 
+#define configUSE_TIMER0			1	// Select which timer you want to use for RTOS tick generation (configUSE_TIMER0:5)
+#define portUSE_WDTO				WDTO_15MS	
+/************************************************/
+
+
 #define configMAX_PRIORITIES 4
-#define configMINIMAL_STACK_SIZE 110
+#define configMINIMAL_STACK_SIZE 256
 #define configMAX_TASK_NAME_LEN 8
 #define configUSE_16_BIT_TICKS 1
 #define configIDLE_SHOULD_YIELD 1

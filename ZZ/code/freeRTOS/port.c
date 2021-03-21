@@ -42,25 +42,18 @@
 /* Start tasks with interrupts enabled. */
 #define portFLAGS_INT_ENABLED           ( (StackType_t) 0x80 )
 
-#if defined( portUSE_WDTO)
-    #warning "Watchdog Timer used for scheduler."
-    #define portSCHEDULER_ISR           WDT_vect
 
-#elif defined( portUSE_TIMER0 )
-/* Hardware constants for Timer0. */
-    #warning "Timer0 used for scheduler."
-    #define portSCHEDULER_ISR           TIMER0_COMPA_vect
-    #define portCLEAR_COUNTER_ON_MATCH  ( (uint8_t) _BV(WGM01) )
-    #define portPRESCALE_1024           ( (uint8_t) (_BV(CS02)|_BV(CS00)) )
-    #define portCLOCK_PRESCALER         ( (uint32_t) 1024 )
-    #define portCOMPARE_MATCH_A_INTERRUPT_ENABLE    ( (uint8_t) _BV(OCIE0A) )
-    #define portOCRL                    OCR0A
-    #define portTCCRa                   TCCR0A
-    #define portTCCRb                   TCCR0B
-    #define portTIMSK                   TIMSK0
-    #define portTIFR                    TIFR0
-
+#if (port_SLICING_USE_TIMERS == 1)
+	#warning "Using one of 5 other timers (not WDT) as FreeRTOS tick source"
+#else
+	#warning "Watchdog Timer used for scheduler."
+	#define portSCHEDULER_ISR           WDT_vect
 #endif
+
+
+
+
+
 
 /*-----------------------------------------------------------*/
 
@@ -87,7 +80,7 @@ extern volatile TCB_t * volatile pxCurrentTCB;
     Updated to match avr-libc 2.0.0
 */
 
-#if defined( portUSE_WDTO)
+#if ( port_SLICING_USE_TIMERS == 0)
 
 static __inline__
 __attribute__ ((__always_inline__))
@@ -153,7 +146,7 @@ void wdt_interrupt_enable (const uint8_t value)
     Updated to match avr-libc 2.0.0
 */
 
-#if defined( portUSE_WDTO)
+#if ( port_SLICING_USE_TIMERS == 0)
 
 static __inline__
 __attribute__ ((__always_inline__))
@@ -673,7 +666,7 @@ void vPortYieldFromTick( void )
 }
 /*-----------------------------------------------------------*/
 
-#if defined(portUSE_WDTO)
+#if (port_SLICING_USE_TIMERS == 0)
 /*
  * Setup WDT to generate a tick interrupt.
  */
@@ -686,42 +679,121 @@ void prvSetupTimerInterrupt( void )
     wdt_interrupt_enable( portUSE_WDTO );
 }
 
-#elif defined (portUSE_TIMER0)
-/*
- * Setup Timer0 compare match A to generate a tick interrupt.
- */
+#else
+
 static void prvSetupTimerInterrupt( void )
 {
-uint32_t ulCompareMatch;
-uint8_t ucLowByte;
+	
+	uint16_t outputCompare;
+#if configUSE_TIMER2 == 0
+	#if (configTICK_PRESCALER == 1)
+		#define portPRESCALER 1;
+	#elif (configTICK_PRESCALER == 8)
+		#define portPRESCALER (1 << 1)
+	#elif (configTICK_PRESCALER == 64)	
+		#define portPRESCALER (1 << 1 | 1)
+	#elif (configTICK_PRESCALER == 256)
+		#define portPRESCALER (1 << 2)
+	#elif (configTICK_PRESCALER == 1024)
+		#define portPRESCALER (1 << 2 | 1)
+    #elif
+        #error "configTICK_PRESCALER invalid! Use 1, 8, 64, 256 or 1024"    		
+	#endif
+#else
+	#if (configTICK_PRESCALER == 1)
+		#define portPRESCALER 1;
+	#elif (configTICK_PRESCALER == 8)
+		#define portPRESCALER (1 << 1)
+	#elif (configTICK_PRESCALER == 32)	
+		#define portPRESCALER (1 << 1 | 1)
+	#elif (configTICK_PRESCALER == 64)
+		#define portPRESCALER (1 << 2)
+	#elif (configTICK_PRESCALER == 256)
+		#define portPRESCALER (1 << 2 | 1<<1)
+    #elif (configTICK_PRESCALER == 1024)
+		#define portPRESCALER (1 << 2 | 1<<1 | 1)
+    #elif
+        #error "configTICK_PRESCALER invalid! Use 1, 8, 32,64, 256 or 1024"    		
+	#endif
 
-    /* Using 8bit Timer0 to generate the tick. Correct fuses must be
-    selected for the configCPU_CLOCK_HZ clock.*/
-
-    ulCompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
-
-    /* We only have 8 bits so have to scale 1024 to get our required tick rate. */
-    ulCompareMatch /= portCLOCK_PRESCALER;
-
-    /* Adjust for correct value. */
-    ulCompareMatch -= ( uint32_t ) 1;
-
-    /* Setup compare match value for compare match A. Interrupts are disabled
-    before this is called so we need not worry here. */
-    ucLowByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
-    portOCRL = ucLowByte;
-
-    /* Setup clock source and compare match behaviour. */
-    portTCCRa = portCLEAR_COUNTER_ON_MATCH;
-    portTCCRb = portPRESCALE_1024;
-
-
-    /* Enable the interrupt - this is okay as interrupt are currently globally disabled. */
-    ucLowByte = portTIMSK;
-    ucLowByte |= portCOMPARE_MATCH_A_INTERRUPT_ENABLE;
-    portTIMSK = ucLowByte;
-}
-
+#endif	
+		#if (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 255 && configUSE_TIMER0)
+		#error "The configTICK_RATE_HZ is too low, either select a higher bit timer or increase the frequency!"
+		#elif (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 65535)
+		#error "configTICK_RATE_HZ is too low!"
+		#endif
+	
+	
+	#if	configUSE_TIMER0
+			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
+			outputCompare /= configTICK_PRESCALER;
+			outputCompare -= 1;
+			OCR0A = outputCompare;
+			/* Setup clock source and compare match behaviour. */
+			TCCR0A = 1 << WGM01; //Set CTC mode (clear timer on compare match)
+			TCCR0B = portPRESCALER;
+			TIMSK0 = 1 << OCIE0A;
+	#define portSCHEDULER_ISR TIMER0_COMPA_vect
+			
+	
+	#elif configUSE_TIMER1
+			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
+			outputCompare /= configTICK_PRESCALER;
+			outputCompare -= 1;
+			OCR1A = outputCompare;
+			/* Setup clock source and compare match behaviour. */
+			TCCR1A = 0;
+			TCCR1B = portPRESCALER | 1 << WGM12;
+			TIMSK1 = 1 << OCIE1A;
+	#define portSCHEDULER_ISR TIMER1_COMPA_vect	
+			
+	#elif configUSE_TIMER2
+			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
+			outputCompare /= configTICK_PRESCALER;
+			outputCompare -= 1;
+			OCR2A = outputCompare;
+			/* Setup clock source and compare match behaviour. */
+			TCCR2A = 1 << WGM21; //Set CTC mode (clear timer on compare match)
+			TCCR2B = portPRESCALER;
+			TIMSK2 = 1 << OCIE2A;
+	#define portSCHEDULER_ISR TIMER2_COMPA_vect				
+			
+	#elif configUSE_TIMER3
+			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
+			outputCompare /= configTICK_PRESCALER| 1 << WGM32;
+			outputCompare -= 1;
+				OCR3A = outputCompare;
+				/* Setup clock source and compare match behaviour. */
+				TCCR3A = 0;
+				TCCR3B = portPRESCALER;
+				TIMSK3 = 1 << OCIE3A;
+	#define portSCHEDULER_ISR TIMER3_COMPA_vect	
+				
+	#elif configUSE_TIMER4
+			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
+			outputCompare /= configTICK_PRESCALER;
+			outputCompare -= 1;
+				OCR4A = outputCompare;
+				/* Setup clock source and compare match behaviour. */
+				TCCR4A = 0;
+				TCCR4B = portPRESCALER| 1 << WGM42;
+				TIMSK4 = 1 << OCIE4A;
+	#define portSCHEDULER_ISR TIMER4_COMPA_vect		
+	
+	#elif configUSE_TIMER5
+			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
+			outputCompare /= configTICK_PRESCALER;
+			outputCompare -= 1;
+				/* Setup clock source and compare match behaviour. */
+				OCR5A = outputCompare;
+				TCCR5A = 0;
+				TCCR5B = portPRESCALER | 1 << WGM52;
+				TIMSK5 = 1 << OCIE5A;
+	#define portSCHEDULER_ISR TIMER5_COMPA_vect				
+	#endif			
+	
+	
+	}
 #endif
 
 /*-----------------------------------------------------------*/
@@ -753,9 +825,9 @@ uint8_t ucLowByte;
      *
      * use ISR_NOBLOCK where there is an important timer running, that should preempt the scheduler.
      */
-    ISR(portSCHEDULER_ISR) __attribute__ ((hot, flatten));
-/*  ISR(portSCHEDULER_ISR, ISR_NOBLOCK) __attribute__ ((hot, flatten));
- */
+   /* ISR(portSCHEDULER_ISR) __attribute__ ((hot, flatten));*/
+ ISR(portSCHEDULER_ISR, ISR_NOBLOCK) __attribute__ ((hot, flatten));
+
     ISR(portSCHEDULER_ISR)
     {
         xTaskIncrementTick();

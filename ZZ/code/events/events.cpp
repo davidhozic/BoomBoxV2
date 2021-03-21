@@ -40,12 +40,19 @@ enum states_t
 /******************************************************************************************/
 struct event_struct_t
 {
-    uint8_t state = unset;
-    uint8_t menu_seek = TOGGLE_LCD;
+    uint8_t state;
+    uint8_t menu_seek;
     castimer state_exit_timer;
     castimer hold_timer;
-    unsigned int hold_time = 0;
-    bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
+    unsigned int hold_time;
+    bool longPRESS; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
+	
+	event_struct_t(){
+	    state = unset;
+	    menu_seek = TOGGLE_LCD;
+	    hold_time = 0;
+	    longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
+	}
 };
 
 event_struct_t event_struct;
@@ -73,7 +80,7 @@ void exit()
     event_struct.state_exit_timer.ponastavi();
     tr_bright = 255;
     brightDOWN(15);
-    vTaskDelay(500);
+    delayFREERTOS(500);
     resumeTASK(audio_system_control);
 }
 
@@ -116,7 +123,7 @@ void events(void *paramOdTaska)
                     turnOFFstrip();
                     flash_strip();
                     show_scroll_Seek();
-                    vTaskDelay(200);
+                    delayFREERTOS(200);
                     event_struct.longPRESS = true;
                 }
 
@@ -152,7 +159,7 @@ void events(void *paramOdTaska)
                             break;
 							
 						case MIC_MD_CHG:
-							AUSYS_vars.MIC_MODE = (AUSYS_vars.MIC_MODE + 1) % mic_enum_len;
+							Audio_vars.MIC_MODE = (Audio_vars.MIC_MODE + 1) % mic_enum_len;
 							exit();
 						break;	
                         }
@@ -178,18 +185,18 @@ void events(void *paramOdTaska)
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {
-            vTaskDelay(20);
+            delayFREERTOS(20);
             external_power_switch_ev();
-            vTaskDelay(20);
+            delayFREERTOS(20);
         }
 
         else if (napajalnik.vrednost() == 0 && Hardware.PSW)
         {
-            vTaskDelay(20);
+            delayFREERTOS(20);
             internal_power_switch_ev();
-            vTaskDelay(20);
+            delayFREERTOS(20);
         }
-        vTaskDelay(50);
+        delayFREERTOS(50);
         /*************************************************************************************/
 		// END WHILE
 	}

@@ -32,7 +32,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 	uint16_t ref_glasnost = 2048;
 	while (true)
 	{
-		switch (AUSYS_vars.MIC_MODE)
+		switch (Audio_vars.MIC_MODE)
 		{
 
 		case POTENCIOMETER:
@@ -55,12 +55,11 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		{
 			Timers.lucke_filter_time.ponastavi();
 			static uint8_t barva_selekt = 0;
-			barva_selekt += 1 % LENGHT;
-			switch (AUSYS_vars.STRIP_MODE)
+			barva_selekt += 1 % barve_end;
+			switch (Audio_vars.STRIP_MODE)
 			{
 
 			case NORMAL_FADE: //Prizig in fade izklop
-				deleteTask(fade_control);
 				cr_fade_tsk(fade_task, "Normal Fade", barva_selekt, fade_control);
 				break;
 
@@ -78,6 +77,6 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			}
 		}
 
-		vTaskDelay(1);
+		delayFREERTOS(15);
 	}
 }

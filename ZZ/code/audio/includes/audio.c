@@ -3,7 +3,7 @@
 
 
 
-adsys_t AUSYS_vars = {
+audio_t Audio_vars = {
 	OFF_A,
 	{0, 0, 0},
 	0,

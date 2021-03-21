@@ -78,7 +78,7 @@ void writePWM(uint8_t pin, char port, uint8_t vrednost)
 	switch (port)
 	{
 		case 'B':
-		DDRB = DDRB | (0b00000001 << pin); //Nastavi na output
+		DDRB = DDRB | (1 << pin); //Nastavi na output
 		switch (pin){
 			case 4:
 				TCCR2A = (1 << WGM21) | (1 << WGM20) | (1 << COM2A1);  //fast pwm, clear on compare match
