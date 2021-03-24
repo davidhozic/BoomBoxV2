@@ -1,14 +1,8 @@
-/*
-* CFile1.c
-*
-* Created: 11/03/2021 11:19:37
-*  Author: D
-*/
+
 #include "avr/io.h"
 #include "FreeRTOS.h"
 #include "avr/interrupt.h"
-
-#include "EEPROM.h"
+#include "libs/EEPROM/EEPROM.h"
 
 void EEPROM_t::pisi(uint8_t podatek, uint16_t naslov){
 	cli();
@@ -29,8 +23,7 @@ uint8_t EEPROM_t::beri (uint16_t naslov){
 	return EEDR;					//Vrni vrednost
 	sei();
 }
-
-
+EEPROM_t EEPROM;
 
 
 

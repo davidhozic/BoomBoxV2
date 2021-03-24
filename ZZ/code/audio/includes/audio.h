@@ -1,16 +1,15 @@
 
 #ifndef AUDIO_H
 #define AUDIO_H
-#include "../../includes/settings.h"
 #include "../BARVE/barve.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "common/inc/FreeRTOS_def_decl.h"
+#include "settings.h"
 /*********************************/
 /*             Makro             */
 /*********************************/
-#define r_trak 4 // PB port
-#define z_trak 5
-#define m_trak 6
+
 #define tr_r Audio_vars.TR_BARVA[0]
 #define tr_z Audio_vars.TR_BARVA[1]
 #define tr_m Audio_vars.TR_BARVA[2]
@@ -68,6 +67,7 @@ enum mic_mode_enum_t{
 	short tr_svetlost;
 	unsigned short MIC_MODE;
 	unsigned char zrebana_barva;
+	unsigned short Average_vol;
 }audio_t;
 
 extern audio_t Audio_vars;
@@ -84,7 +84,6 @@ void mic_mode_change();
 void strip_mode_chg(char *ch);
 void deleteALL_subAUDIO_tasks();
 void flash_strip();
-int AVG_Volume_Meri();
 /*********************************************/
 
 /*********************************************/
@@ -92,7 +91,8 @@ int AVG_Volume_Meri();
 /*********************************************/
 void fade_task(void *B);
 void Color_Fade_task(void *B);
-void Fade_Breathe_Task(void *B);
+void Fade_Breathe_task(void *B);
+void avg_vol_task(void* param);
 /*********************************************/
 
 

@@ -1,6 +1,6 @@
-code/audio/includes/Audio_Sys_vars.d code/audio/includes/Audio_Sys_vars.o: \
- ../code/audio/includes/Audio_Sys_vars.c ../code/audio/includes/audio.h \
- ../code/audio/includes/../../includes/settings.h \
+code/libs/outputs_inputs/outputs_inputs.d \
+ code/libs/outputs_inputs/outputs_inputs.o: \
+ ../code/libs/outputs_inputs/outputs_inputs.cpp \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -12,20 +12,7 @@ code/audio/includes/Audio_Sys_vars.d code/audio/includes/Audio_Sys_vars.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../code/audio/includes/../BARVE/barve.h \
- ../code/freeRTOS/include/FreeRTOS.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
- ../code/includes/FreeRTOSConfig.h ../code/freeRTOS/include/projdefs.h \
- ../code/freeRTOS/include/portable.h \
- ../code/freeRTOS/include/deprecated_definitions.h \
- ../code/freeRTOS/portmacro.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
- ../code/freeRTOS/include/mpu_wrappers.h ../code/freeRTOS/include/task.h \
- ../code/freeRTOS/include/list.h
-
-../code/audio/includes/audio.h:
-
-../code/audio/includes/../../includes/settings.h:
+ ../code/libs/outputs_inputs/outputs_inputs.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -49,26 +36,4 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-../code/audio/includes/../BARVE/barve.h:
-
-../code/freeRTOS/include/FreeRTOS.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
-
-../code/includes/FreeRTOSConfig.h:
-
-../code/freeRTOS/include/projdefs.h:
-
-../code/freeRTOS/include/portable.h:
-
-../code/freeRTOS/include/deprecated_definitions.h:
-
-../code/freeRTOS/portmacro.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h:
-
-../code/freeRTOS/include/mpu_wrappers.h:
-
-../code/freeRTOS/include/task.h:
-
-../code/freeRTOS/include/list.h:
+../code/libs/outputs_inputs/outputs_inputs.h:

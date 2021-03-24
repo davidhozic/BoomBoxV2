@@ -44,9 +44,9 @@
 #include <stdint.h>
 
 /* *INDENT-OFF* */
-#ifdef __cplusplus
+
     extern "C" {
-#endif
+
 /* *INDENT-ON* */
 
 /*
@@ -409,9 +409,9 @@ static portFORCE_INLINE uint32_t Atomic_XOR_u32( uint32_t volatile * pulDestinat
 }
 
 /* *INDENT-OFF* */
-#ifdef __cplusplus
+
     }
-#endif
+
 /* *INDENT-ON* */
 
 #endif /* ATOMIC_H */

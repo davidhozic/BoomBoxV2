@@ -29,32 +29,12 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-/*
- * #define TCB_t to avoid conflicts between the
- * FreeRTOS task control block type (TCB_t) and the
- * AVR Timer Counter B type (TCB_t)
- */
-#define TCB_t avrTCB_t
-#include <avr/io.h>
-#undef TCB_t
 
-/*
- * Timer instance  |  Value
- * ----------------|---------
- *     TCB0        |    0  
- *     TCB1        |    1  
- *     TCB2        |    2  
- *     TCB3        |    3
- *     RTC         |    4  
- */
-
-#define configUSE_TIMER_INSTANCE 0
 #define configUSE_PREEMPTION 1
 
-
 /*		FreeRTOS tick generation	*/
-#define configCPU_CLOCK_HZ (16000000UL)
-#define configTICK_RATE_HZ (4000)				
+#define configCPU_CLOCK_HZ (F_CPU)
+#define configTICK_RATE_HZ (4000)
 #define configTICK_PRESCALER (64)   // 1, 8, 64, 256 or 1024
 
 
@@ -63,28 +43,24 @@
 #define portUSE_WDTO				WDTO_15MS	
 /************************************************/
 
-
-#define configMAX_PRIORITIES 4
-#define configMINIMAL_STACK_SIZE 256
-#define configMAX_TASK_NAME_LEN 8
-#define configUSE_16_BIT_TICKS 1
-#define configIDLE_SHOULD_YIELD 1
-#define configUSE_TASK_NOTIFICATIONS 1
-#define configUSE_MUTEXES 1
-#define configUSE_RECURSIVE_MUTEXES 1
-#define configUSE_COUNTING_SEMAPHORES 0
-#define configQUEUE_REGISTRY_SIZE 2
-#define configUSE_QUEUE_SETS 0
-#define configUSE_TIME_SLICING 1
-#define configUSE_NEWLIB_REENTRANT 0
-#define configENABLE_BACKWARD_COMPATIBILITY 0
-#define configNUM_THREAD_LOCAL_STORAGE_POINTERS 0
-
+	
+#define configMAX_PRIORITIES 4				// Maximum priority each task can have 
+#define configMINIMAL_STACK_SIZE 256		// Stack size for the idle task
+#define configMAX_TASK_NAME_LEN 8			// Max length of the task name
+#define configUSE_16_BIT_TICKS 1			// Size of the Tick_t type, if 0, will be 32 bit, if 1 then the performance will be improved on 16 bit/8 bit CPUs (but timers will bi limited to max 2^16 -1 ticks)
+#define configIDLE_SHOULD_YIELD 1			// If this option is 1, the idle task and next task in line will share one time slice, if 0, all tasks will have same time slices
+#define configUSE_TASK_NOTIFICATIONS 1		
+#define configUSE_MUTEXES 1					// Mutual exclusion for a semaphore
+#define configUSE_RECURSIVE_MUTEXES 1		// Tasks can take more than one "key" from the semaphore in the same line of your code
+#define configUSE_COUNTING_SEMAPHORES 0		// Semaphores won't have just one "key" but multiple
+#define configQUEUE_REGISTRY_SIZE 2			
+#define configUSE_QUEUE_SETS 1			
+#define configUSE_TIME_SLICING 1			// Tasks with same prioriy will time slice (each gets to run for a small ammount of time)
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION 0
 #define configSUPPORT_DYNAMIC_ALLOCATION 1
 #define configTOTAL_HEAP_SIZE 4096
-#define configAPPLICATION_ALLOCATED_HEAP 0
+#define configAPPLICATION_ALLOCATED_HEAP 0 //	Reserve heap inside program
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK 0
@@ -103,7 +79,7 @@
 #define configMAX_CO_ROUTINE_PRIORITIES 2
 
 /* Software timer related definitions. */
-#define configUSE_TIMERS 1
+#define configUSE_TIMERS 0
 #define configTIMER_TASK_PRIORITY ( configMAX_PRIORITIES - 1 )
 #define configTIMER_QUEUE_LENGTH 5
 #define configTIMER_TASK_STACK_DEPTH ( 128 * 2 )

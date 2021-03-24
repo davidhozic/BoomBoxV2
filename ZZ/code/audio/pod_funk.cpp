@@ -1,10 +1,9 @@
 #include "FreeRTOS.h"
 #include "includes/audio.h"
-#include "../includes/includes.h"
-#include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h"
-#include "C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h"
-#include "Hardware Functions/EEPROM/EEPROM.h"
-
+#include "libs/EEPROM/EEPROM.h"
+#include "libs/outputs_inputs/outputs_inputs.h"
+#include "common/inc/FreeRTOS_def_decl.h"
+#include <string.h>
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *
@@ -37,13 +36,13 @@ void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 {
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		writeOUTPUT(r_trak, 'B', 0);
-		writeOUTPUT(z_trak, 'B', 0);
-		writeOUTPUT(m_trak, 'B', 0);
+		writeOUTPUT(r_trak, strip_port, 0);
+		writeOUTPUT(z_trak, strip_port, 0);
+		writeOUTPUT(m_trak, strip_port, 0);
 		delayFREERTOS(125);
-		writeOUTPUT(r_trak, 'B', 1);
-		writeOUTPUT(z_trak, 'B', 1);
-		writeOUTPUT(m_trak, 'B', 1);
+		writeOUTPUT(r_trak, strip_port, 1);
+		writeOUTPUT(z_trak, strip_port, 1);
+		writeOUTPUT(m_trak, strip_port, 1);
 		delayFREERTOS(125);
 	}
 }
@@ -63,13 +62,15 @@ void color_fade_funct(uint8_t *BARVA)
 
 		//Preveri prenihaj:
 
-		smer[0] == 1 && tr_r > mozne_barve.barvni_ptr[*BARVA][0] ? tr_r = mozne_barve.barvni_ptr[*BARVA][0] : NULL; //Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
-		smer[1] == 1 && tr_z > mozne_barve.barvni_ptr[*BARVA][1] ? tr_z = mozne_barve.barvni_ptr[*BARVA][1] : NULL;
-		smer[2] == 1 && tr_m > mozne_barve.barvni_ptr[*BARVA][2] ? tr_m = mozne_barve.barvni_ptr[*BARVA][2] : NULL;
+		tr_r = (smer[0] == 1 && tr_r > mozne_barve.barvni_ptr[*BARVA][0]) || 
+		(smer[0] == -1 && tr_r < mozne_barve.barvni_ptr[*BARVA][0]) ? mozne_barve.barvni_ptr[*BARVA][0]: tr_r ; //Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
+		
+		tr_z = (smer[1] == 1 && tr_z > mozne_barve.barvni_ptr[*BARVA][1]) ||
+		(smer[1] == -1 && tr_z < mozne_barve.barvni_ptr[*BARVA][1]) ? mozne_barve.barvni_ptr[*BARVA][1]: tr_z ;
+		
+		tr_m = (smer[2] == 1 && tr_m > mozne_barve.barvni_ptr[*BARVA][2]) || 
+		(smer[2] == -1 && tr_m < mozne_barve.barvni_ptr[*BARVA][2]) ? mozne_barve.barvni_ptr[*BARVA][2]: tr_m ;
 
-		smer[0] == -1 && tr_r < mozne_barve.barvni_ptr[*BARVA][0] ? tr_r = mozne_barve.barvni_ptr[*BARVA][0] : NULL;
-		smer[1] == -1 && tr_z < mozne_barve.barvni_ptr[*BARVA][1] ? tr_z = mozne_barve.barvni_ptr[*BARVA][1] : NULL;
-		smer[2] == -1 && tr_m < mozne_barve.barvni_ptr[*BARVA][2] ? tr_m = mozne_barve.barvni_ptr[*BARVA][2] : NULL;
 
 		writeTRAK();
 		delayFREERTOS(5);

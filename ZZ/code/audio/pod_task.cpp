@@ -1,5 +1,4 @@
 #include "includes/audio.h"
-#include "../includes/includes.h"
 
 /**************************************************************************************************************************
 *                                                                                                                         *
@@ -30,10 +29,11 @@ void Color_Fade_task(void *BARVA) //Fade iz ene barve v drugo
     vTaskDelete(NULL);
 }
 
-void Fade_Breathe_Task(void *BARVA)
+void Fade_Breathe_task(void *BARVA)
 {
     if (color_fade_control == NULL)
     {
+
         nastavi_barve(BARVA);
     }
     brightUP(7);

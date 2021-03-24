@@ -1,13 +1,18 @@
-
+#include "FreeRTOS.h"
+#include "task.h"
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
-#include "includes/includes.h"
-
-const int lcd_pb_pin = 2;
-extern VHOD napajalnik;
+#include <avr/io.h>
+#include "common/inc/global.h"
+#include "common/inc/FreeRTOS_def_decl.h"
+#include "libs/outputs_inputs/outputs_inputs.h"
 
 void zaslon(void *paramOdTaska)
 {
+	/************************************************************************/
+	/*                          LOCAL TASK VARIABLES                        */
+	/************************************************************************/
+	castimer LCD_timer;	
 
     while (1)
     {
@@ -15,35 +20,35 @@ void zaslon(void *paramOdTaska)
         {
             if (napajalnik.vrednost() == 0)
             {
-                if (Timers.LCD_timer.vrednost() >= 9000 || !Hardware.is_Powered_UP)
+                if (LCD_timer.vrednost() >= 9000 || !Hardware.is_Powered_UP)
                 {
-                    Timers.LCD_timer.ponastavi();
-                    PORTB &= ~(1 << lcd_pb_pin);
+                    LCD_timer.ponastavi();
+					writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
                 }
-                else if (Timers.LCD_timer.vrednost() > 6000)
+                else if (LCD_timer.vrednost() > 6000)
                 { //Prižig vsakih 6s za 3s, če zunanje napajanje ni priključeno
-                    PORTB |= (1 << lcd_pb_pin);
+                    writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
                 }
             }
 
             else if (Hardware.polnjenjeON)
             {                     //Če je zunanje napajanje priključeno in baterije niso napolnjene, zaslon utripa
-                vTaskDelay(500); //1Hz utripanje
-                PORTB = PORTB ^ 0b00000100;
-                Timers.LCD_timer.ponastavi();
+                delayFREERTOS(500); //1Hz utripanje
+                toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
+                LCD_timer.ponastavi();
             }
             else // Ce je napajalnik izkljucen in se ne polni, potem 3s gori
             {
-                PORTB |= (1 << lcd_pb_pin);
-                vTaskDelay(3000);
+                writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 1);
+                delayFREERTOS(3000);
                 Hardware.display_enabled = false;
             }
         }
         else
         {
-            PORTB &= ~(1 << lcd_pb_pin);
+            PORTB &= ~(1 << BAT_LCD_pin);
             holdTASK(zaslon_control); //Resuma se v eventih
         }
-        vTaskDelay(200);
+        delayFREERTOS(200);
     }
 }

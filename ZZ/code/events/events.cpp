@@ -1,9 +1,9 @@
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
-#include "../includes/includes.h"
 #include "FreeRTOS.h"
 #include "../audio/includes/audio.h"
-
+#include "common/inc/global.h"
+#include <util/delay.h>
 /******************************************************************************************/
 /*                                     EXTERN DEKLARACIJE                                 */
 /******************************************************************************************/
@@ -11,8 +11,6 @@ void Shutdown();
 void external_power_switch_ev();
 void internal_power_switch_ev();
 void strip_mode_chg(char *ch);
-extern VHOD napajalnik;
-
 /******************************************************************************************/
 /*                                  ELEMENTI V SCROLL MENIJU                              */
 /******************************************************************************************/
@@ -42,8 +40,9 @@ struct event_struct_t
 {
     uint8_t state;
     uint8_t menu_seek;
-    castimer state_exit_timer;
-    castimer hold_timer;
+	castimer SW2_off_timer;
+	castimer state_exit_timer;
+	castimer hold_timer;
     unsigned int hold_time;
     bool longPRESS; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 	
@@ -55,9 +54,9 @@ struct event_struct_t
 	}
 };
 
-event_struct_t event_struct;
+ event_struct_t event_struct;
 
-VHOD eventSW(5, 'G', 0);
+ VHOD eventSW(red_button_pin, red_button_port, 0);
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
@@ -100,9 +99,9 @@ void events(void *paramOdTaska)
 
         if (eventSW.vrednost())
         {
-            Timers.SW2_off_timer.ponastavi(); // Filtrira lazne nepritiske
+           event_struct.SW2_off_timer.ponastavi(); // Filtrira lazne nepritiske
         }
-        else if (Timers.SW2_off_timer.vrednost() > 50)
+        else if (event_struct.SW2_off_timer.vrednost() > 50)
         {
             event_struct.longPRESS = false;
         }
@@ -196,7 +195,7 @@ void events(void *paramOdTaska)
             internal_power_switch_ev();
             delayFREERTOS(20);
         }
-        delayFREERTOS(50);
+        delayFREERTOS(10);
         /*************************************************************************************/
 		// END WHILE
 	}
@@ -209,7 +208,7 @@ void external_power_switch_ev()
     Shutdown();
     _delay_ms(20);
     PORTD |= (1 << 7);
-    Timers.stikaloCAS.ponastavi();
+    stikaloCAS.ponastavi();
     _delay_ms(20);
     Hardware.PSW = true;
     taskEXIT_CRITICAL();
@@ -221,7 +220,7 @@ void internal_power_switch_ev()
     Shutdown();
     _delay_ms(20);
     PORTD &= ~(1 << 7);
-    Timers.stikaloCAS.ponastavi();
+    stikaloCAS.ponastavi();
     _delay_ms(20);
     Hardware.PSW = false;
     taskEXIT_CRITICAL();

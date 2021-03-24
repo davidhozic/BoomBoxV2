@@ -1,6 +1,5 @@
-code/Hardware Functions/outputs_inputs.d \
- code/Hardware Functions/outputs_inputs.o: \
- ../code/Hardware\ Functions/outputs_inputs.cpp \
+code/libs/EEPROM/eeprom.d code/libs/EEPROM/eeprom.o: \
+ ../code/libs/EEPROM/eeprom.cpp \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -12,7 +11,6 @@ code/Hardware Functions/outputs_inputs.d \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../code/includes/includes.h ../code/includes/settings.h \
  ../code/freeRTOS/include/FreeRTOS.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
  ../code/FreeRTOSConfig.h ../code/freeRTOS/include/projdefs.h \
@@ -20,12 +18,9 @@ code/Hardware Functions/outputs_inputs.d \
  ../code/freeRTOS/include/deprecated_definitions.h \
  ../code/freeRTOS/portmacro.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
- ../code/freeRTOS/include/mpu_wrappers.h ../code/libs/castimer/castimer.h \
- ../code/freeRTOS/include/semphr.h ../code/freeRTOS/include/queue.h \
- ../code/freeRTOS/include/task.h ../code/freeRTOS/include/list.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h
+ ../code/freeRTOS/include/mpu_wrappers.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
+ ../code/libs/EEPROM/EEPROM.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -49,10 +44,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-../code/includes/includes.h:
-
-../code/includes/settings.h:
-
 ../code/freeRTOS/include/FreeRTOS.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
@@ -71,18 +62,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 ../code/freeRTOS/include/mpu_wrappers.h:
 
-../code/libs/castimer/castimer.h:
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
 
-../code/freeRTOS/include/semphr.h:
-
-../code/freeRTOS/include/queue.h:
-
-../code/freeRTOS/include/task.h:
-
-../code/freeRTOS/include/list.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h:
+../code/libs/EEPROM/EEPROM.h:

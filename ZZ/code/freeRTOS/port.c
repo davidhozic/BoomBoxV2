@@ -44,7 +44,7 @@
 
 
 #if (port_SLICING_USE_TIMERS == 1)
-	#warning "Using one of 5 other timers (not WDT) as FreeRTOS tick source"
+	#warning "Using one of 6 other timers (not WDT) used for scheduler"
 #else
 	#warning "Watchdog Timer used for scheduler."
 	#define portSCHEDULER_ISR           WDT_vect
@@ -682,47 +682,53 @@ void prvSetupTimerInterrupt( void )
 #else
 
 static void prvSetupTimerInterrupt( void )
-{
-	
+{	
 	uint16_t outputCompare;
-#if configUSE_TIMER2 == 0
-	#if (configTICK_PRESCALER == 1)
-		#define portPRESCALER 1;
-	#elif (configTICK_PRESCALER == 8)
-		#define portPRESCALER (1 << 1)
-	#elif (configTICK_PRESCALER == 64)	
-		#define portPRESCALER (1 << 1 | 1)
-	#elif (configTICK_PRESCALER == 256)
-		#define portPRESCALER (1 << 2)
-	#elif (configTICK_PRESCALER == 1024)
-		#define portPRESCALER (1 << 2 | 1)
-    #elif
-        #error "configTICK_PRESCALER invalid! Use 1, 8, 64, 256 or 1024"    		
+	 
+	
+	#if configUSE_TIMER2 != 1
+		#if (configTICK_PRESCALER == 1)
+			#define portPRESCALER 1;
+		#elif (configTICK_PRESCALER == 8)
+			#define portPRESCALER (1 << 1)
+		#elif (configTICK_PRESCALER == 64)	
+			#define portPRESCALER (1 << 1 | 1)
+		#elif (configTICK_PRESCALER == 256)
+			#define portPRESCALER (1 << 2)
+		#elif (configTICK_PRESCALER == 1024)
+			#define portPRESCALER (1 << 2 | 1)
+		#else
+			#error "configTICK_PRESCALER invalid! Use 1, 8, 64, 256 or 1024"   
+		#endif
+	#else
+		#if (configTICK_PRESCALER == 1)
+			#define portPRESCALER 1;
+		#elif (configTICK_PRESCALER == 8)
+			#define portPRESCALER (1 << 1)
+		#elif (configTICK_PRESCALER == 32)	
+			#define portPRESCALER (1 << 1 | 1)
+		#elif (configTICK_PRESCALER == 64)
+			#define portPRESCALER (1 << 2)
+		#elif (configTICK_PRESCALER == 256)
+			#define portPRESCALER (1 << 2 | 1<<1)
+		#elif (configTICK_PRESCALER == 1024)
+			#define portPRESCALER (1 << 2 | 1<<1 | 1)
+		#else
+			#error "configTICK_PRESCALER invalid! Use 1, 8, 32, 64, 256 or 1024"    		
+		#endif
+
+	#endif	
+	
+	#if (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 255 && (configUSE_TIMER0 || configUSE_TIMER2))
+	#error "The configTICK_RATE_HZ is too low, either select a higher bit timer or increase the frequency!"
+	#elif (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 65535)
+	#error "configTICK_RATE_HZ is too low!"
 	#endif
-#else
-	#if (configTICK_PRESCALER == 1)
-		#define portPRESCALER 1;
-	#elif (configTICK_PRESCALER == 8)
-		#define portPRESCALER (1 << 1)
-	#elif (configTICK_PRESCALER == 32)	
-		#define portPRESCALER (1 << 1 | 1)
-	#elif (configTICK_PRESCALER == 64)
-		#define portPRESCALER (1 << 2)
-	#elif (configTICK_PRESCALER == 256)
-		#define portPRESCALER (1 << 2 | 1<<1)
-    #elif (configTICK_PRESCALER == 1024)
-		#define portPRESCALER (1 << 2 | 1<<1 | 1)
-    #elif
-        #error "configTICK_PRESCALER invalid! Use 1, 8, 32,64, 256 or 1024"    		
+	
+	#ifndef portPRESCALER
+	#define portPRESCALER -1 // To prevent error in the section below
 	#endif
 
-#endif	
-		#if (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 255 && configUSE_TIMER0)
-		#error "The configTICK_RATE_HZ is too low, either select a higher bit timer or increase the frequency!"
-		#elif (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 65535)
-		#error "configTICK_RATE_HZ is too low!"
-		#endif
-	
 	
 	#if	configUSE_TIMER0
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
@@ -733,7 +739,8 @@ static void prvSetupTimerInterrupt( void )
 			TCCR0A = 1 << WGM01; //Set CTC mode (clear timer on compare match)
 			TCCR0B = portPRESCALER;
 			TIMSK0 = 1 << OCIE0A;
-	#define portSCHEDULER_ISR TIMER0_COMPA_vect
+			#define portSCHEDULER_ISR TIMER0_COMPA_vect
+			#warning Using TIMER0 for scheduler!
 			
 	
 	#elif configUSE_TIMER1
@@ -745,7 +752,9 @@ static void prvSetupTimerInterrupt( void )
 			TCCR1A = 0;
 			TCCR1B = portPRESCALER | 1 << WGM12;
 			TIMSK1 = 1 << OCIE1A;
-	#define portSCHEDULER_ISR TIMER1_COMPA_vect	
+			#define portSCHEDULER_ISR TIMER1_COMPA_vect	
+			#warning Using TIMER1 for scheduler!
+			
 			
 	#elif configUSE_TIMER2
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
@@ -756,7 +765,9 @@ static void prvSetupTimerInterrupt( void )
 			TCCR2A = 1 << WGM21; //Set CTC mode (clear timer on compare match)
 			TCCR2B = portPRESCALER;
 			TIMSK2 = 1 << OCIE2A;
-	#define portSCHEDULER_ISR TIMER2_COMPA_vect				
+			#define portSCHEDULER_ISR TIMER2_COMPA_vect				
+			#warning Using TIMER2 for scheduler!
+			
 			
 	#elif configUSE_TIMER3
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
@@ -767,7 +778,9 @@ static void prvSetupTimerInterrupt( void )
 				TCCR3A = 0;
 				TCCR3B = portPRESCALER;
 				TIMSK3 = 1 << OCIE3A;
-	#define portSCHEDULER_ISR TIMER3_COMPA_vect	
+				#define portSCHEDULER_ISR TIMER3_COMPA_vect	
+				#warning Using TIMER3 for scheduler!
+				
 				
 	#elif configUSE_TIMER4
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
@@ -778,8 +791,10 @@ static void prvSetupTimerInterrupt( void )
 				TCCR4A = 0;
 				TCCR4B = portPRESCALER| 1 << WGM42;
 				TIMSK4 = 1 << OCIE4A;
-	#define portSCHEDULER_ISR TIMER4_COMPA_vect		
-	
+				#define portSCHEDULER_ISR TIMER4_COMPA_vect		
+				#warning Using TIMER4 for scheduler!
+				
+				
 	#elif configUSE_TIMER5
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER;
@@ -789,9 +804,11 @@ static void prvSetupTimerInterrupt( void )
 				TCCR5A = 0;
 				TCCR5B = portPRESCALER | 1 << WGM52;
 				TIMSK5 = 1 << OCIE5A;
-	#define portSCHEDULER_ISR TIMER5_COMPA_vect				
+				#define portSCHEDULER_ISR TIMER5_COMPA_vect				
+				#warning Using TIMER5 for scheduler!
+				
+				
 	#endif			
-	
 	
 	}
 #endif
@@ -811,7 +828,7 @@ static void prvSetupTimerInterrupt( void )
     ISR(portSCHEDULER_ISR, ISR_NAKED) __attribute__ ((hot, flatten));
 /*  ISR(portSCHEDULER_ISR, ISR_NAKED ISR_NOBLOCK) __attribute__ ((hot, flatten));
  */
-    ISR(portSCHEDULER_ISR)
+    ISR(portSCHEDULER_ISR, ISR_NOBLOCK)
     {
         vPortYieldFromTick();
         __asm__ __volatile__ ( "reti" );

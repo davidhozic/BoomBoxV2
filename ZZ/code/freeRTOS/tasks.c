@@ -1720,6 +1720,7 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB )
             if( uxListRemove( &( pxTCB->xStateListItem ) ) == ( UBaseType_t ) 0 )
             {
                 taskRESET_READY_PRIORITY( pxTCB->uxPriority );
+			
             }
             else
             {

@@ -1,6 +1,5 @@
-code/Hardware Functions/EEPROM/eeprom.d \
- code/Hardware Functions/EEPROM/eeprom.o: \
- ../code/Hardware\ Functions/EEPROM/eeprom.cpp \
+code/common/global.d code/common/global.o: ../code/common/global.cpp \
+ ../code/common/inc/global.h ../code/settings.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -12,16 +11,11 @@ code/Hardware Functions/EEPROM/eeprom.d \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
- ../code/freeRTOS/include/FreeRTOS.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
- ../code/FreeRTOSConfig.h ../code/freeRTOS/include/projdefs.h \
- ../code/freeRTOS/include/portable.h \
- ../code/freeRTOS/include/deprecated_definitions.h \
- ../code/freeRTOS/portmacro.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
- ../code/freeRTOS/include/mpu_wrappers.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- ../code/Hardware\ Functions/EEPROM/EEPROM.h
+ ../code/libs/castimer/castimer.h ../code/libs/VHOD/Vhod.h
+
+../code/common/inc/global.h:
+
+../code/settings.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -45,24 +39,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
-../code/freeRTOS/include/FreeRTOS.h:
+../code/libs/castimer/castimer.h:
 
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
-
-../code/FreeRTOSConfig.h:
-
-../code/freeRTOS/include/projdefs.h:
-
-../code/freeRTOS/include/portable.h:
-
-../code/freeRTOS/include/deprecated_definitions.h:
-
-../code/freeRTOS/portmacro.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h:
-
-../code/freeRTOS/include/mpu_wrappers.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
-
-../code/Hardware\ Functions/EEPROM/EEPROM.h:
+../code/libs/VHOD/Vhod.h:

@@ -1,6 +1,7 @@
 
 
-#include "includes/includes.h"
+#include "libs/castimer/castimer.h"
+#include "common/inc/global.h"
 
 unsigned long castimer::vrednost(void)
 {

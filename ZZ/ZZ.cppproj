@@ -44,15 +44,30 @@
     <avrtoolserialnumber />
     <avrdeviceexpectedsignature>0x1E9801</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_simulator>
+      <ToolOptions>
+        <InterfaceProperties>
+        </InterfaceProperties>
+        <InterfaceName>
+        </InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolNumber>
+      </ToolNumber>
+      <ToolName>Simulator</ToolName>
+    </com_atmel_avrdbg_tool_simulator>
+    <avrtoolinterface />
+    <custom>
       <ToolOptions xmlns="">
         <InterfaceProperties>
         </InterfaceProperties>
+        <InterfaceName>
+        </InterfaceName>
       </ToolOptions>
-      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolType xmlns="">custom</ToolType>
       <ToolNumber xmlns="">
       </ToolNumber>
-      <ToolName xmlns="">Simulator</ToolName>
-    </com_atmel_avrdbg_tool_simulator>
+      <ToolName xmlns="">Custom Programming Tool</ToolName>
+    </custom>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -114,69 +129,69 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGccCpp>
-        <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560"</avrgcc.common.Device>
-        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-          </ListValues>
-        </avrgcc.compiler.symbols.DefSymbols>
-        <avrgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
-            <Value>../code/freeRTOS/include</Value>
-            <Value>../code/freeRTOS</Value>
-            <Value>../code</Value>
-            <Value>../code/libs</Value>
-            <Value>../code/includes</Value>
-          </ListValues>
-        </avrgcc.compiler.directories.IncludePaths>
-        <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
-        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcccpp.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-            <Value>F_CPU</Value>
-          </ListValues>
-        </avrgcccpp.compiler.symbols.DefSymbols>
-        <avrgcccpp.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
-            <Value>../code</Value>
-            <Value>../code/libs</Value>
-            <Value>../code/freeRTOS</Value>
-            <Value>../code/freeRTOS/include</Value>
-            <Value>../code/includes</Value>
-          </ListValues>
-        </avrgcccpp.compiler.directories.IncludePaths>
-        <avrgcccpp.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcccpp.compiler.optimization.level>
-        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
-        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcccpp.compiler.optimization.DebugLevel>
-        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-        <avrgcccpp.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </avrgcccpp.linker.libraries.Libraries>
-        <avrgcccpp.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
-          </ListValues>
-        </avrgcccpp.assembler.general.IncludePaths>
-        <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
-      </AvrGccCpp>
+  <avrgcc.common.Device>-mmcu=atmega2560 -B "%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560"</avrgcc.common.Device>
+  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
+      <Value>../code/freeRTOS/include</Value>
+      <Value>../code/freeRTOS</Value>
+      <Value>../code</Value>
+      <Value>../code/libs</Value>
+      <Value>../code/common/inc</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize more (-O2)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU</Value>
+    </ListValues>
+  </avrgcccpp.compiler.symbols.DefSymbols>
+  <avrgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
+      <Value>../code</Value>
+      <Value>../code/libs</Value>
+      <Value>../code/freeRTOS</Value>
+      <Value>../code/freeRTOS/include</Value>
+      <Value>../code/common/inc</Value>
+    </ListValues>
+  </avrgcccpp.compiler.directories.IncludePaths>
+  <avrgcccpp.compiler.optimization.level>Optimize more (-O2)</avrgcccpp.compiler.optimization.level>
+  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcccpp.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcccpp.compiler.optimization.DebugLevel>
+  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+  <avrgcccpp.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcccpp.linker.libraries.Libraries>
+  <avrgcccpp.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.6.364\include\</Value>
+    </ListValues>
+  </avrgcccpp.assembler.general.IncludePaths>
+  <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
+</AvrGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
@@ -187,12 +202,12 @@
     <Folder Include="code\events\" />
     <Folder Include="code\freeRTOS\" />
     <Folder Include="code\freeRTOS\include\" />
-    <Folder Include="code\Hardware Functions\" />
-    <Folder Include="code\Hardware Functions\EEPROM\" />
-    <Folder Include="code\includes\" />
-    <Folder Include="code\core" />
+    <Folder Include="code\common" />
+    <Folder Include="code\common\inc" />
     <Folder Include="code\libs\" />
     <Folder Include="code\libs\castimer\" />
+    <Folder Include="code\libs\EEPROM" />
+    <Folder Include="code\libs\outputs_inputs" />
     <Folder Include="code\libs\VHOD\" />
     <Folder Include="code\Power\" />
   </ItemGroup>
@@ -219,12 +234,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\audio\pod_task.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\core\core.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\core\thermal.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\events\events.cpp">
@@ -299,9 +308,6 @@
     <Compile Include="code\freeRTOS\list.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\freeRTOS\mpu_wrappers.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="code\freeRTOS\port.c">
       <SubType>compile</SubType>
     </Compile>
@@ -320,31 +326,31 @@
     <Compile Include="code\freeRTOS\timers.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\Hardware Functions\EEPROM\eeprom.cpp">
+    <Compile Include="code\common\global.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\Hardware Functions\EEPROM\EEPROM.h">
+    <Compile Include="code\common\inc\FreeRTOS_def_decl.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\Hardware Functions\outputs_inputs.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\Hardware Functions\sleep.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\includes\includes.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\includes\settings.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\includes\structs.cpp">
+    <Compile Include="code\common\inc\global.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\libs\castimer\castimer.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\libs\castimer\castimer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\libs\EEPROM\eeprom.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\libs\EEPROM\EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\libs\outputs_inputs\outputs_inputs.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\libs\outputs_inputs\outputs_inputs.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\libs\VHOD\vhod.cpp">
@@ -359,7 +365,16 @@
     <Compile Include="code\Power\chrg.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="code\Power\Power.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\Power\sleep.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="code\Power\zaslon.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="code\settings.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

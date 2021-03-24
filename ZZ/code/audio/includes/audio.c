@@ -8,5 +8,6 @@ audio_t Audio_vars = {
 	{0, 0, 0},
 	0,
 	POTENCIOMETER,
-	BELA
+	BELA,
+	0
 };

@@ -1,8 +1,10 @@
 #include <avr/sleep.h>
 #include "avr/common.h"
 #include "avr/interrupt.h"
-#include "includes/settings.h"
+#include "settings.h"
 #include "util/delay.h"
+
+void Shutdown();
 
 void bujenje()
 { //Avtomaticno rising edge, saj se interrupt vklopi sele ob spanju
@@ -14,8 +16,9 @@ void bujenje()
 }
 
 void spanje()
-{
-	sei();					 //vklop zunanjih interruptov
+{	
+	Shutdown();
+	asm("sei");					 //vklop zunanjih interruptov
 	PCICR = (1 << PCIE2);	 // Vklopi PCINT interrupt
 	PCIFR = (1 << PCIF2);	 // Vlopi ISR
 	PCMSK2 = (1 << PCINT17); //Vklopi vector na 17
