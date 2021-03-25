@@ -28,19 +28,19 @@
 
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
-
+#include "settings.h"
 
 #define configUSE_PREEMPTION 1
 
 /*		FreeRTOS tick generation	*/
 #define configCPU_CLOCK_HZ (F_CPU)
-#define configTICK_RATE_HZ (4000)
-#define configTICK_PRESCALER (64)   // 1, 8, 64, 256 or 1024
+#define configTICK_RATE_HZ (2000)
+#define configTICK_PRESCALER (64)   // 1, 8, 64, 256 or 1024 (or 32 for timer2)
 
 
 #define port_SLICING_USE_TIMERS		1   // If this option is off, WDT will  be used 
-#define configUSE_TIMER0			1	// Select which timer you want to use for RTOS tick generation (configUSE_TIMER0:5)
-#define portUSE_WDTO				WDTO_15MS	
+#define portUSE_TIMER0				1	// Select which timer you want to use for RTOS tick generation (portUSE_TIMER0:5)
+#define portUSE_WDTO			 WDTO_15MS	
 /************************************************/
 
 	
@@ -59,7 +59,6 @@
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION 0
 #define configSUPPORT_DYNAMIC_ALLOCATION 1
-#define configTOTAL_HEAP_SIZE 4096
 #define configAPPLICATION_ALLOCATED_HEAP 0 //	Reserve heap inside program
 
 /* Hook function related definitions. */

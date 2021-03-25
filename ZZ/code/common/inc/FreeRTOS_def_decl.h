@@ -20,7 +20,7 @@ if (eTaskGetState(task) == eSuspended && task != NULL)	    \
 	vTaskResume(task);										\
 }
 
-#define deleteTask(task)   \
+#define deleteTASK(task)   \
 if (task != NULL)      \
 {                      \
 	vTaskDelete(task); \

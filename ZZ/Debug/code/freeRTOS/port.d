@@ -15,7 +15,8 @@ code/freeRTOS/port.d code/freeRTOS/port.o: ../code/freeRTOS/port.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
  ../code/freeRTOS/include/FreeRTOS.h ../code/FreeRTOSConfig.h \
- ../code/freeRTOS/include/projdefs.h ../code/freeRTOS/include/portable.h \
+ ../code/settings.h ../code/freeRTOS/include/projdefs.h \
+ ../code/freeRTOS/include/portable.h \
  ../code/freeRTOS/include/deprecated_definitions.h \
  ../code/freeRTOS/portmacro.h ../code/freeRTOS/include/mpu_wrappers.h \
  ../code/freeRTOS/include/task.h ../code/freeRTOS/include/list.h
@@ -53,6 +54,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../code/freeRTOS/include/FreeRTOS.h:
 
 ../code/FreeRTOSConfig.h:
+
+../code/settings.h:
 
 ../code/freeRTOS/include/projdefs.h:
 

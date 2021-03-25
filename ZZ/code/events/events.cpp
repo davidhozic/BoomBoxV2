@@ -4,6 +4,7 @@
 #include "../audio/includes/audio.h"
 #include "common/inc/global.h"
 #include <util/delay.h>
+#include "libs/outputs_inputs/outputs_inputs.h"
 /******************************************************************************************/
 /*                                     EXTERN DEKLARACIJE                                 */
 /******************************************************************************************/
@@ -16,10 +17,10 @@ void strip_mode_chg(char *ch);
 /******************************************************************************************/
 enum menu_seek_scroll_t
 {
-    TOGGLE_LCD,
-    STRIP_MD_CHG,
-    STRIP_OFF,
-	MIC_MD_CHG,
+    TOGGLE_LCD=0,
+    STRIP_MD_CHG=1,
+    STRIP_OFF=2,
+	MIC_MD_CHG=3,
     menu_seek_LEN //dolzina
 };
 
@@ -55,8 +56,8 @@ struct event_struct_t
 };
 
  event_struct_t event_struct;
-
  VHOD eventSW(red_button_pin, red_button_port, 0);
+ 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
@@ -79,7 +80,7 @@ void exit()
     event_struct.state_exit_timer.ponastavi();
     tr_bright = 255;
     brightDOWN(15);
-    delayFREERTOS(500);
+    delayFREERTOS(100);
     resumeTASK(audio_system_control);
 }
 
@@ -93,10 +94,13 @@ void exit()
 
 void events(void *paramOdTaska)
 {
+	
     while (true)
     {
-        /******************************************** SWITCH 2 EVENTS ****************************************/
-
+        /************************************************************************/
+        /*					 SWITCH 2 (RED BUTTON) EVENTS                       */
+        /************************************************************************/
+		
         if (eventSW.vrednost())
         {
            event_struct.SW2_off_timer.ponastavi(); // Filtrira lazne nepritiske
@@ -105,7 +109,8 @@ void events(void *paramOdTaska)
         {
             event_struct.longPRESS = false;
         }
-        //
+		
+		
         //State machine
         if (Hardware.is_Powered_UP && !event_struct.longPRESS)
         {
@@ -160,7 +165,7 @@ void events(void *paramOdTaska)
 						case MIC_MD_CHG:
 							Audio_vars.MIC_MODE = (Audio_vars.MIC_MODE + 1) % mic_enum_len;
 							exit();
-						break;	
+							break;	
                         }
                         event_struct.hold_timer.ponastavi();
                     }
@@ -184,18 +189,14 @@ void events(void *paramOdTaska)
         /******************************** POWER SWITCH EVENTS ********************************/
         if (napajalnik.vrednost() && Hardware.PSW == false)
         {
-            delayFREERTOS(20);
             external_power_switch_ev();
-            delayFREERTOS(20);
         }
 
         else if (napajalnik.vrednost() == 0 && Hardware.PSW)
         {
-            delayFREERTOS(20);
             internal_power_switch_ev();
-            delayFREERTOS(20);
         }
-        delayFREERTOS(10);
+        delayFREERTOS(5);
         /*************************************************************************************/
 		// END WHILE
 	}
@@ -207,11 +208,10 @@ void external_power_switch_ev()
     taskENTER_CRITICAL();
     Shutdown();
     _delay_ms(20);
-    PORTD |= (1 << 7);
+    writeOUTPUT(menjalnik_pin,menjalnik_port,1);
     stikaloCAS.ponastavi();
-    _delay_ms(20);
+	taskEXIT_CRITICAL();
     Hardware.PSW = true;
-    taskEXIT_CRITICAL();
 }
 
 void internal_power_switch_ev()
@@ -219,7 +219,7 @@ void internal_power_switch_ev()
     taskENTER_CRITICAL();
     Shutdown();
     _delay_ms(20);
-    PORTD &= ~(1 << 7);
+     writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
     stikaloCAS.ponastavi();
     _delay_ms(20);
     Hardware.PSW = false;

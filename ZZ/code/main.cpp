@@ -1,5 +1,5 @@
 
-#define  F_CPU 16000000UL
+
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
 #include "FreeRTOS.h"
@@ -28,7 +28,7 @@ void polnjenje(void *paramOdTaska);
 void events(void *paramOdTaska);
 /************************************************************************/
 
-/**************************************************
+/*************************************************/
 /*                                               */
 /*            FreeRTOS main task control         */
 /*                                               */

@@ -25,7 +25,6 @@ struct Hardware_t
 	bool polnjenjeON;
 	bool AMP_oheat;
 	bool display_enabled;
-	float Hardware_temp;
 	float napetost;
 	unsigned long timeFROMboot;
 };

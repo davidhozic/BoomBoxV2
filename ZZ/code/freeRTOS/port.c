@@ -686,7 +686,7 @@ static void prvSetupTimerInterrupt( void )
 	uint16_t outputCompare;
 	 
 	
-	#if configUSE_TIMER2 != 1
+	#if portUSE_TIMER2 != 1
 		#if (configTICK_PRESCALER == 1)
 			#define portPRESCALER 1;
 		#elif (configTICK_PRESCALER == 8)
@@ -719,10 +719,10 @@ static void prvSetupTimerInterrupt( void )
 
 	#endif	
 	
-	#if (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 255 && (configUSE_TIMER0 || configUSE_TIMER2))
-	#error "The configTICK_RATE_HZ is too low, either select a higher bit timer or increase the frequency!"
+	#if (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 255 && (portUSE_TIMER0 == 1 || portUSE_TIMER2 == 1))
+	#error "The configTICK_RATE_HZ is too low, either select a higher bit timer or either increase the frequency or increase the prescaler!"
 	#elif (configCPU_CLOCK_HZ / (configTICK_RATE_HZ*configTICK_PRESCALER)-1 > 65535)
-	#error "configTICK_RATE_HZ is too low!"
+	#error "The configTICK_RATE_HZ is too low, either select a higher bit timer or either increase the frequency or increase the prescaler!"
 	#endif
 	
 	#ifndef portPRESCALER
@@ -730,7 +730,7 @@ static void prvSetupTimerInterrupt( void )
 	#endif
 
 	
-	#if	configUSE_TIMER0
+	#if	portUSE_TIMER0
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER;
 			outputCompare -= 1;
@@ -743,7 +743,7 @@ static void prvSetupTimerInterrupt( void )
 			#warning Using TIMER0 for scheduler!
 			
 	
-	#elif configUSE_TIMER1
+	#elif portUSE_TIMER1
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER;
 			outputCompare -= 1;
@@ -756,7 +756,7 @@ static void prvSetupTimerInterrupt( void )
 			#warning Using TIMER1 for scheduler!
 			
 			
-	#elif configUSE_TIMER2
+	#elif portUSE_TIMER2
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER;
 			outputCompare -= 1;
@@ -769,7 +769,7 @@ static void prvSetupTimerInterrupt( void )
 			#warning Using TIMER2 for scheduler!
 			
 			
-	#elif configUSE_TIMER3
+	#elif portUSE_TIMER3
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER| 1 << WGM32;
 			outputCompare -= 1;
@@ -782,7 +782,7 @@ static void prvSetupTimerInterrupt( void )
 				#warning Using TIMER3 for scheduler!
 				
 				
-	#elif configUSE_TIMER4
+	#elif portUSE_TIMER4
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER;
 			outputCompare -= 1;
@@ -795,7 +795,7 @@ static void prvSetupTimerInterrupt( void )
 				#warning Using TIMER4 for scheduler!
 				
 				
-	#elif configUSE_TIMER5
+	#elif portUSE_TIMER5
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
 			outputCompare /= configTICK_PRESCALER;
 			outputCompare -= 1;

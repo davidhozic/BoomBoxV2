@@ -56,6 +56,9 @@
 /************************************************************************/
 /*								OTHER                                   */
 /************************************************************************/
-    #define SAVE_STRIP_MODE			    1    
-    #define sleep_voltage			  3200      
+    #define SAVE_STRIP_MODE				     1    
+    #define sleep_voltage				   3200   
+	#define F_CPU						16000000UL  
+
+ 
 #endif

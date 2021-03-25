@@ -18,7 +18,7 @@ void avg_vol_task(void* param)
 		if (tr_vrednost > max_izmerjeno)
 		max_izmerjeno = tr_vrednost;
 
-		if (average_v_timer.vrednost() >= 20)
+		if (average_v_timer.vrednost() >= 15)
 		{
 			vsota_branj += max_izmerjeno;
 			st_branj++;
@@ -28,10 +28,16 @@ void avg_vol_task(void* param)
 
 		if (st_branj >= 50)
 		{
+			taskENTER_CRITICAL();
 			Audio_vars.Average_vol = vsota_branj / st_branj;
 			vsota_branj = 0;
 			st_branj = 0;
 			max_izmerjeno = 0;
+			taskEXIT_CRITICAL();
 		}
+		
+		delayFREERTOS(2);
+		
+		//END LOOP
 	}
 }

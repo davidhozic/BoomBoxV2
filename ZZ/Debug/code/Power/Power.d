@@ -4,11 +4,7 @@ code/Power/Power.d code/Power/Power.o: ../code/Power/Power.cpp \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdint.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdint.h \
- ../code/FreeRTOSConfig.h ../code/freeRTOS/include/projdefs.h \
- ../code/freeRTOS/include/portable.h \
- ../code/freeRTOS/include/deprecated_definitions.h \
- ../code/freeRTOS/portmacro.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
+ ../code/FreeRTOSConfig.h ../code/settings.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -18,8 +14,12 @@ code/Power/Power.d code/Power/Power.o: ../code/Power/Power.cpp \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
+ ../code/freeRTOS/include/projdefs.h ../code/freeRTOS/include/portable.h \
+ ../code/freeRTOS/include/deprecated_definitions.h \
+ ../code/freeRTOS/portmacro.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
  ../code/freeRTOS/include/mpu_wrappers.h ../code/audio/includes/audio.h \
- ../code/audio/includes/../BARVE/barve.h ../code/freeRTOS/include/task.h \
+ ../code/audio/includes/barve.h ../code/freeRTOS/include/task.h \
  ../code/freeRTOS/include/list.h ../code/common/inc/FreeRTOS_def_decl.h \
  ../code/freeRTOS/include/semphr.h ../code/freeRTOS/include/queue.h \
  ../code/freeRTOS/include/task.h ../code/settings.h \
@@ -41,15 +41,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 ../code/FreeRTOSConfig.h:
 
-../code/freeRTOS/include/projdefs.h:
-
-../code/freeRTOS/include/portable.h:
-
-../code/freeRTOS/include/deprecated_definitions.h:
-
-../code/freeRTOS/portmacro.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h:
+../code/settings.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -69,11 +61,21 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
+../code/freeRTOS/include/projdefs.h:
+
+../code/freeRTOS/include/portable.h:
+
+../code/freeRTOS/include/deprecated_definitions.h:
+
+../code/freeRTOS/portmacro.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h:
+
 ../code/freeRTOS/include/mpu_wrappers.h:
 
 ../code/audio/includes/audio.h:
 
-../code/audio/includes/../BARVE/barve.h:
+../code/audio/includes/barve.h:
 
 ../code/freeRTOS/include/task.h:
 

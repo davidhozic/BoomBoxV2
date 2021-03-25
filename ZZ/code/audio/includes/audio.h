@@ -1,7 +1,7 @@
 
 #ifndef AUDIO_H
 #define AUDIO_H
-#include "../BARVE/barve.h"
+#include "audio/includes/barve.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "common/inc/FreeRTOS_def_decl.h"
@@ -19,27 +19,21 @@
 #define brightDOWN(cas_na_krog) svetlost_mod_funct(-1, cas_na_krog);
 #define colorSHIFT(index_barve) color_fade_funct((uint8_t *)index_barve);
 #define cr_fade_tsk(funct, name, barv, control) \
-    deleteTask(control);                        \
+    deleteTASK(control);                        \
     xTaskCreate(funct, name, 128, &barv, 3, &control);
 
 #define turnOFFstrip()              \
     holdTASK(audio_system_control); \
-    deleteALL_subAUDIO_tasks();     \
+	deleteStripSubTasks(); \
     brightDOWN(15);
+  
+
 #define nastavi_barve(x)                               \
     tr_r = mozne_barve.barvni_ptr[*((uint8_t *)x)][0]; \
     tr_z = mozne_barve.barvni_ptr[*((uint8_t *)x)][1]; \
     tr_m = mozne_barve.barvni_ptr[*((uint8_t *)x)][2];
 /********************************************************************/
 
-
-/*********************************************/
-/*			  TASK CONTROL FREERTOS          */
-/*********************************************/
-
-extern TaskHandle_t fade_control;
-extern TaskHandle_t color_fade_control;
-extern TaskHandle_t Breathe_control;
 
 /*********************************************/
 /*			 ENUM,STRUCT DEFINICIJE          */
@@ -50,7 +44,7 @@ enum strip_mode_enum_t
 	NORMAL_FADE,
 	COLOR_FADE,
 	Fade_Breathe,
-	LENGTH_2,
+	strip_mode_len,
 	OFF_A
 };
 
@@ -60,15 +54,15 @@ enum mic_mode_enum_t{
 	mic_enum_len
 };
 
- typedef struct 
+ struct audio_t
 {
-	unsigned short STRIP_MODE;
-	short TR_BARVA[3];
-	short tr_svetlost;
-	unsigned short MIC_MODE;
-	unsigned char zrebana_barva;
-	unsigned short Average_vol;
-}audio_t;
+	unsigned short STRIP_MODE = OFF_A;
+	short TR_BARVA[3] = {0, 0, 0};
+	short tr_svetlost = 0;
+	unsigned short MIC_MODE = POTENCIOMETER;
+	unsigned short Average_vol = 2048;
+};
+
 
 extern audio_t Audio_vars;
 
@@ -76,13 +70,12 @@ extern audio_t Audio_vars;
 /*********************************************/
 /*         Prototipi pomoznih funkcij        */
 /*********************************************/
-void holdALL_tasks();
 void writeTRAK();
 void color_fade_funct(uint8_t *BARVA);
 void svetlost_mod_funct(char smer, uint8_t cas_krog);
 void mic_mode_change();
 void strip_mode_chg(char *ch);
-void deleteALL_subAUDIO_tasks();
+void deleteStripSubTasks();
 void flash_strip();
 /*********************************************/
 
@@ -95,6 +88,10 @@ void Fade_Breathe_task(void *B);
 void avg_vol_task(void* param);
 /*********************************************/
 
+
+extern TaskHandle_t fade_control;
+extern TaskHandle_t color_fade_control;
+extern TaskHandle_t Breathe_control;
 
 
 #endif

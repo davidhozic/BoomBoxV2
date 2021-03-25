@@ -5,10 +5,7 @@ code/freeRTOS/stream_buffer.d code/freeRTOS/stream_buffer.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
  ../code/freeRTOS/include/FreeRTOS.h ../code/FreeRTOSConfig.h \
- ../code/freeRTOS/include/projdefs.h ../code/freeRTOS/include/portable.h \
- ../code/freeRTOS/include/deprecated_definitions.h \
- ../code/freeRTOS/portmacro.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
+ ../code/settings.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -18,6 +15,10 @@ code/freeRTOS/stream_buffer.d code/freeRTOS/stream_buffer.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
+ ../code/freeRTOS/include/projdefs.h ../code/freeRTOS/include/portable.h \
+ ../code/freeRTOS/include/deprecated_definitions.h \
+ ../code/freeRTOS/portmacro.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h \
  ../code/freeRTOS/include/mpu_wrappers.h ../code/freeRTOS/include/task.h \
  ../code/freeRTOS/include/list.h ../code/freeRTOS/include/stream_buffer.h
 
@@ -33,15 +34,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 
 ../code/FreeRTOSConfig.h:
 
-../code/freeRTOS/include/projdefs.h:
-
-../code/freeRTOS/include/portable.h:
-
-../code/freeRTOS/include/deprecated_definitions.h:
-
-../code/freeRTOS/portmacro.h:
-
-c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h:
+../code/settings.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -60,6 +53,16 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
+
+../code/freeRTOS/include/projdefs.h:
+
+../code/freeRTOS/include/portable.h:
+
+../code/freeRTOS/include/deprecated_definitions.h:
+
+../code/freeRTOS/portmacro.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\wdt.h:
 
 ../code/freeRTOS/include/mpu_wrappers.h:
 

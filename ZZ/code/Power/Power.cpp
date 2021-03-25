@@ -21,34 +21,16 @@ void spanje();
 
 void power(void *paramOdTaska)
 {
-/************************************************************************/
-/*                          LOCAL TASK VARIABLES                        */
-/************************************************************************/
-	castimer temperature_read_timer;	
+	/************************************************************************/
+	/*                          LOCAL TASK VARIABLES                        */
+	/************************************************************************/
 	castimer VOLT_timer;
 	castimer stikaloOFFtime;
 	VHOD stikalo(1, 'K', 0);
+	
 	while (true)
 	{ 
-		
-		/************************************************************************/
-		/*							TEMPERATURE READING                         */
-		/************************************************************************/		
-		if (temperature_read_timer.vrednost() > 4000){
-			taskENTER_CRITICAL();
-			float TempReadV = (float)readANALOG(Temp_sensor_pin) * Hardware.REF_mVOLT / 1023.00f;
-			Hardware.Hardware_temp = (float)(-0.073f) * (float)TempReadV + 192.754f;
-			taskEXIT_CRITICAL();
-			temperature_read_timer.ponastavi();
-		}
-		
-		if (Hardware.Hardware_temp > 60)
-		{
-			Hardware.AMP_oheat = true;
-			Shutdown();
-		}
-		
-			
+	
 		/************************************************************************/
 		/*							VOLTAGE READING                             */
 		/************************************************************************/
@@ -87,7 +69,7 @@ void power(void *paramOdTaska)
 		{
 			spanje();
 		}
-		delayFREERTOS(5);
+		delayFREERTOS(10);
 	}
 }
 

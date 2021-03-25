@@ -136,11 +136,9 @@
   <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
   <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
   <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
   <avrgcc.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>DEBUG</Value>
-      <Value>F_CPU</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -158,11 +156,9 @@
   <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
   <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
   <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
   <avrgcccpp.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>DEBUG</Value>
-      <Value>F_CPU</Value>
     </ListValues>
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
@@ -197,7 +193,6 @@
   <ItemGroup>
     <Folder Include="code\" />
     <Folder Include="code\audio\" />
-    <Folder Include="code\audio\BARVE\" />
     <Folder Include="code\audio\includes\" />
     <Folder Include="code\events\" />
     <Folder Include="code\freeRTOS\" />
@@ -212,28 +207,19 @@
     <Folder Include="code\Power\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="code\audio\audiovs.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\audio\BARVE\barve.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\audio\BARVE\barve.h">
+    <Compile Include="code\audio\audio_visual.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\audio\includes\audio.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\audio\includes\audio.c">
+    <Compile Include="code\audio\includes\barve.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\audio\meritve.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\audio\pod_funk.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="code\audio\pod_task.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\events\events.cpp">
@@ -248,7 +234,7 @@
     <Compile Include="code\freeRTOS\event_groups.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="code\freeRTOS\heap_4.c">
+    <Compile Include="code\freeRTOS\heap_3.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="code\freeRTOS\include\atomic.h">
