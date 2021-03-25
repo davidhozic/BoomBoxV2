@@ -16,11 +16,11 @@ void zaslon(void *paramOdTaska)
 
     while (1)
     {
-        if (Hardware.display_enabled)
+        if (readBIT(Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN))
         {
             if (napajalnik.vrednost() == 0)
             {
-                if (LCD_timer.vrednost() >= 9000 || !Hardware.is_Powered_UP)
+                if (LCD_timer.vrednost() >= 9000 || !readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP))
                 {
                     LCD_timer.ponastavi();
 					writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
@@ -31,7 +31,7 @@ void zaslon(void *paramOdTaska)
                 }
             }
 
-            else if (Hardware.polnjenjeON)
+            else if (readBIT(Hardware.status_reg,STATUS_REG_CHARGING_EN))
             {                     //Če je zunanje napajanje priključeno in baterije niso napolnjene, zaslon utripa
                 delayFREERTOS(500); //1Hz utripanje
                 toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
@@ -41,7 +41,7 @@ void zaslon(void *paramOdTaska)
             {
                 writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 1);
                 delayFREERTOS(3000);
-                Hardware.display_enabled = false;
+                writeBIT(Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN, 0);
             }
         }
         else

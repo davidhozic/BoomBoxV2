@@ -14,7 +14,7 @@
 
 
 ISR (TIMER3_COMPA_vect){
-	Hardware.timeFROMboot +=1;					// Belezi cas od zagona krmilnika
+	Hardware.sys_time +=1;					// Belezi cas od zagona krmilnika
 }
 
 /************************************************************************/
@@ -70,7 +70,7 @@ void init()
 	/*							  SETUP OTHER                               */
 	/************************************************************************/
 	writeOUTPUT(red_button_pin, red_button_port, 1);			// PULL UP
-	Hardware.POLKONC = EEPROM.beri(battery_eeprom_addr);
+	writeBIT(Hardware.status_reg, STATUS_REG_CHARGING_FINISHED ,EEPROM.beri(battery_eeprom_addr));
 	voltage_SEM = xSemaphoreCreateMutex();
 	xSemaphoreGive(voltage_SEM);								// GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja
 

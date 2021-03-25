@@ -38,7 +38,7 @@ void power(void *paramOdTaska)
 		if (VOLT_timer.vrednost() > 500)
 		{
 			xSemaphoreTake(voltage_SEM, portMAX_DELAY);		// Prevent other task from reading while write operation is in effect
-			Hardware.napetost = readANALOG(vDIV_pin) * 5000.00f/1023.00f;
+			Hardware.battery_voltage = readANALOG(vDIV_pin) * 5000.00/1023.00;
 			VOLT_timer.ponastavi();
 		}
 		
@@ -48,24 +48,22 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*								POWER UP/SHUTDOWN                       */
 		/************************************************************************/
-		if (stikaloCAS.vrednost() >= 2000 && !Hardware.AMP_oheat && (Hardware.napetost > sleep_voltage + 50 || Hardware.PSW) && !Hardware.is_Powered_UP)
+		if (stikaloCAS.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER)) && !readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
 		
 		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
-		{		
-		
-			if (Hardware.is_Powered_UP)
+		{	
+			if (readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP))
 				Shutdown();
-			stikaloCAS.ponastavi();
-			Hardware.AMP_oheat = false;
-		
+			stikaloCAS.ponastavi();		
 		}
+		
 		else if (stikalo.vrednost() == 1)
 			stikaloOFFtime.ponastavi();
 			
-		if (Hardware.napetost <= sleep_voltage && !napajalnik.vrednost() && Hardware.napetost > 0) //Če je napetost 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
+		if (Hardware.battery_voltage <= sleep_voltage && !napajalnik.vrednost() && Hardware.battery_voltage > 0) //Če je battery_voltage 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
 		{
 			spanje();
 		}
@@ -77,14 +75,14 @@ void Shutdown()
 {
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
-	Hardware.is_Powered_UP = false;
-	trenutni_audio_mode = OFF_A;
+	writeBIT(Hardware.status_reg, STATUS_REG_POWERED_UP, 0);
+	STRIP_MODE = OFF_A;
 }
 
 void Power_UP()
 {
-	trenutni_audio_mode = EEPROM.beri(audiomode_eeprom_addr);
+	STRIP_MODE = EEPROM.beri(audiomode_eeprom_addr);
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
-	Hardware.is_Powered_UP = true;
+	writeBIT(Hardware.status_reg, STATUS_REG_POWERED_UP, 1);
 }

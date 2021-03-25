@@ -7,11 +7,11 @@ unsigned long castimer::vrednost(void)
 {
   if (tr == false)
   {
-    ts = Hardware.timeFROMboot;
+    ts = Hardware.sys_time;
     tr = true;
     return 0;
   }
-  return Hardware.timeFROMboot - ts;
+  return Hardware.sys_time - ts;
 }
 
 void castimer::ponastavi(void)

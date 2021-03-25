@@ -29,7 +29,7 @@ void avg_vol_task(void* param)
 		if (st_branj >= 50)
 		{
 			taskENTER_CRITICAL();
-			Audio_vars.Average_vol = vsota_branj / st_branj;
+			audio_system.average_volume = vsota_branj / st_branj;
 			vsota_branj = 0;
 			st_branj = 0;
 			max_izmerjeno = 0;

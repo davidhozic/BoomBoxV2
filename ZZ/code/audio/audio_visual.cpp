@@ -10,14 +10,14 @@
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
-TaskHandle_t fade_control;
-TaskHandle_t color_fade_control;
-TaskHandle_t Breathe_control;
-TaskHandle_t average_volume_control;
+TaskHandle_t normal_fade_handle;
+TaskHandle_t color_fade_handle;
+TaskHandle_t breathe_fade_handle;
+TaskHandle_t average_volume_handle;
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
-audio_t Audio_vars;
+audio_t audio_system;
 mozne_barve_t mozne_barve;
 
 
@@ -37,20 +37,17 @@ mozne_barve_t mozne_barve;
 **************************************************************************************************************************/
 
 
-
 void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
 	bool mikrofon_detect = false;
 	uint16_t ref_glasnost = 2048;
-	castimer lucke_filter_time;
+	castimer lucke_filter_timer;
 	castimer mic_ref_timer;
-
-	xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &average_volume_control);
+	xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &average_volume_handle);
 	while (true)
 	{
-		switch (Audio_vars.MIC_MODE)
+		switch (audio_system.mic_mode)
 		{
-
 		case POTENCIOMETER:
 		
 			mikrofon_detect = readANALOG(mic_pin) > ref_glasnost; //Gleda ce je vrednost mikrofona nad referencno in se sprozi
@@ -62,28 +59,31 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			}
 			break;
 		case AVG_VOL:
-			mikrofon_detect = readANALOG(mic_pin) >= (Audio_vars.Average_vol + 60);
+			mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 60);
 			break;
 		}
 		
-		if (lucke_filter_time.vrednost() > 100 && mikrofon_detect) // AUDIO_M machine
+		if (lucke_filter_timer.vrednost() > 100 && mikrofon_detect) // AUDIO_M machine
 		{
-			lucke_filter_time.ponastavi();
+			lucke_filter_timer.ponastavi();
 			static uint8_t barva_selekt = 0;
 			barva_selekt += 1 % barve_end;
-			switch (Audio_vars.STRIP_MODE)
+			switch (audio_system.strip_mode)
 			{
 
 			case NORMAL_FADE: //Prizig in fade izklop
-				cr_fade_tsk(fade_task, "Normal Fade", barva_selekt, fade_control);
+				deleteTASK(normal_fade_handle);
+				xTaskCreate(normal_fade_task, "NormalFade", 128, NULL, 4, &normal_fade_handle);
 				break;
 
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-				cr_fade_tsk(Color_Fade_task, "Color shift", barva_selekt, color_fade_control);
+				deleteTASK(color_fade_handle);
+				xTaskCreate(color_fade_task, "ColorFade", 128, NULL, 4, &color_fade_handle);
 				break;
 
-			case Fade_Breathe: //Dihalni nacin
-				cr_fade_tsk(Fade_Breathe_task, "Breathe Fade", barva_selekt, Breathe_control);
+			case BREATHE_FADE: //Dihalni nacin
+				deleteTASK(normal_fade_handle);
+				xTaskCreate(breathe_fade_task, "BreatheFade", 128, NULL, 4, &breathe_fade_handle);
 				break;
 
 			case OFF_A:
@@ -102,41 +102,45 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 *                                                         FADE TASKI                                                      *
 *                                                                                                                         *
 **************************************************************************************************************************/
-void fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
+void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 {
-	tr_bright = 255;
-	nastavi_barve(BARVA);
+	STRIP_CURRENT_BRIGHT = 255;
+	set_strip_color(BARVA);
 
 	brightDOWN(5);
 
-	fade_control = NULL;
+	normal_fade_handle = NULL;
 	vTaskDelete(NULL);
 }
 
 
 
-void Color_Fade_task(void *BARVA) //Fade iz ene barve v drugo
+void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 
-	if (Breathe_control == NULL) // Ce diha on ne sme nastaviti svetlosti,
+	if (breathe_fade_handle == NULL) // Ce diha on ne sme nastaviti svetlosti,
 	{                            // saj jo nastavlja dihalni task
-		tr_bright = 255;
+		STRIP_CURRENT_BRIGHT = 255;
 	}
 
 	colorSHIFT(BARVA); //prehod iz ene barve v drugo
-	color_fade_control = NULL;
+	color_fade_handle = NULL;
 	vTaskDelete(NULL);
 }
 
-void Fade_Breathe_task(void *BARVA)
+void breathe_fade_task(void *BARVA)
 {
-	if (color_fade_control == NULL)
+	
+	
+	if (color_fade_handle == NULL)
 	{
 
-		nastavi_barve(BARVA);
+		set_strip_color(BARVA);
 	}
 	brightUP(3);
 	brightDOWN(3);
-	Breathe_control = NULL;
+	breathe_fade_handle = NULL;
 	vTaskDelete(NULL);
 }
+
+

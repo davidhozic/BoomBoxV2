@@ -11,7 +11,7 @@
 void Shutdown();
 void external_power_switch_ev();
 void internal_power_switch_ev();
-void strip_mode_chg(char *ch);
+void strip_mode_chg(const char *ch);
 /******************************************************************************************/
 /*                                  ELEMENTI V SCROLL MENIJU                              */
 /******************************************************************************************/
@@ -39,20 +39,13 @@ enum states_t
 /******************************************************************************************/
 struct event_struct_t
 {
-    uint8_t state;
-    uint8_t menu_seek;
+    uint8_t state = unset;
+    uint8_t menu_seek = TOGGLE_LCD;
 	castimer SW2_off_timer;
 	castimer state_exit_timer;
 	castimer hold_timer;
-    unsigned int hold_time;
-    bool longPRESS; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
-	
-	event_struct_t(){
-	    state = unset;
-	    menu_seek = TOGGLE_LCD;
-	    hold_time = 0;
-	    longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
-	}
+    unsigned short hold_time = 0;
+    bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 };
 
  event_struct_t event_struct;
@@ -62,12 +55,12 @@ struct event_struct_t
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
 #define toggleLCD()                                         \
-    Hardware.display_enabled = !(Hardware.display_enabled); \
-    if (Hardware.display_enabled)                           \
+    writeBIT(  Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN)); \
+    if (readBIT(Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN))                           \
         resumeTASK(zaslon_control); //Ker se v zaslon tasku blocka v primeru da je display_enabled false
 
 #define show_scroll_Seek() \
-    tr_bright = 255;       \
+    STRIP_CURRENT_BRIGHT = 255;       \
     colorSHIFT(&event_struct.menu_seek);
 // Prikaze element v seeku ce je scroll aktiven
 
@@ -78,7 +71,7 @@ void exit()
     event_struct.longPRESS = true;
     flash_strip();
     event_struct.state_exit_timer.ponastavi();
-    tr_bright = 255;
+    STRIP_CURRENT_BRIGHT = 255;
     brightDOWN(15);
     delayFREERTOS(100);
     resumeTASK(audio_system_control);
@@ -112,7 +105,7 @@ void events(void *paramOdTaska)
 		
 		
         //State machine
-        if (Hardware.is_Powered_UP && !event_struct.longPRESS)
+        if (readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP) && !event_struct.longPRESS)
         {
             switch (event_struct.state)
             {
@@ -124,7 +117,7 @@ void events(void *paramOdTaska)
                     event_struct.menu_seek = TOGGLE_LCD;
                     event_struct.state_exit_timer.ponastavi();
                     event_struct.hold_timer.ponastavi();
-                    turnOFFstrip();
+                    stripOFF();
                     flash_strip();
                     show_scroll_Seek();
                     delayFREERTOS(200);
@@ -163,14 +156,13 @@ void events(void *paramOdTaska)
                             break;
 							
 						case MIC_MD_CHG:
-							Audio_vars.MIC_MODE = (Audio_vars.MIC_MODE + 1) % mic_enum_len;
+							audio_system.mic_mode = (audio_system.mic_mode + 1) % mic_enum_len;
 							exit();
 							break;	
                         }
                         event_struct.hold_timer.ponastavi();
                     }
                 }
-
                 else if (event_struct.hold_time > 0)
                 {
 
@@ -187,12 +179,12 @@ void events(void *paramOdTaska)
         }
 
         /******************************** POWER SWITCH EVENTS ********************************/
-        if (napajalnik.vrednost() && Hardware.PSW == false)
+        if (napajalnik.vrednost() && readBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER) == false)
         {
             external_power_switch_ev();
         }
 
-        else if (napajalnik.vrednost() == 0 && Hardware.PSW)
+        else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER))
         {
             internal_power_switch_ev();
         }
@@ -211,7 +203,7 @@ void external_power_switch_ev()
     writeOUTPUT(menjalnik_pin,menjalnik_port,1);
     stikaloCAS.ponastavi();
 	taskEXIT_CRITICAL();
-    Hardware.PSW = true;
+    writeBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER, 1);
 }
 
 void internal_power_switch_ev()
@@ -222,6 +214,6 @@ void internal_power_switch_ev()
      writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
     stikaloCAS.ponastavi();
     _delay_ms(20);
-    Hardware.PSW = false;
+    writeBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER, 0);
     taskEXIT_CRITICAL();
 }

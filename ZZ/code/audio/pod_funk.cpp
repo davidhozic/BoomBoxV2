@@ -14,22 +14,21 @@
 
 void deleteStripSubTasks()
 {
- deleteTASK(fade_control);
- deleteTASK(color_fade_control);
- deleteTASK(Breathe_control);
+ deleteTASK(normal_fade_handle);
+ deleteTASK(color_fade_handle);
+ deleteTASK(breathe_fade_handle);
 }
 
-void writeTRAK()
+void update_strip()
 {
-	writePWM(r_trak, strip_port, (float)tr_r * (float)tr_bright / 255.00);
-	writePWM(z_trak, strip_port, (float)tr_z * (float)tr_bright / 255.00);
-	writePWM(m_trak, strip_port, (float)tr_m * (float)tr_bright / 255.00);
+	writePWM(r_trak, strip_port, (float)STRIP_CURRENT_RED * STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(z_trak, strip_port, (float)STRIP_CURRENT_GREEN * STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(m_trak, strip_port, (float)STRIP_CURRENT_BLUE * STRIP_CURRENT_BRIGHT / 255.00f);
 }
 
 void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 {
-	free(Audio_vars.TR_BARVA);
-	memcpy(Audio_vars.TR_BARVA, mozne_barve.barvni_ptr[BELA] ,sizeof(short)*3); 
+	set_strip_color(BELA);						
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		writeOUTPUT(r_trak, strip_port, 0);
@@ -45,42 +44,41 @@ void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 
 void color_fade_funct(uint8_t *BARVA)
 {
-	while (tr_r != mozne_barve.barvni_ptr[*BARVA][0] || tr_z != mozne_barve.barvni_ptr[*BARVA][1] || tr_m != mozne_barve.barvni_ptr[*BARVA][2]) //Trenutna razlicna od zeljene
+	while (STRIP_CURRENT_RED != mozne_barve.barvni_ptr[*BARVA][0] || STRIP_CURRENT_GREEN != mozne_barve.barvni_ptr[*BARVA][1] || STRIP_CURRENT_BLUE != mozne_barve.barvni_ptr[*BARVA][2]) //Trenutna razlicna od zeljene
 	{
 		char smer[3] = {0, 0, 0};
-		mozne_barve.barvni_ptr[*BARVA][0] >= tr_r ? smer[0] = 1 : smer[0] = -1;
-		mozne_barve.barvni_ptr[*BARVA][1] >= tr_z ? smer[1] = 1 : smer[1] = -1;
-		mozne_barve.barvni_ptr[*BARVA][2] >= tr_m ? smer[2] = 1 : smer[2] = -1;
+		mozne_barve.barvni_ptr[*BARVA][0] >= STRIP_CURRENT_RED ? smer[0] = 1 : smer[0] = -1;
+		mozne_barve.barvni_ptr[*BARVA][1] >= STRIP_CURRENT_GREEN ? smer[1] = 1 : smer[1] = -1;
+		mozne_barve.barvni_ptr[*BARVA][2] >= STRIP_CURRENT_BLUE ? smer[2] = 1 : smer[2] = -1;
 
-		tr_r = tr_r + (10 * smer[0]);
-		tr_z = tr_z + (10 * smer[1]);
-		tr_m = tr_m + (10 * smer[2]);
+		STRIP_CURRENT_RED += (10 * smer[0]);
+		STRIP_CURRENT_GREEN += (10 * smer[1]);
+		STRIP_CURRENT_BLUE += (10 * smer[2]);
 
 		//Preveri prenihaj:
 
-		tr_r = (smer[0] == 1 && tr_r > mozne_barve.barvni_ptr[*BARVA][0]) ||
-		(smer[0] == -1 && tr_r < mozne_barve.barvni_ptr[*BARVA][0]) ? mozne_barve.barvni_ptr[*BARVA][0]: tr_r ; //Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
+		STRIP_CURRENT_RED = (smer[0] == 1 && STRIP_CURRENT_RED > mozne_barve.barvni_ptr[*BARVA][0]) ||
+		(smer[0] == -1 && STRIP_CURRENT_RED < mozne_barve.barvni_ptr[*BARVA][0]) ? mozne_barve.barvni_ptr[*BARVA][0]: STRIP_CURRENT_RED ;	//Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
 		
-		tr_z = (smer[1] == 1 && tr_z > mozne_barve.barvni_ptr[*BARVA][1]) ||
-		(smer[1] == -1 && tr_z < mozne_barve.barvni_ptr[*BARVA][1]) ? mozne_barve.barvni_ptr[*BARVA][1]: tr_z ;
+		STRIP_CURRENT_GREEN = (smer[1] == 1 && STRIP_CURRENT_GREEN > mozne_barve.barvni_ptr[*BARVA][1]) ||
+		(smer[1] == -1 && STRIP_CURRENT_GREEN < mozne_barve.barvni_ptr[*BARVA][1]) ? mozne_barve.barvni_ptr[*BARVA][1]: STRIP_CURRENT_GREEN ;
 		
-		tr_m = (smer[2] == 1 && tr_m > mozne_barve.barvni_ptr[*BARVA][2]) ||
-		(smer[2] == -1 && tr_m < mozne_barve.barvni_ptr[*BARVA][2]) ? mozne_barve.barvni_ptr[*BARVA][2]: tr_m ;
+		STRIP_CURRENT_BLUE = (smer[2] == 1 && STRIP_CURRENT_BLUE > mozne_barve.barvni_ptr[*BARVA][2]) ||
+		(smer[2] == -1 && STRIP_CURRENT_BLUE < mozne_barve.barvni_ptr[*BARVA][2]) ? mozne_barve.barvni_ptr[*BARVA][2]: STRIP_CURRENT_BLUE ;
 
-
-		writeTRAK();
+		update_strip();
 		delayFREERTOS(5);
 	}
 }
 
 void svetlost_mod_funct(char smer, uint8_t cas_krog)
 {
-	while (smer > 0 ? tr_bright < 255 : tr_bright > 0)
+	while (smer > 0 ? STRIP_CURRENT_BRIGHT < 255 : STRIP_CURRENT_BRIGHT > 0)
 	{
-		tr_bright += 8 * smer;
-		tr_bright = tr_bright < 0 ? 0 : tr_bright;
-		tr_bright = tr_bright > 255 ? 255 : tr_bright;
-		writeTRAK();
+		STRIP_CURRENT_BRIGHT += 8 * smer;
+		STRIP_CURRENT_BRIGHT = STRIP_CURRENT_BRIGHT < 0 ? 0 : STRIP_CURRENT_BRIGHT;
+		STRIP_CURRENT_BRIGHT = STRIP_CURRENT_BRIGHT > 255 ? 255 : STRIP_CURRENT_BRIGHT;
+		update_strip();
 		delayFREERTOS(cas_krog);
 	}
 }
@@ -88,17 +86,25 @@ void svetlost_mod_funct(char smer, uint8_t cas_krog)
 
 
 
-void strip_mode_chg(char* ch)
+void strip_mode_chg(const char* ch)
 {
 	if (strcmp(ch,"off"))
-	trenutni_audio_mode = OFF_A;
+	STRIP_MODE = OFF_A;
 
-	else if (trenutni_audio_mode == OFF_A)
-	trenutni_audio_mode = NORMAL_FADE;
+	else if (STRIP_MODE == OFF_A)
+	STRIP_MODE = NORMAL_FADE;
 
 	else
-	trenutni_audio_mode = (trenutni_audio_mode + 1) % strip_mode_len;
+	STRIP_MODE = (STRIP_MODE + 1) % strip_mode_len;
 
-	EEPROM.pisi(audiomode_eeprom_addr, trenutni_audio_mode);
-	//deleteStripSubTasks();
+	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);
+	deleteStripSubTasks();
+}
+
+
+void mic_mode_change(){
+		
+	
+	
+	
 }
