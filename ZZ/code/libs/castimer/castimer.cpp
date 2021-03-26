@@ -1,9 +1,9 @@
 
 
-#include "libs/castimer/castimer.h"
+#include "castimer/castimer.h"
 #include "common/inc/global.h"
 
-unsigned long castimer::vrednost(void)
+unsigned long class_TIMER::vrednost(void)
 {
   if (tr == false)
   {
@@ -14,7 +14,7 @@ unsigned long castimer::vrednost(void)
   return Hardware.sys_time - ts;
 }
 
-void castimer::ponastavi(void)
+void class_TIMER::ponastavi(void)
 {
   tr = false;
 }

@@ -9,13 +9,21 @@
 /************************************************************************************************/
 /*                          GLOBAL MACROS										                */
 /************************************************************************************************/
-enum Status_reg_hardware_enum
+enum enum_STATUS_REGISTERS
 {
-	STATUS_REG_POWERED_UP,	
-	STATUS_REG_EXTERNAL_POWER,
-	STATUS_REG_CHARGING_FINISHED,
-	STATUS_REG_CHARGING_EN,
-	STATUS_REG_CAPACITY_DISPLAY_EN
+	/************************************************************************/
+	/*				  HARDWARE STRUCT STATUS REGISTER BITS                  */
+	/************************************************************************/
+	
+		HARDWARE_STATUS_REG_POWERED_UP = 0,
+		HARDWARE_STATUS_REG_EXTERNAL_POWER,
+		HARDWARE_STATUS_REG_CHARGING_FINISHED,
+		HARDWARE_STATUS_REG_CHARGING_EN,
+		HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
 };								
 
 
@@ -26,13 +34,13 @@ enum Status_reg_hardware_enum
 /************************************************************************************************/
 /*							GLOBAL OBJECTS												        */
 /************************************************************************************************/
-extern VHOD napajalnik;
-extern castimer stikaloCAS;
+extern class_VHOD napajalnik;
+extern class_TIMER stikaloCAS;
 
 /************************************************************************************************/
 /*							GLOBAL STRUCTS														*/
 /************************************************************************************************/
-struct Hardware_t
+struct struct_HARDWARE
 {		
 	const short adc_milivolt_ref = 5000;	 //Referencna battery_voltage na ADC (4.999V - 5.002V)
 	const float adc_volt_ref = 5.00;
@@ -41,7 +49,7 @@ struct Hardware_t
 	unsigned long sys_time = 0;
 };
 
-extern Hardware_t Hardware;
+extern struct_HARDWARE Hardware;
 
 
 #endif

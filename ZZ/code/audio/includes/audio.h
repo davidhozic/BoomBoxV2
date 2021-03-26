@@ -54,7 +54,7 @@ enum mic_mode_enum{
 	mic_enum_len
 };
 
- struct audio_t
+ struct struct_AUDIO_SYS
 {
 	unsigned short strip_mode = OFF_A;
 	short current_color[3] = {0, 0, 0};
@@ -64,7 +64,7 @@ enum mic_mode_enum{
 };
 
 
-extern audio_t audio_system;
+extern struct_AUDIO_SYS audio_system;
 
 
 /*********************************************/

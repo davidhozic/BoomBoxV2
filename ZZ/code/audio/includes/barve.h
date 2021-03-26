@@ -1,7 +1,7 @@
 #ifndef barvna_lista
 #define barvna_lista
 
-enum barve_t
+enum enum_BARVE
 {
 	BELA=0,
 	ZELENA,
@@ -14,7 +14,7 @@ enum barve_t
 	barve_end
 };
 
-	struct mozne_barve_t
+	struct struct_MOZNE_BARVE
 	{
 		unsigned char BELA[3] = {255, 255, 255};
 		unsigned char ZELENA[3] = {0, 255, 0};
@@ -26,6 +26,6 @@ enum barve_t
 		unsigned char ROZA[3] = {255, 20, 147};
 		unsigned char *barvni_ptr[8] = {this->BELA, this->ZELENA, this->RDECA, this->MODRA, this->RUMENA, this->SVETLO_MODRA, this->VIJOLICNA, this->ROZA};
 	};
-extern mozne_barve_t mozne_barve;
+extern struct_MOZNE_BARVE mozne_barve;
 	
 #endif

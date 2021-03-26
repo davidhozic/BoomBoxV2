@@ -41,22 +41,22 @@ struct event_struct_t
 {
     uint8_t state = unset;
     uint8_t menu_seek = TOGGLE_LCD;
-	castimer SW2_off_timer;
-	castimer state_exit_timer;
-	castimer hold_timer;
+	class_TIMER SW2_off_timer;
+	class_TIMER state_exit_timer;
+	class_TIMER hold_timer;
     unsigned short hold_time = 0;
     bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 };
 
  event_struct_t event_struct;
- VHOD eventSW(red_button_pin, red_button_port, 0);
+ class_VHOD eventSW(red_button_pin, red_button_port, 0);
  
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
 #define toggleLCD()                                         \
-    writeBIT(  Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN)); \
-    if (readBIT(Hardware.status_reg, STATUS_REG_CAPACITY_DISPLAY_EN))                           \
+    writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN)); \
+    if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))                           \
         resumeTASK(zaslon_control); //Ker se v zaslon tasku blocka v primeru da je display_enabled false
 
 #define show_scroll_Seek() \
@@ -105,7 +105,7 @@ void events(void *paramOdTaska)
 		
 		
         //State machine
-        if (readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP) && !event_struct.longPRESS)
+        if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !event_struct.longPRESS)
         {
             switch (event_struct.state)
             {
@@ -179,12 +179,12 @@ void events(void *paramOdTaska)
         }
 
         /******************************** POWER SWITCH EVENTS ********************************/
-        if (napajalnik.vrednost() && readBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER) == false)
+        if (napajalnik.vrednost() && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER) == false)
         {
             external_power_switch_ev();
         }
 
-        else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER))
+        else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
         {
             internal_power_switch_ev();
         }
@@ -203,7 +203,7 @@ void external_power_switch_ev()
     writeOUTPUT(menjalnik_pin,menjalnik_port,1);
     stikaloCAS.ponastavi();
 	taskEXIT_CRITICAL();
-    writeBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER, 1);
+    writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 1);
 }
 
 void internal_power_switch_ev()
@@ -214,6 +214,6 @@ void internal_power_switch_ev()
      writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
     stikaloCAS.ponastavi();
     _delay_ms(20);
-    writeBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER, 0);
+    writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
     taskEXIT_CRITICAL();
 }

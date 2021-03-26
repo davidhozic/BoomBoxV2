@@ -2,7 +2,7 @@
 #define castimer_H
 
 
-class castimer
+class class_TIMER
 {
 private:
     bool tr;

@@ -1,7 +1,7 @@
 #include "VHOD/Vhod.h"
 #include "avr/io.h"
 
-bool class_VHOD::vrednost()
+bool VHOD::vrednost()
 {
 
 	switch (port)
@@ -40,7 +40,7 @@ bool class_VHOD::vrednost()
 	return trenutno_stanje;
 }
 
-bool class_VHOD::risingEdge()
+bool VHOD::risingEdge()
 {
 	vrednost();
 	if (trenutno_stanje == 0)
@@ -55,7 +55,7 @@ bool class_VHOD::risingEdge()
 	return false;
 }
 
-bool class_VHOD::fallingEdge()
+bool VHOD::fallingEdge()
 {
 	vrednost();
 	if (trenutno_stanje)

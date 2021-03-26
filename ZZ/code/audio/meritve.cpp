@@ -10,7 +10,7 @@ void avg_vol_task(void* param)
 	unsigned short st_branj = 0;
 	unsigned short max_izmerjeno = 0;
 	unsigned short tr_vrednost = 0;
-	castimer average_v_timer;
+	class_TIMER average_v_timer;
 
 	while (1){
 

@@ -24,9 +24,9 @@ void power(void *paramOdTaska)
 	/************************************************************************/
 	/*                          LOCAL TASK VARIABLES                        */
 	/************************************************************************/
-	castimer VOLT_timer;
-	castimer stikaloOFFtime;
-	VHOD stikalo(1, 'K', 0);
+	class_TIMER VOLT_timer;
+	class_TIMER stikaloOFFtime;
+	class_VHOD stikalo(1, 'K', 0);
 	
 	while (true)
 	{ 
@@ -48,14 +48,14 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*								POWER UP/SHUTDOWN                       */
 		/************************************************************************/
-		if (stikaloCAS.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, STATUS_REG_EXTERNAL_POWER)) && !readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP))
+		if (stikaloCAS.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)) && !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
 		
 		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
 		{	
-			if (readBIT(Hardware.status_reg, STATUS_REG_POWERED_UP))
+			if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
 				Shutdown();
 			stikaloCAS.ponastavi();		
 		}
@@ -75,7 +75,7 @@ void Shutdown()
 {
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
-	writeBIT(Hardware.status_reg, STATUS_REG_POWERED_UP, 0);
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
 	STRIP_MODE = OFF_A;
 }
 
@@ -84,5 +84,5 @@ void Power_UP()
 	STRIP_MODE = EEPROM.beri(audiomode_eeprom_addr);
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
-	writeBIT(Hardware.status_reg, STATUS_REG_POWERED_UP, 1);
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
 }

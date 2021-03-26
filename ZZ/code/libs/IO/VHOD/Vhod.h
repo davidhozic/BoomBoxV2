@@ -1,7 +1,7 @@
 #ifndef VHOD_H
 #define VHOD_H
 
-class class_VHOD // pin, port, stanje ko ni pritisnjen
+class VHOD // pin, port, stanje ko ni pritisnjen
 {
 private:
     bool prejsnje_stanje;
@@ -17,7 +17,7 @@ public:
     bool risingEdge();
     bool fallingEdge();
 
-    class_VHOD(int pin, char port, int default_state)
+    VHOD(int pin, char port, int default_state)
     {
         this->port = port;
         this->pin = pin;

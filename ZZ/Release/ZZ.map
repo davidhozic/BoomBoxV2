@@ -313,9 +313,9 @@ Discarded input sections
  .text          0x00000000        0x0 code/libs/VHOD/vhod.o
  .data          0x00000000        0x0 code/libs/VHOD/vhod.o
  .bss           0x00000000        0x0 code/libs/VHOD/vhod.o
- .text._ZN4VHOD10risingEdgeEv
+ .text._ZN10class_VHOD10risingEdgeEv
                 0x00000000       0x1c code/libs/VHOD/vhod.o
- .text._ZN4VHOD11fallingEdgeEv
+ .text._ZN10class_VHOD11fallingEdgeEv
                 0x00000000       0x22 code/libs/VHOD/vhod.o
  .text          0x00000000        0x0 code/main.o
  .data          0x00000000        0x0 code/main.o
@@ -944,12 +944,12 @@ END GROUP
                 0x0000201a                pvTaskIncrementMutexHeldCount
  .text.startup._GLOBAL__sub_I_napajalnik
                 0x0000203e       0x12 code/common/global.o
- .text._ZN8castimer8vrednostEv
+ .text._ZN11class_TIMER8vrednostEv
                 0x00002050       0x4a code/libs/castimer/castimer.o
-                0x00002050                _ZN8castimer8vrednostEv
- .text._ZN8castimer9ponastaviEv
+                0x00002050                _ZN11class_TIMER8vrednostEv
+ .text._ZN11class_TIMER9ponastaviEv
                 0x0000209a        0x6 code/libs/castimer/castimer.o
-                0x0000209a                _ZN8castimer9ponastaviEv
+                0x0000209a                _ZN11class_TIMER9ponastaviEv
  .text._ZN8EEPROM_t4pisiEhj
                 0x000020a0       0x10 code/libs/EEPROM/eeprom.o
                 0x000020a0                _ZN8EEPROM_t4pisiEhj
@@ -971,9 +971,9 @@ END GROUP
  .text._Z8writePWMhch
                 0x00002230       0x72 code/libs/outputs_inputs/outputs_inputs.o
                 0x00002230                _Z8writePWMhch
- .text._ZN4VHOD8vrednostEv
+ .text._ZN10class_VHOD8vrednostEv
                 0x000022a2       0x72 code/libs/VHOD/vhod.o
-                0x000022a2                _ZN4VHOD8vrednostEv
+                0x000022a2                _ZN10class_VHOD8vrednostEv
  .text.__vector_32
                 0x00002314       0x4e code/main.o
                 0x00002314                __vector_32

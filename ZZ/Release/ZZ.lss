@@ -422,7 +422,7 @@ Disassembly of section .text:
      32c:	10 e0       	ldi	r17, 0x00	; 0
      32e:	ce 01       	movw	r24, r28
      330:	01 96       	adiw	r24, 0x01	; 1
-     332:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     332:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      336:	69 3b       	cpi	r22, 0xB9	; 185
      338:	7b 40       	sbci	r23, 0x0B	; 11
      33a:	81 05       	cpc	r24, r1
@@ -430,7 +430,7 @@ Disassembly of section .text:
      33e:	b8 f0       	brcs	.+46     	; 0x36e <_Z12audio_visualPv+0x9a>
      340:	ce 01       	movw	r24, r28
      342:	01 96       	adiw	r24, 0x01	; 1
-     344:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     344:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      348:	83 e0       	ldi	r24, 0x03	; 3
      34a:	0e 94 fb 10 	call	0x21f6	; 0x21f6 <_Z10readANALOGh>
      34e:	6c 01       	movw	r12, r24
@@ -448,7 +448,7 @@ Disassembly of section .text:
      36c:	10 e0       	ldi	r17, 0x00	; 0
      36e:	ce 01       	movw	r24, r28
      370:	06 96       	adiw	r24, 0x06	; 6
-     372:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     372:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      376:	65 36       	cpi	r22, 0x65	; 101
      378:	71 05       	cpc	r23, r1
      37a:	81 05       	cpc	r24, r1
@@ -458,7 +458,7 @@ Disassembly of section .text:
      382:	89 f1       	breq	.+98     	; 0x3e6 <_Z12audio_visualPv+0x112>
      384:	ce 01       	movw	r24, r28
      386:	06 96       	adiw	r24, 0x06	; 6
-     388:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     388:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      38c:	80 91 aa 02 	lds	r24, 0x02AA	; 0x8002aa <__data_end>
      390:	8f 5f       	subi	r24, 0xFF	; 255
      392:	80 93 aa 02 	sts	0x02AA, r24	; 0x8002aa <__data_end>
@@ -588,7 +588,7 @@ Disassembly of section .text:
      4c2:	7c 01       	movw	r14, r24
      4c4:	ce 01       	movw	r24, r28
      4c6:	01 96       	adiw	r24, 0x01	; 1
-     4c8:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     4c8:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      4cc:	6f 30       	cpi	r22, 0x0F	; 15
      4ce:	71 05       	cpc	r23, r1
      4d0:	81 05       	cpc	r24, r1
@@ -602,7 +602,7 @@ Disassembly of section .text:
      4e0:	1f 4f       	sbci	r17, 0xFF	; 255
      4e2:	ce 01       	movw	r24, r28
      4e4:	01 96       	adiw	r24, 0x01	; 1
-     4e6:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     4e6:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      4ea:	e1 2c       	mov	r14, r1
      4ec:	f1 2c       	mov	r15, r1
      4ee:	02 33       	cpi	r16, 0x32	; 50
@@ -1079,7 +1079,7 @@ Disassembly of section .text:
      940:	a3 de       	rcall	.-698    	; 0x688 <_Z11flash_stripv>
      942:	83 ec       	ldi	r24, 0xC3	; 195
      944:	92 e0       	ldi	r25, 0x02	; 2
-     946:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     946:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      94a:	8f ef       	ldi	r24, 0xFF	; 255
      94c:	90 e0       	ldi	r25, 0x00	; 0
      94e:	90 93 37 02 	sts	0x0237, r25	; 0x800237 <audio_system+0x9>
@@ -1122,7 +1122,7 @@ Disassembly of section .text:
      9a4:	0e 94 8f 10 	call	0x211e	; 0x211e <_Z11writeOUTPUThcb>
      9a8:	87 e3       	ldi	r24, 0x37	; 55
      9aa:	93 e0       	ldi	r25, 0x03	; 3
-     9ac:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     9ac:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      9b0:	0f 90       	pop	r0
      9b2:	0f be       	out	0x3f, r0	; 63
      9b4:	ed e3       	ldi	r30, 0x3D	; 61
@@ -1152,7 +1152,7 @@ Disassembly of section .text:
      9e2:	0e 94 8f 10 	call	0x211e	; 0x211e <_Z11writeOUTPUThcb>
      9e6:	87 e3       	ldi	r24, 0x37	; 55
      9e8:	93 e0       	ldi	r25, 0x03	; 3
-     9ea:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     9ea:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      9ee:	2f ef       	ldi	r18, 0xFF	; 255
      9f0:	89 ef       	ldi	r24, 0xF9	; 249
      9f2:	90 e0       	ldi	r25, 0x00	; 0
@@ -1177,16 +1177,16 @@ Disassembly of section .text:
      a14:	11 e0       	ldi	r17, 0x01	; 1
      a16:	83 eb       	ldi	r24, 0xB3	; 179
      a18:	92 e0       	ldi	r25, 0x02	; 2
-     a1a:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN4VHOD8vrednostEv>
+     a1a:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
      a1e:	88 23       	and	r24, r24
      a20:	29 f0       	breq	.+10     	; 0xa2c <_Z6eventsPv+0x1c>
      a22:	8e eb       	ldi	r24, 0xBE	; 190
      a24:	92 e0       	ldi	r25, 0x02	; 2
-     a26:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     a26:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      a2a:	0b c0       	rjmp	.+22     	; 0xa42 <_Z6eventsPv+0x32>
      a2c:	8e eb       	ldi	r24, 0xBE	; 190
      a2e:	92 e0       	ldi	r25, 0x02	; 2
-     a30:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     a30:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      a34:	63 33       	cpi	r22, 0x33	; 51
      a36:	71 05       	cpc	r23, r1
      a38:	81 05       	cpc	r24, r1
@@ -1210,7 +1210,7 @@ Disassembly of section .text:
      a64:	c2 c0       	rjmp	.+388    	; 0xbea <_Z6eventsPv+0x1da>
      a66:	88 ec       	ldi	r24, 0xC8	; 200
      a68:	92 e0       	ldi	r25, 0x02	; 2
-     a6a:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     a6a:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      a6e:	69 3e       	cpi	r22, 0xE9	; 233
      a70:	73 40       	sbci	r23, 0x03	; 3
      a72:	81 05       	cpc	r24, r1
@@ -1220,10 +1220,10 @@ Disassembly of section .text:
      a7c:	10 92 bd 02 	sts	0x02BD, r1	; 0x8002bd <event_struct+0x1>
      a80:	83 ec       	ldi	r24, 0xC3	; 195
      a82:	92 e0       	ldi	r25, 0x02	; 2
-     a84:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     a84:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      a88:	88 ec       	ldi	r24, 0xC8	; 200
      a8a:	92 e0       	ldi	r25, 0x02	; 2
-     a8c:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     a8c:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      a90:	80 91 4c 03 	lds	r24, 0x034C	; 0x80034c <audio_system_control>
      a94:	90 91 4d 03 	lds	r25, 0x034D	; 0x80034d <audio_system_control+0x1>
      a98:	e2 d6       	rcall	.+3524   	; 0x185e <eTaskGetState>
@@ -1251,13 +1251,13 @@ Disassembly of section .text:
      ad0:	8c c0       	rjmp	.+280    	; 0xbea <_Z6eventsPv+0x1da>
      ad2:	83 eb       	ldi	r24, 0xB3	; 179
      ad4:	92 e0       	ldi	r25, 0x02	; 2
-     ad6:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN4VHOD8vrednostEv>
+     ad6:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
      ada:	81 11       	cpse	r24, r1
      adc:	86 c0       	rjmp	.+268    	; 0xbea <_Z6eventsPv+0x1da>
      ade:	60 c0       	rjmp	.+192    	; 0xba0 <_Z6eventsPv+0x190>
      ae0:	83 ec       	ldi	r24, 0xC3	; 195
      ae2:	92 e0       	ldi	r25, 0x02	; 2
-     ae4:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     ae4:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      ae8:	61 37       	cpi	r22, 0x71	; 113
      aea:	77 41       	sbci	r23, 0x17	; 23
      aec:	81 05       	cpc	r24, r1
@@ -1266,18 +1266,18 @@ Disassembly of section .text:
      af2:	1f df       	rcall	.-450    	; 0x932 <_Z4exitv>
      af4:	83 eb       	ldi	r24, 0xB3	; 179
      af6:	92 e0       	ldi	r25, 0x02	; 2
-     af8:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN4VHOD8vrednostEv>
+     af8:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
      afc:	88 23       	and	r24, r24
      afe:	09 f4       	brne	.+2      	; 0xb02 <_Z6eventsPv+0xf2>
      b00:	54 c0       	rjmp	.+168    	; 0xbaa <_Z6eventsPv+0x19a>
      b02:	88 ec       	ldi	r24, 0xC8	; 200
      b04:	92 e0       	ldi	r25, 0x02	; 2
-     b06:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN8castimer8vrednostEv>
+     b06:	0e 94 28 10 	call	0x2050	; 0x2050 <_ZN11class_TIMER8vrednostEv>
      b0a:	70 93 ce 02 	sts	0x02CE, r23	; 0x8002ce <event_struct+0x12>
      b0e:	60 93 cd 02 	sts	0x02CD, r22	; 0x8002cd <event_struct+0x11>
      b12:	83 ec       	ldi	r24, 0xC3	; 195
      b14:	92 e0       	ldi	r25, 0x02	; 2
-     b16:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     b16:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      b1a:	80 91 cd 02 	lds	r24, 0x02CD	; 0x8002cd <event_struct+0x11>
      b1e:	90 91 ce 02 	lds	r25, 0x02CE	; 0x8002ce <event_struct+0x12>
      b22:	89 3e       	cpi	r24, 0xE9	; 233
@@ -1332,7 +1332,7 @@ Disassembly of section .text:
      b9e:	c9 de       	rcall	.-622    	; 0x932 <_Z4exitv>
      ba0:	88 ec       	ldi	r24, 0xC8	; 200
      ba2:	92 e0       	ldi	r25, 0x02	; 2
-     ba4:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     ba4:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      ba8:	20 c0       	rjmp	.+64     	; 0xbea <_Z6eventsPv+0x1da>
      baa:	80 91 cd 02 	lds	r24, 0x02CD	; 0x8002cd <event_struct+0x11>
      bae:	90 91 ce 02 	lds	r25, 0x02CE	; 0x8002ce <event_struct+0x12>
@@ -1354,12 +1354,12 @@ Disassembly of section .text:
      bd8:	9f dd       	rcall	.-1218   	; 0x718 <_Z16color_fade_functPh>
      bda:	88 ec       	ldi	r24, 0xC8	; 200
      bdc:	92 e0       	ldi	r25, 0x02	; 2
-     bde:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN8castimer9ponastaviEv>
+     bde:	0e 94 4d 10 	call	0x209a	; 0x209a <_ZN11class_TIMER9ponastaviEv>
      be2:	10 92 ce 02 	sts	0x02CE, r1	; 0x8002ce <event_struct+0x12>
      be6:	10 92 cd 02 	sts	0x02CD, r1	; 0x8002cd <event_struct+0x11>
      bea:	8c e3       	ldi	r24, 0x3C	; 60
      bec:	93 e0       	ldi	r25, 0x03	; 3
-     bee:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN4VHOD8vrednostEv>
+     bee:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
      bf2:	88 23       	and	r24, r24
      bf4:	61 f0       	breq	.+24     	; 0xc0e <_Z6eventsPv+0x1fe>
      bf6:	80 91 43 02 	lds	r24, 0x0243	; 0x800243 <Hardware+0x6>
@@ -1374,7 +1374,7 @@ Disassembly of section .text:
      c0c:	4f cf       	rjmp	.-354    	; 0xaac <_Z6eventsPv+0x9c>
      c0e:	8c e3       	ldi	r24, 0x3C	; 60
      c10:	93 e0       	ldi	r25, 0x03	; 3
-     c12:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN4VHOD8vrednostEv>
+     c12:	0e 94 51 11 	call	0x22a2	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
      c16:	81 11       	cpse	r24, r1
      c18:	f3 cf       	rjmp	.-26     	; 0xc00 <_Z6eventsPv+0x1f0>
      c1a:	80 91 43 02 	lds	r24, 0x0243	; 0x800243 <Hardware+0x6>
@@ -3842,7 +3842,7 @@ Disassembly of section .text:
     204c:	17 82       	std	Z+7, r1	; 0x07
     204e:	08 95       	ret
 
-00002050 <_ZN8castimer8vrednostEv>:
+00002050 <_ZN11class_TIMER8vrednostEv>:
     2050:	0f 93       	push	r16
     2052:	1f 93       	push	r17
     2054:	fc 01       	movw	r30, r24
@@ -3852,7 +3852,7 @@ Disassembly of section .text:
     2060:	a0 91 4a 02 	lds	r26, 0x024A	; 0x80024a <Hardware+0xd>
     2064:	b0 91 4b 02 	lds	r27, 0x024B	; 0x80024b <Hardware+0xe>
     2068:	21 11       	cpse	r18, r1
-    206a:	0a c0       	rjmp	.+20     	; 0x2080 <_ZN8castimer8vrednostEv+0x30>
+    206a:	0a c0       	rjmp	.+20     	; 0x2080 <_ZN11class_TIMER8vrednostEv+0x30>
     206c:	81 83       	std	Z+1, r24	; 0x01
     206e:	92 83       	std	Z+2, r25	; 0x02
     2070:	a3 83       	std	Z+3, r26	; 0x03
@@ -3862,7 +3862,7 @@ Disassembly of section .text:
     2078:	60 e0       	ldi	r22, 0x00	; 0
     207a:	70 e0       	ldi	r23, 0x00	; 0
     207c:	cb 01       	movw	r24, r22
-    207e:	0a c0       	rjmp	.+20     	; 0x2094 <_ZN8castimer8vrednostEv+0x44>
+    207e:	0a c0       	rjmp	.+20     	; 0x2094 <_ZN11class_TIMER8vrednostEv+0x44>
     2080:	01 81       	ldd	r16, Z+1	; 0x01
     2082:	12 81       	ldd	r17, Z+2	; 0x02
     2084:	23 81       	ldd	r18, Z+3	; 0x03
@@ -3877,7 +3877,7 @@ Disassembly of section .text:
     2096:	0f 91       	pop	r16
     2098:	08 95       	ret
 
-0000209a <_ZN8castimer9ponastaviEv>:
+0000209a <_ZN11class_TIMER9ponastaviEv>:
     209a:	fc 01       	movw	r30, r24
     209c:	10 82       	st	Z, r1
     209e:	08 95       	ret
@@ -4113,46 +4113,46 @@ Disassembly of section .text:
     229c:	40 93 8a 00 	sts	0x008A, r20	; 0x80008a <__TEXT_REGION_LENGTH__+0x7c008a>
     22a0:	08 95       	ret
 
-000022a2 <_ZN4VHOD8vrednostEv>:
+000022a2 <_ZN10class_VHOD8vrednostEv>:
     22a2:	fc 01       	movw	r30, r24
     22a4:	86 81       	ldd	r24, Z+6	; 0x06
     22a6:	84 34       	cpi	r24, 0x44	; 68
-    22a8:	61 f0       	breq	.+24     	; 0x22c2 <_ZN4VHOD8vrednostEv+0x20>
-    22aa:	20 f4       	brcc	.+8      	; 0x22b4 <_ZN4VHOD8vrednostEv+0x12>
+    22a8:	61 f0       	breq	.+24     	; 0x22c2 <_ZN10class_VHOD8vrednostEv+0x20>
+    22aa:	20 f4       	brcc	.+8      	; 0x22b4 <_ZN10class_VHOD8vrednostEv+0x12>
     22ac:	82 34       	cpi	r24, 0x42	; 66
-    22ae:	e9 f4       	brne	.+58     	; 0x22ea <_ZN4VHOD8vrednostEv+0x48>
+    22ae:	e9 f4       	brne	.+58     	; 0x22ea <_ZN10class_VHOD8vrednostEv+0x48>
     22b0:	23 b1       	in	r18, 0x03	; 3
-    22b2:	0a c0       	rjmp	.+20     	; 0x22c8 <_ZN4VHOD8vrednostEv+0x26>
+    22b2:	0a c0       	rjmp	.+20     	; 0x22c8 <_ZN10class_VHOD8vrednostEv+0x26>
     22b4:	87 34       	cpi	r24, 0x47	; 71
-    22b6:	39 f0       	breq	.+14     	; 0x22c6 <_ZN4VHOD8vrednostEv+0x24>
+    22b6:	39 f0       	breq	.+14     	; 0x22c6 <_ZN10class_VHOD8vrednostEv+0x24>
     22b8:	8b 34       	cpi	r24, 0x4B	; 75
-    22ba:	b9 f4       	brne	.+46     	; 0x22ea <_ZN4VHOD8vrednostEv+0x48>
+    22ba:	b9 f4       	brne	.+46     	; 0x22ea <_ZN10class_VHOD8vrednostEv+0x48>
     22bc:	20 91 06 01 	lds	r18, 0x0106	; 0x800106 <__TEXT_REGION_LENGTH__+0x7c0106>
-    22c0:	03 c0       	rjmp	.+6      	; 0x22c8 <_ZN4VHOD8vrednostEv+0x26>
+    22c0:	03 c0       	rjmp	.+6      	; 0x22c8 <_ZN10class_VHOD8vrednostEv+0x26>
     22c2:	29 b1       	in	r18, 0x09	; 9
-    22c4:	01 c0       	rjmp	.+2      	; 0x22c8 <_ZN4VHOD8vrednostEv+0x26>
+    22c4:	01 c0       	rjmp	.+2      	; 0x22c8 <_ZN10class_VHOD8vrednostEv+0x26>
     22c6:	22 b3       	in	r18, 0x12	; 18
     22c8:	81 e0       	ldi	r24, 0x01	; 1
     22ca:	90 e0       	ldi	r25, 0x00	; 0
     22cc:	04 80       	ldd	r0, Z+4	; 0x04
-    22ce:	02 c0       	rjmp	.+4      	; 0x22d4 <_ZN4VHOD8vrednostEv+0x32>
+    22ce:	02 c0       	rjmp	.+4      	; 0x22d4 <_ZN10class_VHOD8vrednostEv+0x32>
     22d0:	88 0f       	add	r24, r24
     22d2:	99 1f       	adc	r25, r25
     22d4:	0a 94       	dec	r0
-    22d6:	e2 f7       	brpl	.-8      	; 0x22d0 <_ZN4VHOD8vrednostEv+0x2e>
+    22d6:	e2 f7       	brpl	.-8      	; 0x22d0 <_ZN10class_VHOD8vrednostEv+0x2e>
     22d8:	30 e0       	ldi	r19, 0x00	; 0
     22da:	82 23       	and	r24, r18
     22dc:	93 23       	and	r25, r19
     22de:	21 e0       	ldi	r18, 0x01	; 1
     22e0:	18 16       	cp	r1, r24
     22e2:	19 06       	cpc	r1, r25
-    22e4:	0c f0       	brlt	.+2      	; 0x22e8 <_ZN4VHOD8vrednostEv+0x46>
+    22e4:	0c f0       	brlt	.+2      	; 0x22e8 <_ZN10class_VHOD8vrednostEv+0x46>
     22e6:	20 e0       	ldi	r18, 0x00	; 0
     22e8:	21 83       	std	Z+1, r18	; 0x01
     22ea:	87 81       	ldd	r24, Z+7	; 0x07
     22ec:	90 85       	ldd	r25, Z+8	; 0x08
     22ee:	89 2b       	or	r24, r25
-    22f0:	21 f0       	breq	.+8      	; 0x22fa <_ZN4VHOD8vrednostEv+0x58>
+    22f0:	21 f0       	breq	.+8      	; 0x22fa <_ZN10class_VHOD8vrednostEv+0x58>
     22f2:	91 81       	ldd	r25, Z+1	; 0x01
     22f4:	81 e0       	ldi	r24, 0x01	; 1
     22f6:	89 27       	eor	r24, r25
@@ -4160,10 +4160,10 @@ Disassembly of section .text:
     22fa:	81 81       	ldd	r24, Z+1	; 0x01
     22fc:	90 81       	ld	r25, Z
     22fe:	98 17       	cp	r25, r24
-    2300:	41 f0       	breq	.+16     	; 0x2312 <_ZN4VHOD8vrednostEv+0x70>
+    2300:	41 f0       	breq	.+16     	; 0x2312 <_ZN10class_VHOD8vrednostEv+0x70>
     2302:	91 e0       	ldi	r25, 0x01	; 1
     2304:	88 23       	and	r24, r24
-    2306:	19 f0       	breq	.+6      	; 0x230e <_ZN4VHOD8vrednostEv+0x6c>
+    2306:	19 f0       	breq	.+6      	; 0x230e <_ZN10class_VHOD8vrednostEv+0x6c>
     2308:	92 83       	std	Z+2, r25	; 0x02
     230a:	90 83       	st	Z, r25
     230c:	08 95       	ret
@@ -4415,7 +4415,7 @@ Disassembly of section .text:
     252c:	20 c0       	rjmp	.+64     	; 0x256e <_Z9polnjenjePv+0xe8>
     252e:	8c e3       	ldi	r24, 0x3C	; 60
     2530:	93 e0       	ldi	r25, 0x03	; 3
-    2532:	b7 de       	rcall	.-658    	; 0x22a2 <_ZN4VHOD8vrednostEv>
+    2532:	b7 de       	rcall	.-658    	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
     2534:	88 23       	and	r24, r24
     2536:	79 f3       	breq	.-34     	; 0x2516 <_Z9polnjenjePv+0x90>
     2538:	80 91 43 02 	lds	r24, 0x0243	; 0x800243 <Hardware+0x6>
@@ -4423,7 +4423,7 @@ Disassembly of section .text:
     253e:	09 c0       	rjmp	.+18     	; 0x2552 <_Z9polnjenjePv+0xcc>
     2540:	8c e3       	ldi	r24, 0x3C	; 60
     2542:	93 e0       	ldi	r25, 0x03	; 3
-    2544:	ae de       	rcall	.-676    	; 0x22a2 <_ZN4VHOD8vrednostEv>
+    2544:	ae de       	rcall	.-676    	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
     2546:	88 23       	and	r24, r24
     2548:	21 f0       	breq	.+8      	; 0x2552 <_Z9polnjenjePv+0xcc>
     254a:	80 91 43 02 	lds	r24, 0x0243	; 0x800243 <Hardware+0x6>
@@ -4521,7 +4521,7 @@ Disassembly of section .text:
     2604:	18 86       	std	Y+8, r1	; 0x08
     2606:	ce 01       	movw	r24, r28
     2608:	0f 96       	adiw	r24, 0x0f	; 15
-    260a:	22 dd       	rcall	.-1468   	; 0x2050 <_ZN8castimer8vrednostEv>
+    260a:	22 dd       	rcall	.-1468   	; 0x2050 <_ZN11class_TIMER8vrednostEv>
     260c:	65 3f       	cpi	r22, 0xF5	; 245
     260e:	71 40       	sbci	r23, 0x01	; 1
     2610:	81 05       	cpc	r24, r1
@@ -4554,7 +4554,7 @@ Disassembly of section .text:
     2652:	90 93 47 02 	sts	0x0247, r25	; 0x800247 <Hardware+0xa>
     2656:	ce 01       	movw	r24, r28
     2658:	0f 96       	adiw	r24, 0x0f	; 15
-    265a:	1f dd       	rcall	.-1474   	; 0x209a <_ZN8castimer9ponastaviEv>
+    265a:	1f dd       	rcall	.-1474   	; 0x209a <_ZN11class_TIMER9ponastaviEv>
     265c:	20 e0       	ldi	r18, 0x00	; 0
     265e:	40 e0       	ldi	r20, 0x00	; 0
     2660:	50 e0       	ldi	r21, 0x00	; 0
@@ -4565,7 +4565,7 @@ Disassembly of section .text:
     266e:	0e 94 1c 09 	call	0x1238	; 0x1238 <xQueueGenericSend>
     2672:	87 e3       	ldi	r24, 0x37	; 55
     2674:	93 e0       	ldi	r25, 0x03	; 3
-    2676:	ec dc       	rcall	.-1576   	; 0x2050 <_ZN8castimer8vrednostEv>
+    2676:	ec dc       	rcall	.-1576   	; 0x2050 <_ZN11class_TIMER8vrednostEv>
     2678:	60 3d       	cpi	r22, 0xD0	; 208
     267a:	77 40       	sbci	r23, 0x07	; 7
     267c:	81 05       	cpc	r24, r1
@@ -4589,12 +4589,12 @@ Disassembly of section .text:
     26aa:	0e c0       	rjmp	.+28     	; 0x26c8 <_Z5powerPv+0xe6>
     26ac:	ce 01       	movw	r24, r28
     26ae:	01 96       	adiw	r24, 0x01	; 1
-    26b0:	f8 dd       	rcall	.-1040   	; 0x22a2 <_ZN4VHOD8vrednostEv>
+    26b0:	f8 dd       	rcall	.-1040   	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
     26b2:	81 11       	cpse	r24, r1
     26b4:	12 c0       	rjmp	.+36     	; 0x26da <_Z5powerPv+0xf8>
     26b6:	ce 01       	movw	r24, r28
     26b8:	0a 96       	adiw	r24, 0x0a	; 10
-    26ba:	ca dc       	rcall	.-1644   	; 0x2050 <_ZN8castimer8vrednostEv>
+    26ba:	ca dc       	rcall	.-1644   	; 0x2050 <_ZN11class_TIMER8vrednostEv>
     26bc:	6f 31       	cpi	r22, 0x1F	; 31
     26be:	71 05       	cpc	r23, r1
     26c0:	81 05       	cpc	r24, r1
@@ -4611,12 +4611,12 @@ Disassembly of section .text:
     26d8:	07 c0       	rjmp	.+14     	; 0x26e8 <_Z5powerPv+0x106>
     26da:	ce 01       	movw	r24, r28
     26dc:	01 96       	adiw	r24, 0x01	; 1
-    26de:	e1 dd       	rcall	.-1086   	; 0x22a2 <_ZN4VHOD8vrednostEv>
+    26de:	e1 dd       	rcall	.-1086   	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
     26e0:	88 23       	and	r24, r24
     26e2:	19 f0       	breq	.+6      	; 0x26ea <_Z5powerPv+0x108>
     26e4:	ce 01       	movw	r24, r28
     26e6:	0a 96       	adiw	r24, 0x0a	; 10
-    26e8:	d8 dc       	rcall	.-1616   	; 0x209a <_ZN8castimer9ponastaviEv>
+    26e8:	d8 dc       	rcall	.-1616   	; 0x209a <_ZN11class_TIMER9ponastaviEv>
     26ea:	20 e0       	ldi	r18, 0x00	; 0
     26ec:	30 e0       	ldi	r19, 0x00	; 0
     26ee:	48 e4       	ldi	r20, 0x48	; 72
@@ -4630,7 +4630,7 @@ Disassembly of section .text:
     2706:	9c f0       	brlt	.+38     	; 0x272e <_Z5powerPv+0x14c>
     2708:	8c e3       	ldi	r24, 0x3C	; 60
     270a:	93 e0       	ldi	r25, 0x03	; 3
-    270c:	ca dd       	rcall	.-1132   	; 0x22a2 <_ZN4VHOD8vrednostEv>
+    270c:	ca dd       	rcall	.-1132   	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
     270e:	81 11       	cpse	r24, r1
     2710:	0e c0       	rjmp	.+28     	; 0x272e <_Z5powerPv+0x14c>
     2712:	20 e0       	ldi	r18, 0x00	; 0
@@ -4740,12 +4740,12 @@ Disassembly of section .text:
     27e4:	2d c0       	rjmp	.+90     	; 0x2840 <_Z6zaslonPv+0x70>
     27e6:	8c e3       	ldi	r24, 0x3C	; 60
     27e8:	93 e0       	ldi	r25, 0x03	; 3
-    27ea:	5b dd       	rcall	.-1354   	; 0x22a2 <_ZN4VHOD8vrednostEv>
+    27ea:	5b dd       	rcall	.-1354   	; 0x22a2 <_ZN10class_VHOD8vrednostEv>
     27ec:	81 11       	cpse	r24, r1
     27ee:	0d c0       	rjmp	.+26     	; 0x280a <_Z6zaslonPv+0x3a>
     27f0:	ce 01       	movw	r24, r28
     27f2:	01 96       	adiw	r24, 0x01	; 1
-    27f4:	2d dc       	rcall	.-1958   	; 0x2050 <_ZN8castimer8vrednostEv>
+    27f4:	2d dc       	rcall	.-1958   	; 0x2050 <_ZN11class_TIMER8vrednostEv>
     27f6:	68 32       	cpi	r22, 0x28	; 40
     27f8:	73 42       	sbci	r23, 0x23	; 35
     27fa:	81 05       	cpc	r24, r1
@@ -4766,7 +4766,7 @@ Disassembly of section .text:
     281c:	bf dc       	rcall	.-1666   	; 0x219c <_Z12toggleOUTPUThc>
     281e:	ce 01       	movw	r24, r28
     2820:	01 96       	adiw	r24, 0x01	; 1
-    2822:	3b dc       	rcall	.-1930   	; 0x209a <_ZN8castimer9ponastaviEv>
+    2822:	3b dc       	rcall	.-1930   	; 0x209a <_ZN11class_TIMER9ponastaviEv>
     2824:	1b c0       	rjmp	.+54     	; 0x285c <_Z6zaslonPv+0x8c>
     2826:	41 e0       	ldi	r20, 0x01	; 1
     2828:	65 e4       	ldi	r22, 0x45	; 69
@@ -4795,7 +4795,7 @@ Disassembly of section .text:
     2862:	bd cf       	rjmp	.-134    	; 0x27de <_Z6zaslonPv+0xe>
     2864:	ce 01       	movw	r24, r28
     2866:	01 96       	adiw	r24, 0x01	; 1
-    2868:	18 dc       	rcall	.-2000   	; 0x209a <_ZN8castimer9ponastaviEv>
+    2868:	18 dc       	rcall	.-2000   	; 0x209a <_ZN11class_TIMER9ponastaviEv>
     286a:	40 e0       	ldi	r20, 0x00	; 0
     286c:	65 e4       	ldi	r22, 0x45	; 69
     286e:	80 e0       	ldi	r24, 0x00	; 0
@@ -4803,7 +4803,7 @@ Disassembly of section .text:
     2872:	f4 cf       	rjmp	.-24     	; 0x285c <_Z6zaslonPv+0x8c>
     2874:	ce 01       	movw	r24, r28
     2876:	01 96       	adiw	r24, 0x01	; 1
-    2878:	eb db       	rcall	.-2090   	; 0x2050 <_ZN8castimer8vrednostEv>
+    2878:	eb db       	rcall	.-2090   	; 0x2050 <_ZN11class_TIMER8vrednostEv>
     287a:	61 37       	cpi	r22, 0x71	; 113
     287c:	77 41       	sbci	r23, 0x17	; 23
     287e:	81 05       	cpc	r24, r1

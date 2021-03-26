@@ -17,8 +17,8 @@ TaskHandle_t average_volume_handle;
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
-audio_t audio_system;
-mozne_barve_t mozne_barve;
+struct_AUDIO_SYS audio_system;
+struct_MOZNE_BARVE mozne_barve;
 
 
 /**************************************************************************************************************************
@@ -41,8 +41,8 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
 	bool mikrofon_detect = false;
 	uint16_t ref_glasnost = 2048;
-	castimer lucke_filter_timer;
-	castimer mic_ref_timer;
+	class_TIMER lucke_filter_timer;
+	class_TIMER mic_ref_timer;
 	xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &average_volume_handle);
 	while (true)
 	{
