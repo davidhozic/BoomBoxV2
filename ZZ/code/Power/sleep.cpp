@@ -27,7 +27,4 @@ void spanje()
 	sleep_cpu();
 }
 
-ISR(PCINT2_vect)
-{
-	bujenje();
-}
+
