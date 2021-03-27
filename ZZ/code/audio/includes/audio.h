@@ -84,7 +84,7 @@ void flash_strip();
 void normal_fade_task(void *B);
 void color_fade_task(void *B);
 void breathe_fade_task(void *B);
-void AVERAGE_VOLUME_task(void* param);
+void avg_vol_task(void* param);
 /*********************************************/
 
 /*********************************************/
