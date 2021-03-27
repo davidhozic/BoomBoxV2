@@ -31,10 +31,10 @@ void events(void *paramOdTaska);
 /*************************************************/
 /**/ TaskHandle_t core_control = NULL;         /**/
 /**/ TaskHandle_t event_control = NULL;        /**/
-/**/ TaskHandle_t audio_system_control = NULL; /**/
-/**/ TaskHandle_t zaslon_control = NULL;       /**/
+/**/ TaskHandle_t audio_system_handle = NULL; /**/
+/**/ TaskHandle_t capacity_display_handle = NULL;       /**/
 /**/ TaskHandle_t chrg_control = NULL;         /**/
-/**/ SemaphoreHandle_t voltage_SEM = NULL;	   /**/ // Preprecuje da bi dva taska dostopala do napetosti naenkrat
+/**/ SemaphoreHandle_t voltage_semaphore = NULL;	   /**/ // Preprecuje da bi dva taska dostopala do napetosti naenkrat
 /*************************************************/
 
 
@@ -67,22 +67,22 @@ void init()
 	/************************************************************************/
 	writeOUTPUT(red_button_pin, red_button_port, 1);			// PULL UP
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED ,EEPROM.beri(battery_eeprom_addr));
-	voltage_SEM = xSemaphoreCreateMutex();
-	xSemaphoreGive(voltage_SEM);								// GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja
+	voltage_semaphore = xSemaphoreCreateMutex();
+	xSemaphoreGive(voltage_semaphore);								// GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja
 
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
-	xTaskCreate(power, "power", 256, NULL, 1, &core_control);
-	xTaskCreate(events, "Events task", 256, NULL, 3, &event_control);
-	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &zaslon_control);
-	xTaskCreate(polnjenje, "CHRG", 256, NULL, 1, &chrg_control);
-	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 2, &audio_system_control);
+	xTaskCreate(power, "power", 256, NULL, 1, NULL);
+	xTaskCreate(events, "Events task", 256, NULL, 3, NULL);
+	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &capacity_display_handle);
+	xTaskCreate(polnjenje, "CHRG", 256, NULL, 1, NULL);
+	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 2, &audio_system_handle);
 	vTaskStartScheduler();
 }
 
 int main()
 {
-init();
-return 0;
+	init();
+	return 0;
 }

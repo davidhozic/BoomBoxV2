@@ -2,3 +2,11 @@
 *.cppproj
 *.srec
 *.hex
+*.o
+*.d
+*.map
+*.mk
+ZZ/Release/Makefile
+*.lss
+*.eep
+*.elf

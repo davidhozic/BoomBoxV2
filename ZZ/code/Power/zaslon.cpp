@@ -47,7 +47,7 @@ void zaslon(void *paramOdTaska)
         else
         {
             PORTB &= ~(1 << BAT_LCD_pin);
-            holdTASK(zaslon_control); //Resuma se v eventih
+            holdTASK(capacity_display_handle); //Resuma se v eventih
         }
         delayFREERTOS(200);
     }
