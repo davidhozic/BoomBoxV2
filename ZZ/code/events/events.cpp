@@ -15,19 +15,19 @@ void strip_mode_chg(const char *ch);
 /******************************************************************************************/
 /*                                  ELEMENTI V SCROLL MENIJU                              */
 /******************************************************************************************/
-enum menu_seek_scroll_t
+enum enum_EVENT_MENU_SEEK
 {
     TOGGLE_LCD=0,
-    STRIP_MD_CHG=1,
-    STRIP_OFF=2,
-	MIC_MD_CHG=3,
-    menu_seek_LEN //dolzina
+    STRIP_MODE_CHANGE=1,
+    STRIP_DISABLE = 2,
+	MIC_MODE_CHANGE=3,
+    end_event_menu_seek //dolzina
 };
 
 /******************************************************************************************/
 /*                                 RAZLICNI MENIJI oz. STANJA                             */
 /******************************************************************************************/
-enum states_t
+enum enum_EVENT_STATES
 {
     unset,
     SCROLL,
@@ -57,7 +57,7 @@ struct event_struct_t
 #define toggleLCD()                                         \
     writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN)); \
     if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))                           \
-        resumeTASK(zaslon_control); //Ker se v zaslon tasku blocka v primeru da je display_enabled false
+        resumeTASK(capacity_display_handle); //Ker se v zaslon tasku blocka v primeru da je display_enabled false
 
 #define show_scroll_Seek() \
     STRIP_CURRENT_BRIGHT = 255;       \
@@ -74,7 +74,7 @@ void exit()
     STRIP_CURRENT_BRIGHT = 255;
     brightDOWN(15);
     delayFREERTOS(100);
-    resumeTASK(audio_system_control);
+    resumeTASK(audio_system_handle);
 }
 
 #define check_auto_exit()                           \
@@ -146,17 +146,17 @@ void events(void *paramOdTaska)
                             toggleLCD(); //Task Zaslon se blocka v zaslon tasku
                             exit();
                             break;
-                        case STRIP_MD_CHG:
+                        case STRIP_MODE_CHANGE:
                             strip_mode_chg("");
                             exit();
                             break;
-                        case STRIP_OFF:
+                        case STRIP_DISABLE:
                             strip_mode_chg("off");
                             exit();
                             break;
 							
-						case MIC_MD_CHG:
-							audio_system.mic_mode = (audio_system.mic_mode + 1) % mic_enum_len;
+						case MIC_MODE_CHANGE:
+							audio_system.mic_mode = (audio_system.mic_mode + 1) % enum_MIC_MODES::end_mic_modes;
 							exit();
 							break;	
                         }
@@ -168,7 +168,7 @@ void events(void *paramOdTaska)
 
                     if (event_struct.hold_time < 500) //Kratek pritisk
                     {
-                        event_struct.menu_seek = (event_struct.menu_seek + 1) % menu_seek_LEN;
+                        event_struct.menu_seek = (event_struct.menu_seek + 1) % end_event_menu_seek;
                     }
                     show_scroll_Seek();
                     event_struct.hold_timer.ponastavi();

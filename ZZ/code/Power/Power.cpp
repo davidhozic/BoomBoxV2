@@ -37,12 +37,12 @@ void power(void *paramOdTaska)
 
 		if (VOLT_timer.vrednost() > 500)
 		{
-			xSemaphoreTake(voltage_SEM, portMAX_DELAY);		// Prevent other task from reading while write operation is in effect
+			xSemaphoreTake(voltage_semaphore, portMAX_DELAY);		// Prevent other task from reading while write operation is in effect
 			Hardware.battery_voltage = readANALOG(vDIV_pin) * 5000.00/1023.00;
 			VOLT_timer.ponastavi();
 		}
 		
-		xSemaphoreGive(voltage_SEM); // Da zeleno luc ostalim taskom
+		xSemaphoreGive(voltage_semaphore); // Da zeleno luc ostalim taskom
 		
 
 		/************************************************************************/
@@ -76,7 +76,7 @@ void Shutdown()
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
-	STRIP_MODE = OFF_A;
+	STRIP_MODE = enum_STRIP_MODES::STRIP_OFF;
 }
 
 void Power_UP()

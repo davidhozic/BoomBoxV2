@@ -12,12 +12,15 @@
 **************************************************************************************************************************/
 
 
-void deleteStripSubTasks()
+void deleteTASK_REC(TaskHandle_t Handle_list[])
 {
- deleteTASK(normal_fade_handle);
- deleteTASK(color_fade_handle);
- deleteTASK(breathe_fade_handle);
+
+	for (uint8_t indx = 0; Handle_list[indx] != NULL ; indx++){
+		deleteTASK(Handle_list[indx]);
+	}
+
 }
+
 
 void update_strip()
 {
@@ -89,22 +92,15 @@ void svetlost_mod_funct(char smer, uint8_t cas_krog)
 void strip_mode_chg(const char* ch)
 {
 	if (strcmp(ch,"off"))
-	STRIP_MODE = OFF_A;
+	STRIP_MODE = STRIP_OFF;
 
-	else if (STRIP_MODE == OFF_A)
+	else if (STRIP_MODE == STRIP_OFF)
 	STRIP_MODE = NORMAL_FADE;
 
 	else
-	STRIP_MODE = (STRIP_MODE + 1) % strip_mode_len;
+	STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
 
 	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);
-	deleteStripSubTasks();
+	deleteTASK_REC(strip_modes_ptr_arr);
 }
 
-
-void mic_mode_change(){
-		
-	
-	
-	
-}

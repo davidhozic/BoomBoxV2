@@ -10,10 +10,17 @@
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
+
+// Strip mode handles
 TaskHandle_t normal_fade_handle;
 TaskHandle_t color_fade_handle;
 TaskHandle_t breathe_fade_handle;
+
+// Microphone measuring tasks
 TaskHandle_t average_volume_handle;
+
+
+TaskHandle_t strip_modes_ptr_arr [] = {normal_fade_handle, color_fade_handle, breathe_fade_handle, NULL};
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
@@ -58,7 +65,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				ref_glasnost = readANALOG(mic_ref_pin); // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 			}
 			break;
-		case AVG_VOL:
+		case AVERAGE_VOLUME:
 			mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 60);
 			break;
 		}
@@ -86,8 +93,8 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				xTaskCreate(breathe_fade_task, "BreatheFade", 128, NULL, 4, &breathe_fade_handle);
 				break;
 
-			case OFF_A:
-				holdTASK(audio_system_control); //Ne rabi hoditi v task ce je izkljucen
+			case STRIP_OFF:
+				holdTASK(audio_system_handle); //Ne rabi hoditi v task ce je izkljucen
 				break;
 			}
 		}

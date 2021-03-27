@@ -31,16 +31,11 @@ if (task != NULL)      \
 #define delayFREERTOS(x)	vTaskDelay(x/portTICK_PERIOD_MS)	//pretvori ms v FreeRTOS ticke
 
 /************************************************************************/
-/*					      Global FreeRTOS variables                     */
+/*					      Global FreeRTOS structs	                    */
 /************************************************************************/
-
-extern TaskHandle_t core_control;
-extern TaskHandle_t event_control;
-extern TaskHandle_t audio_system_control;
-extern TaskHandle_t zaslon_control;
-extern TaskHandle_t chrg_control;
-extern TaskHandle_t meas_control;
-extern SemaphoreHandle_t voltage_SEM;
+extern TaskHandle_t audio_system_handle;
+extern TaskHandle_t capacity_display_handle;
+extern SemaphoreHandle_t voltage_semaphore;
 /************************************************************************/
 	
 
