@@ -12,21 +12,11 @@
 **************************************************************************************************************************/
 
 
-void deleteTASK_REC(TaskHandle_t Handle_list[])
-{
-
-	for (uint8_t indx = 0; Handle_list[indx] != NULL ; indx++){
-		deleteTASK(Handle_list[indx]);
-	}
-
-}
-
-
 void update_strip()
 {
-	writePWM(r_trak, strip_port, (float)STRIP_CURRENT_RED * STRIP_CURRENT_BRIGHT / 255.00f);
-	writePWM(z_trak, strip_port, (float)STRIP_CURRENT_GREEN * STRIP_CURRENT_BRIGHT / 255.00f);
-	writePWM(m_trak, strip_port, (float)STRIP_CURRENT_BLUE * STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(strip_red_pin, strip_port, (float)STRIP_CURRENT_RED * STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(strip_green_pin, strip_port, (float)STRIP_CURRENT_GREEN * STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(strip_blue_pin, strip_port, (float)STRIP_CURRENT_BLUE * STRIP_CURRENT_BRIGHT / 255.00f);
 }
 
 void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
@@ -34,13 +24,13 @@ void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
 	set_strip_color(BELA);						
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		writeOUTPUT(r_trak, strip_port, 0);
-		writeOUTPUT(z_trak, strip_port, 0);
-		writeOUTPUT(m_trak, strip_port, 0);
+		writeOUTPUT(strip_red_pin, strip_port, 0);
+		writeOUTPUT(strip_green_pin, strip_port, 0);
+		writeOUTPUT(strip_blue_pin, strip_port, 0);
 		delayFREERTOS(125);
-		writeOUTPUT(r_trak, strip_port, 1);
-		writeOUTPUT(z_trak, strip_port, 1);
-		writeOUTPUT(m_trak, strip_port, 1);
+		writeOUTPUT(strip_red_pin, strip_port, 1);
+		writeOUTPUT(strip_green_pin, strip_port, 1);
+		writeOUTPUT(strip_blue_pin, strip_port, 1);
 		delayFREERTOS(125);
 	}
 }

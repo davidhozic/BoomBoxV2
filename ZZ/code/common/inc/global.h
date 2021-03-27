@@ -5,7 +5,6 @@
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
 
-
 /****************************************************************************************************************************/
 /*														 GLOBAL MACROS										                */
 /****************************************************************************************************************************/
@@ -27,7 +26,6 @@ enum enum_STATUS_REGISTERS
 };								
 
 
-
 #define readBIT(reg, bit)				( ( reg  &  (1 << bit) ) >  0 )
 #define writeBIT(reg, bit, val)			( val ? reg |=(1 << bit) : reg &= ~(1 << bit) )	
 
@@ -46,7 +44,6 @@ struct struct_HARDWARE
 	const float adc_volt_ref = 5.00;
 	unsigned char status_reg = 0;
 	float battery_voltage = 0;
-	unsigned long sys_time = 0;
 };
 
 extern struct_HARDWARE Hardware;

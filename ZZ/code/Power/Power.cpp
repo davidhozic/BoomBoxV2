@@ -19,6 +19,7 @@ void spanje();
 /* *********************************************************************** */
 
 
+	
 void power(void *paramOdTaska)
 {
 	/************************************************************************/
@@ -67,7 +68,7 @@ void power(void *paramOdTaska)
 		{
 			spanje();
 		}
-		delayFREERTOS(10);
+		delayFREERTOS(5);
 	}
 }
 

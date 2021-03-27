@@ -19,19 +19,27 @@
 #define STRIP_CURRENT_COL								audio_system.current_color
 #define STRIP_MODE										audio_system.strip_mode
 
-#define brightUP(cas_na_krog) svetlost_mod_funct(1, cas_na_krog);
-#define brightDOWN(cas_na_krog) svetlost_mod_funct(-1, cas_na_krog);
-#define colorSHIFT(index_barve) color_fade_funct((uint8_t *)index_barve);
-#define stripOFF()              \
-    holdTASK(audio_system_handle); \
-	deleteTASK_REC(strip_modes_ptr_arr); \
-    brightDOWN(15);
-  
+	/************************ FUNCTION MACROS *************************/
 
-#define set_strip_color(x)                               \
-    STRIP_CURRENT_RED = mozne_barve.barvni_ptr[*((uint8_t *)x)][0]; \
-    STRIP_CURRENT_GREEN = mozne_barve.barvni_ptr[*((uint8_t *)x)][1]; \
+#define brightUP(cas_na_krog)				    		svetlost_mod_funct(1, cas_na_krog);
+#define brightDOWN(cas_na_krog)							svetlost_mod_funct(-1, cas_na_krog);
+#define colorSHIFT(index_barve)							color_fade_funct((uint8_t *)index_barve);
+
+#define stripOFF()															\
+    holdTASK(audio_system_handle);											\
+	deleteTASK_REC(strip_modes_ptr_arr);									\
+    brightDOWN(15);
+	
+#define set_strip_color(x)													\
+    STRIP_CURRENT_RED = mozne_barve.barvni_ptr[*((uint8_t *)x)][0];			\
+    STRIP_CURRENT_GREEN = mozne_barve.barvni_ptr[*((uint8_t *)x)][1];		\
     STRIP_CURRENT_BLUE = mozne_barve.barvni_ptr[*((uint8_t *)x)][2];
+	
+#define deleteTASK_REC(handle_array)										\
+	for (uint8_t index = 0; handle_array[index] != NULL; index++){			\
+		deleteTASK(handle_array[index]);									\
+	}		
+				
 /********************************************************************/
 
 
@@ -48,7 +56,8 @@ enum enum_STRIP_MODES
 	STRIP_OFF
 };
 
-enum enum_MIC_MODES{
+enum enum_MIC_MODES
+{
 	AVERAGE_VOLUME,
 	POTENCIOMETER,
 	end_mic_modes
@@ -74,7 +83,6 @@ void update_strip();
 void color_fade_funct(uint8_t *BARVA);
 void svetlost_mod_funct(char smer, uint8_t cas_krog);
 void strip_mode_chg(char *ch);
-void deleteTASK_REC(TaskHandle_t Handle_list[]);
 void flash_strip();
 /*********************************************/
 

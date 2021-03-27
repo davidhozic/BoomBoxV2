@@ -2,20 +2,28 @@
 
 #include "castimer/castimer.h"
 #include "common/inc/global.h"
+#include "FreeRTOS.h"
 
-unsigned long class_TIMER::vrednost(void)
+class_TIMER* timer_list[50];
+unsigned char timer_num = 0;
+
+unsigned long class_TIMER::vrednost()
 {
-  if (tr == false)
-  {
-    ts = Hardware.sys_time;
-    tr = true;
-    return 0;
-  }
-  return Hardware.sys_time - ts;
+	this->timer_enabled = true;
+	return this->timer_value;
 }
 
-void class_TIMER::ponastavi(void)
+void class_TIMER::ponastavi()
 {
-  tr = false;
+	this->timer_enabled = false;
+	this->timer_value = 0;
 }
 
+void class_TIMER::increment(){
+	if (this->timer_enabled)
+		timer_value += 1;	
+}
+
+class_TIMER::class_TIMER(){
+	timer_list[timer_num++] = this;
+}
