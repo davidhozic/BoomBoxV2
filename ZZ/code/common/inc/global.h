@@ -27,7 +27,7 @@ enum enum_STATUS_REGISTERS
 
 
 #define readBIT(reg, bit)				( ( reg  &  (1 << bit) ) >  0 )
-#define writeBIT(reg, bit, val)			( val ? reg |=(1 << bit) : reg &= ~(1 << bit) )	
+#define writeBIT(reg, bit, val)			( val ? reg |= (1 << bit) : reg &= ~(1 << bit) )	
 
 /****************************************************************************************************************************/
 /*													GLOBAL OBJECTS													        */

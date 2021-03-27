@@ -1,17 +1,17 @@
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
 #include "FreeRTOS.h"
-#include "../audio/includes/audio.h"
+#include "../audio-visual/includes/audio.h"
 #include "common/inc/global.h"
 #include <util/delay.h>
 #include "libs/outputs_inputs/outputs_inputs.h"
+#include "task.h"
 /******************************************************************************************/
 /*                                     EXTERN DEKLARACIJE                                 */
 /******************************************************************************************/
 void Shutdown();
 void external_power_switch_ev();
 void internal_power_switch_ev();
-void strip_mode_chg(const char *ch);
 /******************************************************************************************/
 /*                                  ELEMENTI V SCROLL MENIJU                              */
 /******************************************************************************************/
@@ -147,16 +147,16 @@ void events(void *paramOdTaska)
                             exit();
                             break;
                         case STRIP_MODE_CHANGE:
-                            strip_mode_chg("");
+                            strip_mode_change("", strip_mode_handle_arr);
                             exit();
                             break;
                         case STRIP_DISABLE:
-                            strip_mode_chg("off");
+                            strip_mode_change("off", strip_mode_handle_arr);
                             exit();
                             break;
 							
 						case MIC_MODE_CHANGE:
-							audio_system.mic_mode = (audio_system.mic_mode + 1) % enum_MIC_MODES::end_mic_modes;
+							mic_mode_change(mic_mode_handle_arr);
 							exit();
 							break;	
                         }

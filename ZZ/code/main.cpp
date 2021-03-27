@@ -4,7 +4,7 @@
 #include "castimer/castimer.h"
 #include "FreeRTOS.h"
 #include "common/inc/FreeRTOS_def_decl.h"
-#include "audio/includes/audio.h"
+#include "audio-visual/includes/audio.h"
 #include "libs/EEPROM/EEPROM.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/global.h"
@@ -69,6 +69,7 @@ void init()
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED ,EEPROM.beri(battery_eeprom_addr));
 	voltage_semaphore = xSemaphoreCreateMutex();
 	xSemaphoreGive(voltage_semaphore);								// GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja
+		
 
 	/************************************************************************/
 	/*							   SETUP TASKS                              */

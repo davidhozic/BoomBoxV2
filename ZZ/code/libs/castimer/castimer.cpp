@@ -9,18 +9,18 @@ unsigned char timer_num = 0;
 
 unsigned long class_TIMER::vrednost()
 {
-	this->timer_enabled = true;
-	return this->timer_value;
+	timer_enabled = true;
+	return timer_value;
 }
 
 void class_TIMER::ponastavi()
 {
-	this->timer_enabled = false;
-	this->timer_value = 0;
+	timer_enabled = false;
+	timer_value = 0;
 }
 
 void class_TIMER::increment(){
-	if (this->timer_enabled)
+	if (timer_enabled)
 		timer_value += 1;	
 }
 

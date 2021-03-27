@@ -3,7 +3,7 @@
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
 #include <FreeRTOS.h>
-#include "audio/includes/audio.h"
+#include "audio-visual/includes/audio.h"
 #include "libs/EEPROM/EEPROM.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/global.h"

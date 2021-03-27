@@ -18,7 +18,7 @@ void avg_vol_task(void* param)
 		if (tr_vrednost > max_izmerjeno)
 		max_izmerjeno = tr_vrednost;
 
-		if (average_v_timer.vrednost() >= 15)
+		if (average_v_timer.vrednost() >= 12)
 		{
 			vsota_branj += max_izmerjeno;
 			st_branj++;

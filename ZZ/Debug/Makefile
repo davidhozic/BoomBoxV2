@@ -34,8 +34,8 @@ LINKER_SCRIPT_DEP:=
 # Every subdirectory with source files must be described here
 SUBDIRS :=  \
 ../code/ \
-../code/audio/ \
-../code/audio/includes/ \
+../code/audio-visual \
+../code/audio-visual/includes \
 ../code/events/ \
 ../code/freeRTOS/ \
 ../code/freeRTOS/include/ \
@@ -51,9 +51,9 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../code/audio/audio_visual.cpp \
-../code/audio/meritve.cpp \
-../code/audio/pod_funk.cpp \
+../code/audio-visual/audio_visual.cpp \
+../code/audio-visual/meritve.cpp \
+../code/audio-visual/pod_funk.cpp \
 ../code/common/ISRs.cpp \
 ../code/events/events.cpp \
 ../code/freeRTOS/croutine.c \
@@ -84,9 +84,9 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-code/audio/audio_visual.o \
-code/audio/meritve.o \
-code/audio/pod_funk.o \
+code/audio-visual/audio_visual.o \
+code/audio-visual/meritve.o \
+code/audio-visual/pod_funk.o \
 code/common/ISRs.o \
 code/events/events.o \
 code/freeRTOS/croutine.o \
@@ -110,9 +110,9 @@ code/Power/sleep.o \
 code/Power/zaslon.o
 
 OBJS_AS_ARGS +=  \
-code/audio/audio_visual.o \
-code/audio/meritve.o \
-code/audio/pod_funk.o \
+code/audio-visual/audio_visual.o \
+code/audio-visual/meritve.o \
+code/audio-visual/pod_funk.o \
 code/common/ISRs.o \
 code/events/events.o \
 code/freeRTOS/croutine.o \
@@ -136,9 +136,9 @@ code/Power/sleep.o \
 code/Power/zaslon.o
 
 C_DEPS +=  \
-code/audio/audio_visual.d \
-code/audio/meritve.d \
-code/audio/pod_funk.d \
+code/audio-visual/audio_visual.d \
+code/audio-visual/meritve.d \
+code/audio-visual/pod_funk.d \
 code/common/ISRs.d \
 code/events/events.d \
 code/freeRTOS/croutine.d \
@@ -162,9 +162,9 @@ code/Power/sleep.d \
 code/Power/zaslon.d
 
 C_DEPS_AS_ARGS +=  \
-code/audio/audio_visual.d \
-code/audio/meritve.d \
-code/audio/pod_funk.d \
+code/audio-visual/audio_visual.d \
+code/audio-visual/meritve.d \
+code/audio-visual/pod_funk.d \
 code/common/ISRs.d \
 code/events/events.d \
 code/freeRTOS/croutine.d \
@@ -201,21 +201,21 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
-code/audio/audio_visual.o: ../code/audio/audio_visual.cpp
+code/audio-visual/audio_visual.o: ../code/audio-visual/audio_visual.cpp
 	@echo Building file: $<
 	@echo Invoking: AVR8/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\src" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include" -I"../code/common/inc" -I"../code" -I"../code/libs" -I"../code/freeRTOS" -I"../code/freeRTOS/include"  -O2 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g3 -Wall -mmcu=atmega2560 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -std=c++17 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
-code/audio/meritve.o: ../code/audio/meritve.cpp
+code/audio-visual/meritve.o: ../code/audio-visual/meritve.cpp
 	@echo Building file: $<
 	@echo Invoking: AVR8/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\src" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include" -I"../code/common/inc" -I"../code" -I"../code/libs" -I"../code/freeRTOS" -I"../code/freeRTOS/include"  -O2 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g3 -Wall -mmcu=atmega2560 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -std=c++17 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
-code/audio/pod_funk.o: ../code/audio/pod_funk.cpp
+code/audio-visual/pod_funk.o: ../code/audio-visual/pod_funk.cpp
 	@echo Building file: $<
 	@echo Invoking: AVR8/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\src" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include" -I"../code/common/inc" -I"../code" -I"../code/libs" -I"../code/freeRTOS" -I"../code/freeRTOS/include"  -O2 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g3 -Wall -mmcu=atmega2560 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega2560" -c -std=c++17 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

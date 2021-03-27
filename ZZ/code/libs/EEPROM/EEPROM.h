@@ -1,6 +1,6 @@
 
 
-
+#pragma once
 
 struct EEPROM_t
 {

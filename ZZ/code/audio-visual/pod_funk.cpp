@@ -76,21 +76,3 @@ void svetlost_mod_funct(char smer, uint8_t cas_krog)
 	}
 }
 
-
-
-
-void strip_mode_chg(const char* ch)
-{
-	if (strcmp(ch,"off"))
-	STRIP_MODE = STRIP_OFF;
-
-	else if (STRIP_MODE == STRIP_OFF)
-	STRIP_MODE = NORMAL_FADE;
-
-	else
-	STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
-
-	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);
-	deleteTASK_REC(strip_modes_ptr_arr);
-}
-

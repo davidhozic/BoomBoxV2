@@ -18,9 +18,11 @@ TaskHandle_t breathe_fade_handle;
 
 // Microphone measuring tasks
 TaskHandle_t average_volume_handle;
+TaskHandle_t frequency_measure_handle;
 
-
-TaskHandle_t strip_modes_ptr_arr [] = {normal_fade_handle, color_fade_handle, breathe_fade_handle, NULL};
+TaskHandle_t strip_mode_handle_arr [strip_mode_handle_arr_length] = {normal_fade_handle, color_fade_handle, breathe_fade_handle}; // TaskHandle_t is a TaskControlBlock pointer, no need to make TaskHandle pointer
+TaskHandle_t mic_mode_handle_arr[mic_mode_handle_arr_length] = {average_volume_handle};	
+	
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
@@ -50,21 +52,20 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 	uint16_t ref_glasnost = 2048;
 	class_TIMER lucke_filter_timer;
 	class_TIMER mic_ref_timer;
-	xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &average_volume_handle);
+	
 	while (true)
 	{
 		switch (audio_system.mic_mode)
 		{
 		case POTENCIOMETER:
-		
 			mikrofon_detect = readANALOG(mic_pin) > ref_glasnost; //Gleda ce je vrednost mikrofona nad referencno in se sprozi
-			
 			if (mic_ref_timer.vrednost() > 3000) // Posodobi vsako sekundo
 			{
 				mic_ref_timer.ponastavi();
 				ref_glasnost = readANALOG(mic_ref_pin); // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 			}
 			break;
+			
 		case AVERAGE_VOLUME:
 			mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 60);
 			break;
@@ -112,7 +113,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 {
 	STRIP_CURRENT_BRIGHT = 255;
-	set_strip_color(BARVA);
+	set_strip_color(*((uint8_t*)BARVA));
 
 	brightDOWN(5);
 
@@ -142,7 +143,7 @@ void breathe_fade_task(void *BARVA)
 	if (color_fade_handle == NULL)
 	{
 
-		set_strip_color(BARVA);
+		set_strip_color(*((uint8_t*)BARVA));
 	}
 	brightUP(3);
 	brightDOWN(3);
