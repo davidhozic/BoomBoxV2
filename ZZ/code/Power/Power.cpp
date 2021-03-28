@@ -68,7 +68,7 @@ void power(void *paramOdTaska)
 		{
 			spanje();
 		}
-		delayFREERTOS(5);
+		delayFREERTOS(15);
 	}
 }
 

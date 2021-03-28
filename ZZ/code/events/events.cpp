@@ -191,7 +191,7 @@ void events(void *paramOdTaska)
         {
             internal_power_switch_ev();
         }
-        delayFREERTOS(5);
+        delayFREERTOS(15);
         /*************************************************************************************/
 		// END WHILE
 	}
