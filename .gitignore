@@ -11,3 +11,5 @@ ZZ/Release/Makefile
 *.eep
 *.elf
 ZZ/.vs/ZZ/v14/.atsuo
+ZZ/Debug/Makefile
+ZZ/.vs/ZZ/v14/.atsuo

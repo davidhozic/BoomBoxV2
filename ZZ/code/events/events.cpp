@@ -6,6 +6,9 @@
 #include <util/delay.h>
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "task.h"
+#include <string.h>
+#include <stdio.h>
+
 /******************************************************************************************/
 /*                                     EXTERN DEKLARACIJE                                 */
 /******************************************************************************************/
@@ -17,10 +20,10 @@ void internal_power_switch_ev();
 /******************************************************************************************/
 enum enum_EVENT_MENU_SEEK
 {
-    TOGGLE_LCD=0,
-    STRIP_MODE_CHANGE=1,
-    STRIP_DISABLE = 2,
-	MIC_MODE_CHANGE=3,
+    TOGGLE_LCD = 0,
+    STRIP_MODE_CHANGE,
+    STRIP_DISABLE,
+	MIC_MODE_CHANGE,
     end_event_menu_seek //dolzina
 };
 
@@ -29,7 +32,7 @@ enum enum_EVENT_MENU_SEEK
 /******************************************************************************************/
 enum enum_EVENT_STATES
 {
-    unset,
+    unset = 0,
     SCROLL,
     states_len //dolzina
 };
