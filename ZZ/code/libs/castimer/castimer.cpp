@@ -49,7 +49,7 @@ void class_TIMER_framework::increment_timers(){
 }
 
 class_TIMER_framework::class_TIMER_framework(){
-	for (class_TIMER* &element : class_TIMER_framework::timer_list){		//Setups the list to be NULL
+	for (class_TIMER* &element : timer_list){		//Setups the list to be NULL
 		element = NULL;		
 	}
 }

@@ -37,7 +37,7 @@ void zaslon(void *paramOdTaska)
                 toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
                 LCD_timer.ponastavi();
             }
-            else // Ce je napajalnik izkljucen in se ne polni, potem 3s gori
+            else // Ce je napajalnik vkljucen in se ne polni, potem 3s gori
             {
                 writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 1);
                 delayFREERTOS(3000);
@@ -47,7 +47,7 @@ void zaslon(void *paramOdTaska)
         else
         {
             writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
-            holdTASK(capacity_display_handle); //Resuma se v eventih
+            holdTASK(handle_capacity_display); //Resuma se v eventih
         }
         delayFREERTOS(15);
 		//END WHILE

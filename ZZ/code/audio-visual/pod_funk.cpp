@@ -19,7 +19,7 @@ void update_strip()
 	writePWM(strip_blue_pin, strip_port, (float)STRIP_CURRENT_BLUE * STRIP_CURRENT_BRIGHT / 255.00f);
 }
 
-void flash_strip() //Utripanje (Izhod iz scroll stata / menjava mikrofona)
+void flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
 {
 	set_strip_color(BELA);						
 	for (uint8_t i = 0; i < 5; i++)

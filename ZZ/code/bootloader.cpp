@@ -10,7 +10,7 @@
 #include "common/inc/global.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
-
+#include <util/delay.h>
 
 
 
@@ -22,21 +22,14 @@ void thermal(void *paramOdTaska);
 void zaslon(void *paramOdTaska);
 void audio_visual(void *p);
 void polnjenje(void *paramOdTaska);
-void events(void *paramOdTaska);
-/************************************************************************/
+void settings_UI(void *paramOdTaska);
 
-/*************************************************/
-/*                                               */
-/*            FreeRTOS main task control         */
-/*                                               */
-/*************************************************/
-/**/ TaskHandle_t core_control = NULL;         /**/
-/**/ TaskHandle_t event_control = NULL;        /**/
-/**/ TaskHandle_t audio_system_handle = NULL; /**/
-/**/ TaskHandle_t capacity_display_handle = NULL;       /**/
-/**/ TaskHandle_t chrg_control = NULL;         /**/
-/**/ SemaphoreHandle_t voltage_semaphore = NULL;	   /**/ // Preprecuje da bi dva taska dostopala do napetosti naenkrat
-/*************************************************/
+/************************************************************************/
+/*						Main thread handles			                    */
+/************************************************************************/
+	TaskHandle_t handle_audio_system = NULL;		
+	TaskHandle_t handle_capacity_display = NULL;	
+/************************************************************************/
 
 
 void init()
@@ -51,7 +44,7 @@ void init()
 	DDRB = 1 << PB7 | 1 << PB6 | 1 << PB5 | 1 << PB4;
 
 	/************************************************************************/
-	/*						SETUP TIMER FOR SYSTEM TIME                     */
+	/*						SETUP TIMER FOR TIMER OBJECS                    */
 	/************************************************************************/
 	TCCR3A  = 0;
 	TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;				// Clear timer on compare match
@@ -64,24 +57,21 @@ void init()
 	ADMUX   = (1 << REFS0);										// Izberi
 	ADCSRA |= (1 << ADEN);				                        // Vklop adc in zacetek konverzije
 	ADCSRA |= (1 << ADSC);
+	_delay_ms(3);
 
 	/************************************************************************/
 	/*							  SETUP OTHER                               */
 	/************************************************************************/
-	writeOUTPUT(red_button_pin, red_button_port, 1);			// PULL UP
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED ,EEPROM.beri(battery_eeprom_addr));
-	voltage_semaphore = xSemaphoreCreateMutex();
-	xSemaphoreGive(voltage_semaphore);								// GIVE = ostali lahko vzamejo dostop, TAKE = task ostalim taskom vzame dostop do semaforja
-		
 
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
 	xTaskCreate(power, "power", 256, NULL, 1, NULL);
-	xTaskCreate(events, "Events task", 256, NULL, 3, NULL);
-	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &capacity_display_handle);
+	xTaskCreate(settings_UI, "settings", 256, NULL, 2, NULL);
+	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &handle_capacity_display);
 	xTaskCreate(polnjenje, "CHRG", 256, NULL, 1, NULL);
-	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 2, &audio_system_handle);
+	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 3, &handle_audio_system);
 	vTaskStartScheduler();
 }
 

@@ -30,11 +30,11 @@
 #define FREERTOS_CONFIG_H
 #include "settings.h"
 
-#define configUSE_PREEMPTION 1
+#define configUSE_PREEMPTION 0		
 
 /*		FreeRTOS tick generation	*/
 #define configCPU_CLOCK_HZ (F_CPU)
-#define configTICK_RATE_HZ (2000)
+#define configTICK_RATE_HZ	(1000)
 #define configTICK_PRESCALER (64)   // 1, 8, 64, 256 or 1024 (or 32 for timer2)
 
 
@@ -55,7 +55,7 @@
 #define configUSE_COUNTING_SEMAPHORES 0		// Semaphores won't have just one "key" but multiple
 #define configQUEUE_REGISTRY_SIZE 2			
 #define configUSE_QUEUE_SETS 1			
-#define configUSE_TIME_SLICING 1			// Tasks with same prioriy will time slice (each gets to run for a small ammount of time)
+#define configUSE_TIME_SLICING 0			// Tasks with same prioriy will time slice (each gets to run for a small ammount of time)
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION 0
 #define configSUPPORT_DYNAMIC_ALLOCATION 1

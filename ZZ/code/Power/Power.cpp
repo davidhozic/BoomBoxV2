@@ -8,15 +8,20 @@
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/global.h"
 #include "FreeRTOS_def_decl.h"
+#include <avr/sleep.h>
+#include <util/delay.h>
 
 
-
-/* ************************** Extenal ************************************ */
+/************************************************************************/
+/*							PROTOTYPES                                  */
+/************************************************************************/
 void Shutdown();
 void Power_UP();
 void audio_visual();
 void spanje();
-/* *********************************************************************** */
+void external_power_switch_ev();
+void internal_power_switch_ev();
+/************************************************************************/
 
 
 	
@@ -38,13 +43,10 @@ void power(void *paramOdTaska)
 
 		if (VOLT_timer.vrednost() > 500)
 		{
-			xSemaphoreTake(voltage_semaphore, portMAX_DELAY);		// Prevent other task from reading while write operation is in effect
-			Hardware.battery_voltage = readANALOG(vDIV_pin) * 5000.00/1023.00;
+			Hardware.battery_voltage = readANALOG(vDIV_pin) * adc_milivolt_ref/1023.00f;
 			VOLT_timer.ponastavi();
 		}
-		
-		xSemaphoreGive(voltage_semaphore); // Da zeleno luc ostalim taskom
-		
+			
 
 		/************************************************************************/
 		/*								POWER UP/SHUTDOWN                       */
@@ -66,8 +68,27 @@ void power(void *paramOdTaska)
 			
 		if (Hardware.battery_voltage <= sleep_voltage && !napajalnik.vrednost() && Hardware.battery_voltage > 0) //Če je battery_voltage 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
 		{
+			Shutdown();
 			spanje();
 		}
+		
+		/************************************************************************/
+		/*							 POWER SWITCH	                            */
+		/************************************************************************/
+		
+		if (napajalnik.vrednost() && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER) == false)
+		{
+			external_power_switch_ev();
+		}
+
+		else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
+		{
+			internal_power_switch_ev();
+		}
+
+		/*************************************************************************************/
+		
+		
 		delayFREERTOS(15);
 	}
 }
@@ -86,4 +107,46 @@ void Power_UP()
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1); // izklopi izhod
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
+}
+
+
+
+void external_power_switch_ev()
+{
+	Shutdown();
+	delayFREERTOS(20);
+	writeOUTPUT(menjalnik_pin,menjalnik_port,1);
+	stikaloCAS.ponastavi();
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 1);
+}
+
+void internal_power_switch_ev()
+{
+
+	Shutdown();
+	delayFREERTOS(20);
+	writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
+	stikaloCAS.ponastavi();
+	delayFREERTOS(20);
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
+}
+
+void bujenje()
+{ //Avtomaticno rising edge, saj se interrupt vklopi sele ob spanju
+	sleep_disable();
+	PCICR = 0;
+	PCIFR = 0;
+	PCMSK2 = 0;
+	_delay_ms(200);
+}
+
+void spanje()
+{
+	asm("sei");					 //vklop zunanjih interruptov
+	PCICR = (1 << PCIE2);	 // Vklopi PCINT interrupt
+	PCIFR = (1 << PCIF2);	 // Vlopi ISR
+	PCMSK2 = (1 << PCINT17); //Vklopi vector na 17
+	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+	sleep_enable();
+	sleep_cpu();
 }

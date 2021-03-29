@@ -39,8 +39,8 @@ for (uint8_t index = 0; index < lengthh; index++)			\
 /************************************************************************/
 /*					      Global FreeRTOS structs	                    */
 /************************************************************************/
-extern TaskHandle_t audio_system_handle;
-extern TaskHandle_t capacity_display_handle;
+extern TaskHandle_t handle_audio_system;
+extern TaskHandle_t handle_capacity_display;
 extern SemaphoreHandle_t voltage_semaphore;
 /************************************************************************/
 	

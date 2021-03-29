@@ -45,10 +45,8 @@ extern class_TIMER stikaloCAS;
 /****************************************************************************************************************************/
 struct struct_HARDWARE
 {		
-	const short adc_milivolt_ref = 5000;	 //Referencna battery_voltage na ADC (4.999V - 5.002V)
-	const float adc_volt_ref = 5.00;
 	unsigned char status_reg = 0;
-	float battery_voltage = 0;
+	unsigned short battery_voltage = 0;
 };
 
 extern struct_HARDWARE Hardware;

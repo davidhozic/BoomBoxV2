@@ -11,7 +11,7 @@ void polnjenje(void *paramOdTaska)
 {
 	while (true)
 	{
-		xSemaphoreTake(voltage_semaphore, portMAX_DELAY);
+
 
 		if (Hardware.battery_voltage >= 4150 && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN) == 0)
 		{
@@ -27,8 +27,7 @@ void polnjenje(void *paramOdTaska)
 			EEPROM.pisi(battery_eeprom_addr, readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN));
 		}
 
-		xSemaphoreGive(voltage_semaphore);
-		
+
 
 		if ((readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN) == 1  || napajalnik.vrednost() == 0) && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN))
 		{

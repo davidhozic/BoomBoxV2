@@ -95,7 +95,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				break;
 
 			case STRIP_OFF:
-				holdTASK(audio_system_handle); //Ne rabi hoditi v task ce je izkljucen
+				holdTASK(handle_audio_system); //Ne rabi hoditi v task ce je izkljucen
 				break;
 			}
 		}

@@ -58,7 +58,7 @@ extern TaskHandle_t mic_mode_handle_arr[];
 #define colorSHIFT(index_barve)							color_fade_funct((uint8_t *)index_barve);
 
 #define stripOFF()															\
-    holdTASK(audio_system_handle);											\
+    holdTASK(handle_audio_system);											\
 	deleteTASK_REC(strip_mode_handle_arr, strip_mode_handle_arr_length);									\
     brightDOWN(15);
 	
@@ -67,7 +67,7 @@ extern TaskHandle_t mic_mode_handle_arr[];
     STRIP_CURRENT_GREEN = mozne_barve.barvni_ptr[x][1];		\
     STRIP_CURRENT_BLUE = mozne_barve.barvni_ptr[x][2];
 		
-#define strip_mode_change(ch, strip_list)									\
+#define MENU_STRIP_MODE_CHANGE(ch, strip_list)									\
 	if (strcmp(ch,"off"))													\
 		STRIP_MODE = STRIP_OFF;												\
 	else if (STRIP_MODE == STRIP_OFF)										\
@@ -77,7 +77,7 @@ extern TaskHandle_t mic_mode_handle_arr[];
 	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);							\
 	deleteTASK_REC(strip_list, strip_mode_handle_arr_length);
 	
-#define mic_mode_change(mic_mode_list)										\
+#define MENU_MIC_MODE_CHANGE(mic_mode_list)										\
 	MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;								\
 	deleteTASK_REC(mic_mode_list, mic_mode_handle_arr_length);					\
 	if (MIC_MODE == AVERAGE_VOLUME)											\
