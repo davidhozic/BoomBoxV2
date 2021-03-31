@@ -35,7 +35,7 @@ void flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
 	}
 }
 
-void color_fade_funct(uint8_t *BARVA)
+void color_fade_funct(uint8_t *BARVA, uint8_t cas_krog)
 {
 	while (STRIP_CURRENT_RED != mozne_barve.barvni_ptr[*BARVA][0] || STRIP_CURRENT_GREEN != mozne_barve.barvni_ptr[*BARVA][1] || STRIP_CURRENT_BLUE != mozne_barve.barvni_ptr[*BARVA][2]) //Trenutna razlicna od zeljene
 	{
@@ -44,9 +44,9 @@ void color_fade_funct(uint8_t *BARVA)
 		mozne_barve.barvni_ptr[*BARVA][1] >= STRIP_CURRENT_GREEN? smer[1] = 1 : smer[1] = -1;
 		mozne_barve.barvni_ptr[*BARVA][2] >= STRIP_CURRENT_BLUE	? smer[2] = 1 : smer[2] = -1;
 
-		STRIP_CURRENT_RED	+=	(10 * smer[0]);
-		STRIP_CURRENT_GREEN	+=	(10 * smer[1]);
-		STRIP_CURRENT_BLUE	+=	(10 * smer[2]);
+		STRIP_CURRENT_RED	+=	(6 * smer[0]);
+		STRIP_CURRENT_GREEN	+=	(6 * smer[1]);
+		STRIP_CURRENT_BLUE	+=	(6 * smer[2]);
 
 		//Preveri prenihaj:
 
@@ -60,7 +60,7 @@ void color_fade_funct(uint8_t *BARVA)
 		(smer[2] == -1 && STRIP_CURRENT_BLUE < mozne_barve.barvni_ptr[*BARVA][2]) ? mozne_barve.barvni_ptr[*BARVA][2]: STRIP_CURRENT_BLUE ;
 
 		update_strip();
-		delayFREERTOS(5);
+		delayFREERTOS(cas_krog);
 	}
 }
 
@@ -68,7 +68,7 @@ void svetlost_mod_funct(char smer, uint8_t cas_krog)
 {
 	while (smer > 0 ? STRIP_CURRENT_BRIGHT < 255 : STRIP_CURRENT_BRIGHT > 0)
 	{
-		STRIP_CURRENT_BRIGHT += 8 * smer;
+		STRIP_CURRENT_BRIGHT += 6 * smer;
 		STRIP_CURRENT_BRIGHT = STRIP_CURRENT_BRIGHT < 0 ? 0 : STRIP_CURRENT_BRIGHT;
 		STRIP_CURRENT_BRIGHT = STRIP_CURRENT_BRIGHT > 255 ? 255 : STRIP_CURRENT_BRIGHT;
 		update_strip();

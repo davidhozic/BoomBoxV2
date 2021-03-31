@@ -29,9 +29,9 @@ if (task != NULL)											\
 }
 
 #define deleteTASK_REC(handle_array)						\
-for (TaskHandle_t &current_element : handle_array)			\
+for (uint8_t i = 0; handle_array[i] != NULL; i++)			\
 {															\
-	deleteTASK(handle_array[index]);						\
+	deleteTASK(handle_array[i]);							\
 }
 
 #define delayFREERTOS(x)					 vTaskDelay(x/portTICK_PERIOD_MS)	//pretvori ms v FreeRTOS ticke

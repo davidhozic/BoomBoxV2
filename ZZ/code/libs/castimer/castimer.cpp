@@ -31,7 +31,7 @@ class_TIMER::class_TIMER(){
 }
 
 void class_TIMER::increment(){
-	if (timer_enabled)
+	if (timer_enabled && timer_value < 65535) //Prevent overflow
 		timer_value += 1;
 }
 
@@ -52,7 +52,7 @@ void class_TIMER_framework::increment_timers(){
 }
 
 class_TIMER_framework::class_TIMER_framework(){
-	for (class_TIMER* &element : timer_list){		//Setups the list to be NULL
+	for (class_TIMER* &element : timer_list){								//Setups the list to be NULL
 		element = NULL;		
 	}
 }

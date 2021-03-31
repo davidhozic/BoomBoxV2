@@ -1,5 +1,7 @@
-#ifndef VHOD_H
-#define VHOD_H
+
+#pragma once
+
+#include "castimer/castimer.h"
 
 class class_VHOD // pin, port, stanje ko ni pritisnjen
 {
@@ -11,6 +13,7 @@ private:
     int pin;
     char port;
     int default_state;
+	class_TIMER off_timer;
 
 public:
     bool vrednost();
@@ -25,4 +28,3 @@ public:
     }
 };
 
-#endif

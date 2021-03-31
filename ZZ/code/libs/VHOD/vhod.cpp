@@ -1,5 +1,6 @@
 #include "VHOD/Vhod.h"
 #include "avr/io.h"
+#include "castimer/castimer.h"
 
 bool class_VHOD::vrednost()
 {
@@ -37,7 +38,15 @@ bool class_VHOD::vrednost()
 		prejsnje_stanje = trenutno_stanje;
 	}
 
-	return trenutno_stanje;
+	if (trenutno_stanje)
+		off_timer.ponastavi();	//Resetira timer za filtriranje
+
+	if (!trenutno_stanje && off_timer.vrednost() > 20) //Filtrira lazne izklope
+		return 0;
+
+	return 1;
+	
+
 }
 
 bool class_VHOD::risingEdge()

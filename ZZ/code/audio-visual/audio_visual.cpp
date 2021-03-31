@@ -20,8 +20,8 @@ TaskHandle_t handle_breathe_fade;
 // Microphone measuring tasks
 TaskHandle_t handle_average_volume;
 
-TaskHandle_t strip_mode_handle_arr [] = {handle_normal_fade, handle_inverse_normal_fade, handle_color_fade, handle_breathe_fade}; // TaskHandle_t is a TaskControlBlock pointer, no need to make TaskHandle pointer
-TaskHandle_t mic_mode_handle_arr[] = {handle_average_volume};	
+TaskHandle_t strip_mode_handle_arr [] = {handle_normal_fade, handle_inverse_normal_fade, handle_color_fade, handle_breathe_fade, NULL}; // TaskHandle_t is a TaskControlBlock pointer, no need to make TaskHandle pointer
+TaskHandle_t mic_mode_handle_arr[] = {handle_average_volume, NULL};	
 	
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
@@ -138,7 +138,7 @@ void inverse_normal_fade_task(void *BARVA){
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 	STRIP_CURRENT_BRIGHT = 255;
-	colorSHIFT(BARVA); //prehod iz ene barve v drugo
+	colorSHIFT(BARVA, 4); //prehod iz ene barve v drugo
 	handle_color_fade = NULL;
 	vTaskDelete(NULL);
 }

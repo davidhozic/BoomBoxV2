@@ -21,7 +21,7 @@ public:
 class class_TIMER_framework
 {
 private:
-	class_TIMER* timer_list[10];
+	class_TIMER* timer_list[20];
 	unsigned char timer_num = 0;
 	
 public:

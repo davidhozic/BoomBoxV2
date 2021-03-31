@@ -59,7 +59,7 @@ resumeTASK(handle_capacity_display); //Ker se v zaslon tasku blocka v primeru da
 
 #define show_STATE_SCROLL_Seek() \
 STRIP_CURRENT_BRIGHT = 255;       \
-colorSHIFT(&settings_ui.menu_seek);
+colorSHIFT(&settings_ui.menu_seek, 2);
 // Prikaze element v seeku ce je STATE_SCROLL aktiven
 
 void exit()
