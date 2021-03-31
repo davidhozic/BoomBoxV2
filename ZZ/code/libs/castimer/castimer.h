@@ -20,15 +20,18 @@ public:
 
 class class_TIMER_framework
 {
-	private:
-	class_TIMER* timer_list[25];
+private:
+	class_TIMER* timer_list[10];
 	unsigned char timer_num = 0;
 	
-	public:
+public:
 	void add_timer_to_list(class_TIMER* timer_to_add);
 	void increment_timers();	
 	class_TIMER_framework();
 };
+
+
+
 
 extern class_TIMER_framework timer_control;
 

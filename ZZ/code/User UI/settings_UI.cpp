@@ -142,16 +142,16 @@ void settings_UI(void *paramOdTaska)
 							exit();
 							break;
 							case MENU_STRIP_MODE_CHANGE:
-							MENU_STRIP_MODE_CHANGE("", strip_mode_handle_arr);
+							strip_mode_CHANGE("", strip_mode_handle_arr);
 							exit();
 							break;
 							case MENU_STRIP_DISABLE:
-							MENU_STRIP_MODE_CHANGE("off", strip_mode_handle_arr);
+							strip_mode_CHANGE("off", strip_mode_handle_arr);
 							exit();
 							break;
 							
 							case MENU_MIC_MODE_CHANGE:
-							MENU_MIC_MODE_CHANGE(mic_mode_handle_arr);
+							mic_mode_CHANGE(mic_mode_handle_arr);
 							exit();
 							break;
 						}

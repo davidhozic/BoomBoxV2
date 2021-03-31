@@ -12,16 +12,16 @@
 /************************************************************************/
 
 // Strip mode handles
-TaskHandle_t normal_fade_handle;
-TaskHandle_t color_fade_handle;
-TaskHandle_t breathe_fade_handle;
+TaskHandle_t handle_normal_fade;
+TaskHandle_t handle_inverse_normal_fade;
+TaskHandle_t handle_color_fade;
+TaskHandle_t handle_breathe_fade;
 
 // Microphone measuring tasks
-TaskHandle_t average_volume_handle;
-TaskHandle_t frequency_measure_handle;
+TaskHandle_t handle_average_volume;
 
-TaskHandle_t strip_mode_handle_arr [strip_mode_handle_arr_length] = {normal_fade_handle, color_fade_handle, breathe_fade_handle}; // TaskHandle_t is a TaskControlBlock pointer, no need to make TaskHandle pointer
-TaskHandle_t mic_mode_handle_arr[mic_mode_handle_arr_length] = {average_volume_handle};	
+TaskHandle_t strip_mode_handle_arr [] = {handle_normal_fade, handle_inverse_normal_fade, handle_color_fade, handle_breathe_fade}; // TaskHandle_t is a TaskControlBlock pointer, no need to make TaskHandle pointer
+TaskHandle_t mic_mode_handle_arr[] = {handle_average_volume};	
 	
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
@@ -49,6 +49,7 @@ struct_MOZNE_BARVE mozne_barve;
 void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
 	bool mikrofon_detect = false;
+	uint8_t barva_selekt = 0;
 	uint16_t ref_glasnost = 2048;
 	class_TIMER lucke_filter_timer;
 	class_TIMER mic_ref_timer;
@@ -74,24 +75,30 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		if (lucke_filter_timer.vrednost() > 100 && mikrofon_detect) // AUDIO_M machine
 		{
 			lucke_filter_timer.ponastavi();
-			static uint8_t barva_selekt = 0;
 			barva_selekt += 1 % barve_end;
+			
+			// STRIP task creation
 			switch (audio_system.strip_mode)
 			{
 
 			case NORMAL_FADE: //Prizig in fade izklop
-				deleteTASK(normal_fade_handle);
-				xTaskCreate(normal_fade_task, "NormalFade", 128, NULL, 4, &normal_fade_handle);
+				deleteTASK(handle_normal_fade);
+				xTaskCreate(normal_fade_task, "NormalFade", 128, &barva_selekt, 4, &handle_normal_fade);
 				break;
-
+			
+			case INVERSE_NORMAL_FADE:
+				deleteTASK(handle_inverse_normal_fade);
+				xTaskCreate(inverse_normal_fade_task, "InverseNF", 128, &barva_selekt, 4, &handle_inverse_normal_fade);
+				break;
+			
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-				deleteTASK(color_fade_handle);
-				xTaskCreate(color_fade_task, "ColorFade", 128, NULL, 4, &color_fade_handle);
+				deleteTASK(handle_color_fade);
+				xTaskCreate(color_fade_task, "ColorFade", 128, &barva_selekt, 4, &handle_color_fade);
 				break;
 
 			case BREATHE_FADE: //Dihalni nacin
-				deleteTASK(normal_fade_handle);
-				xTaskCreate(breathe_fade_task, "BreatheFade", 128, NULL, 4, &breathe_fade_handle);
+				deleteTASK(handle_normal_fade);
+				xTaskCreate(breathe_fade_task, "BreatheFade", 128, &barva_selekt, 4, &handle_breathe_fade);
 				break;
 
 			case STRIP_OFF:
@@ -117,37 +124,32 @@ void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 
 	brightDOWN(5);
 
-	normal_fade_handle = NULL;
+	handle_normal_fade = NULL;
 	vTaskDelete(NULL);
 }
 
-
+void inverse_normal_fade_task(void *BARVA){
+	
+	STRIP_CURRENT_BRIGHT = 0;
+	set_strip_color( *( (uint8_t*) BARVA ) );
+	brightUP(12);	
+}
 
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
-
-	if (breathe_fade_handle == NULL) // Ce diha on ne sme nastaviti svetlosti,
-	{                            // saj jo nastavlja dihalni task
-		STRIP_CURRENT_BRIGHT = 255;
-	}
-
+	STRIP_CURRENT_BRIGHT = 255;
 	colorSHIFT(BARVA); //prehod iz ene barve v drugo
-	color_fade_handle = NULL;
+	handle_color_fade = NULL;
 	vTaskDelete(NULL);
 }
 
 void breathe_fade_task(void *BARVA)
 {
 	
-	
-	if (color_fade_handle == NULL)
-	{
-
-		set_strip_color(*((uint8_t*)BARVA));
-	}
+	set_strip_color(*((uint8_t*)BARVA));
 	brightUP(3);
 	brightDOWN(3);
-	breathe_fade_handle = NULL;
+	handle_breathe_fade = NULL;
 	vTaskDelete(NULL);
 }
 
