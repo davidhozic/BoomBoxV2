@@ -14,9 +14,9 @@
 
 void update_strip()
 {
-	writePWM(strip_red_pin, strip_port, (float)STRIP_CURRENT_RED * STRIP_CURRENT_BRIGHT / 255.00f);
-	writePWM(strip_green_pin, strip_port, (float)STRIP_CURRENT_GREEN * STRIP_CURRENT_BRIGHT / 255.00f);
-	writePWM(strip_blue_pin, strip_port, (float)STRIP_CURRENT_BLUE * STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(strip_red_pin, strip_port,		(float)STRIP_CURRENT_RED	*  STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(strip_green_pin, strip_port,	(float)STRIP_CURRENT_GREEN	*  STRIP_CURRENT_BRIGHT / 255.00f);
+	writePWM(strip_blue_pin, strip_port,	(float)STRIP_CURRENT_BLUE	*  STRIP_CURRENT_BRIGHT / 255.00f);
 }
 
 void flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
@@ -40,13 +40,13 @@ void color_fade_funct(uint8_t *BARVA)
 	while (STRIP_CURRENT_RED != mozne_barve.barvni_ptr[*BARVA][0] || STRIP_CURRENT_GREEN != mozne_barve.barvni_ptr[*BARVA][1] || STRIP_CURRENT_BLUE != mozne_barve.barvni_ptr[*BARVA][2]) //Trenutna razlicna od zeljene
 	{
 		char smer[3] = {0, 0, 0};
-		mozne_barve.barvni_ptr[*BARVA][0] >= STRIP_CURRENT_RED ? smer[0] = 1 : smer[0] = -1;
-		mozne_barve.barvni_ptr[*BARVA][1] >= STRIP_CURRENT_GREEN ? smer[1] = 1 : smer[1] = -1;
-		mozne_barve.barvni_ptr[*BARVA][2] >= STRIP_CURRENT_BLUE ? smer[2] = 1 : smer[2] = -1;
+		mozne_barve.barvni_ptr[*BARVA][0] >= STRIP_CURRENT_RED	? smer[0] = 1 : smer[0] = -1;
+		mozne_barve.barvni_ptr[*BARVA][1] >= STRIP_CURRENT_GREEN? smer[1] = 1 : smer[1] = -1;
+		mozne_barve.barvni_ptr[*BARVA][2] >= STRIP_CURRENT_BLUE	? smer[2] = 1 : smer[2] = -1;
 
-		STRIP_CURRENT_RED += (10 * smer[0]);
-		STRIP_CURRENT_GREEN += (10 * smer[1]);
-		STRIP_CURRENT_BLUE += (10 * smer[2]);
+		STRIP_CURRENT_RED	+=	(10 * smer[0]);
+		STRIP_CURRENT_GREEN	+=	(10 * smer[1]);
+		STRIP_CURRENT_BLUE	+=	(10 * smer[2]);
 
 		//Preveri prenihaj:
 

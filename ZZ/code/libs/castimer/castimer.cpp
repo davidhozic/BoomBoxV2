@@ -4,6 +4,8 @@
 #include "common/inc/global.h"
 #include "FreeRTOS.h"
 #include "avr/interrupt.h"
+#include <stdlib.h>
+#include <string.h>
 
 class_TIMER_framework timer_control;										// Control object for all the timers
 
@@ -29,7 +31,8 @@ class_TIMER::class_TIMER(){
 }
 
 void class_TIMER::increment(){
-	this->timer_value += 1;
+	if (timer_enabled)
+		timer_value += 1;
 }
 
 

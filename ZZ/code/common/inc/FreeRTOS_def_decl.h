@@ -28,8 +28,8 @@ if (task != NULL)											\
 	delayFREERTOS(2);										\
 }
 
-#define deleteTASK_REC(handle_array, lengthh)				\
-for (uint8_t index = 0; index < lengthh; index++)			\
+#define deleteTASK_REC(handle_array)						\
+for (TaskHandle_t &current_element : handle_array)			\
 {															\
 	deleteTASK(handle_array[index]);						\
 }

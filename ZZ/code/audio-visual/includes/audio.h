@@ -19,24 +19,24 @@ void flash_strip();
 /*********************************************/
 /*             Prototipi taskov              */
 /*********************************************/
-void normal_fade_task(void *B);
-void color_fade_task(void *B);
-void breathe_fade_task(void *B);
-void avg_vol_task(void* param);
+void normal_fade_task(void* BARVA);
+void inverse_normal_fade_task(void* BARVA);
+void color_fade_task(void* BARVA);
+void breathe_fade_task(void* BARVA);
+void avg_vol_task(void* BARVA);
 /*********************************************/
 
 /*********************************************/
 /*	           Task related	                 */
 /*********************************************/
-extern TaskHandle_t normal_fade_handle;
-extern TaskHandle_t color_fade_handle;
-extern TaskHandle_t breathe_fade_handle;
-extern TaskHandle_t average_volume_handle;
+extern TaskHandle_t handle_normal_fade;
+extern TaskHandle_t handle_inverse_normal_fade;
+extern TaskHandle_t handle_color_fade;
+extern TaskHandle_t handle_breathe_fade;
+extern TaskHandle_t handle_average_volume;
 extern TaskHandle_t strip_mode_handle_arr [];
 extern TaskHandle_t mic_mode_handle_arr[];
 
-#define strip_mode_handle_arr_length	3
-#define mic_mode_handle_arr_length 2
 
 /************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
@@ -59,15 +59,15 @@ extern TaskHandle_t mic_mode_handle_arr[];
 
 #define stripOFF()															\
     holdTASK(handle_audio_system);											\
-	deleteTASK_REC(strip_mode_handle_arr, strip_mode_handle_arr_length);									\
+	deleteTASK_REC(strip_mode_handle_arr);									\
     brightDOWN(15);
 	
 #define set_strip_color(x)													\
-    STRIP_CURRENT_RED = mozne_barve.barvni_ptr[x][0];			\
-    STRIP_CURRENT_GREEN = mozne_barve.barvni_ptr[x][1];		\
+    STRIP_CURRENT_RED = mozne_barve.barvni_ptr[x][0];						\
+    STRIP_CURRENT_GREEN = mozne_barve.barvni_ptr[x][1];						\
     STRIP_CURRENT_BLUE = mozne_barve.barvni_ptr[x][2];
 		
-#define MENU_STRIP_MODE_CHANGE(ch, strip_list)									\
+#define strip_mode_CHANGE(ch, strip_list)									\
 	if (strcmp(ch,"off"))													\
 		STRIP_MODE = STRIP_OFF;												\
 	else if (STRIP_MODE == STRIP_OFF)										\
@@ -75,13 +75,13 @@ extern TaskHandle_t mic_mode_handle_arr[];
 	else																	\
 		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;					\
 	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);							\
-	deleteTASK_REC(strip_list, strip_mode_handle_arr_length);
+	deleteTASK_REC(strip_list);
 	
-#define MENU_MIC_MODE_CHANGE(mic_mode_list)										\
+#define mic_mode_CHANGE(mic_mode_list)										\
 	MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;								\
-	deleteTASK_REC(mic_mode_list, mic_mode_handle_arr_length);					\
+	deleteTASK_REC(mic_mode_list);											\
 	if (MIC_MODE == AVERAGE_VOLUME)											\
-		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &average_volume_handle);		
+		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &handle_average_volume);		
 				
 /********************************************************************/
 
@@ -93,6 +93,7 @@ extern TaskHandle_t mic_mode_handle_arr[];
 enum enum_STRIP_MODES
 {
 	NORMAL_FADE,
+	INVERSE_NORMAL_FADE,
 	COLOR_FADE,
 	BREATHE_FADE,
 	end_strip_modes,
@@ -106,6 +107,7 @@ enum enum_MIC_MODES
 	FREQUENCY,
 	end_mic_modes
 };
+	
 	
  struct struct_AUDIO_SYS
 {
