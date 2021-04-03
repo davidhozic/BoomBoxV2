@@ -1,7 +1,7 @@
-#ifndef castimer_H
-#define castimer_H
+#pragma once
 
 
+#include <vector>
 
 
 class class_TIMER
@@ -10,6 +10,7 @@ private:
 	bool timer_enabled = false;
 	unsigned short timer_value = 0;
 
+	
 public:
     unsigned long vrednost();
     void ponastavi();
@@ -21,7 +22,7 @@ public:
 class class_TIMER_framework
 {
 private:
-	class_TIMER* timer_list[20];
+	std::vector <class_TIMER*> timer_list;
 	unsigned char timer_num = 0;
 	
 public:
@@ -35,5 +36,4 @@ public:
 
 extern class_TIMER_framework timer_control;
 
-#endif
 

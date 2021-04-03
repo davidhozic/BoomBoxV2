@@ -133,6 +133,7 @@ extern void vPortYieldFromISR( void )   __attribute__ ( ( naked ) );
 
 #define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
 
+
 #ifdef __cplusplus
 }
 #endif

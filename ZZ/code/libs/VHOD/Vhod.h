@@ -3,28 +3,27 @@
 
 #include "castimer/castimer.h"
 
+enum enum_VHOD_STATUS_REGISTER
+{
+VHOD_REG_TRENUTNO_STANJE,
+VHOD_REG_PREJSNJE_STANJE,
+VHOD_REG_RISING_EDGE,
+VHOD_REG_FALLING_EDGE
+};
+
+
 class class_VHOD // pin, port, stanje ko ni pritisnjen
 {
 private:
-    bool prejsnje_stanje;
-    bool trenutno_stanje;
-    bool rs_edge;
-    bool fl_edge;
-    int pin;
+	unsigned char status_register;
+    unsigned char pin;
     char port;
-    int default_state;
-	class_TIMER off_timer;
-
+    char default_state;
+	
 public:
     bool vrednost();
     bool risingEdge();
     bool fallingEdge();
-
-    class_VHOD(int pin, char port, int default_state)
-    {
-        this->port = port;
-        this->pin = pin;
-        this->default_state = default_state;
-    }
+    class_VHOD(unsigned char pin, char port, char default_state);
 };
 

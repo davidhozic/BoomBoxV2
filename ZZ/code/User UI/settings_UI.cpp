@@ -39,28 +39,29 @@ struct struct_settings_UI
 {
 	uint8_t state = STATE_UNSET;
 	uint8_t menu_seek = MENU_TOGGLE_LCD;
+	class_VHOD* SW2 = new class_VHOD(red_button_pin, red_button_port, 0);
 	class_TIMER SW2_off_timer;
 	class_TIMER state_exit_timer;
 	class_TIMER hold_timer;
 	unsigned short hold_time = 0;
-	bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
-};
+	bool longPRESS = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust	
+}settings_ui;
 
-struct_settings_UI settings_ui;
-class_VHOD eventSW(red_button_pin, red_button_port, 0);
+
+
 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
-#define toggleLCD()                                         \
-writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN)); \
-if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))                           \
-resumeTASK(handle_capacity_display); //Ker se v zaslon tasku blocka v primeru da je display_enabled false
+#define toggleLCD()																																		\
+writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN));		\
+if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))																		         \
+resumeTASK(handle_capacity_display);	//Ker se v zaslon tasku blocka v primeru da je display_enabled false
 
-#define show_STATE_SCROLL_Seek() \
-STRIP_CURRENT_BRIGHT = 255;       \
-colorSHIFT(&settings_ui.menu_seek, 2);
-// Prikaze element v seeku ce je STATE_SCROLL aktiven
+#define show_SEEK(current_el)	\
+STRIP_CURRENT_BRIGHT = 255;		\
+colorSHIFT(&current_el, 2);		// ^^ Prikaze element v seeku ce je STATE_SCROLL aktiven
+
 
 void exit()
 {
@@ -75,12 +76,7 @@ void exit()
 	resumeTASK(handle_audio_system);
 }
 
-#define check_auto_exit()                           \
-if (settings_ui.state_exit_timer.vrednost() > 6000) \
-{                                               \
-	exit();                                     \
-}
-// auto izhod iz STATE_SCROLLa
+
 /*******************************************************************************************/
 
 
@@ -89,7 +85,7 @@ void settings_UI(void *paramOdTaska)
 	
 	while (true)
 	{
-		if (eventSW.vrednost())
+		if (settings_ui.SW2->vrednost())
 		{
 			settings_ui.SW2_off_timer.ponastavi(); // Filtrira lazne nepritiske
 		}
@@ -114,47 +110,53 @@ void settings_UI(void *paramOdTaska)
 					settings_ui.hold_timer.ponastavi();
 					stripOFF();
 					flash_strip();
-					show_STATE_SCROLL_Seek();
+					show_SEEK(settings_ui.menu_seek);
 					delayFREERTOS(200);
 					settings_ui.longPRESS = true;
 				}
 
-				else if (!eventSW.vrednost())
+				else if (!settings_ui.SW2->vrednost())
 				{
 					settings_ui.hold_timer.ponastavi();
 				}
-				break;
-
+				break;	
+		
+				/*****	END CASE *****/
+			
 				case STATE_SCROLL:
-				check_auto_exit(); //Macro to auto exit timer
-				if (eventSW.vrednost())
+				
+				if (settings_ui.state_exit_timer.vrednost() > 6000)	// Auto exit
 				{
-					settings_ui.hold_time = settings_ui.hold_timer.vrednost(); //stopa cas pritiska
+					exit();
+				}
+				
+				if (settings_ui.SW2->vrednost())
+				{
+					settings_ui.hold_time = settings_ui.hold_timer.vrednost();	// stopa cas pritiska
 					settings_ui.state_exit_timer.ponastavi();
 
 					if (settings_ui.hold_time > 1000)
 					{
 						settings_ui.longPRESS = true;
-						switch (settings_ui.menu_seek) //Glede na trenutni menu seek nekaj izvede
+						switch (settings_ui.menu_seek)	// Glede na trenutni menu seek nekaj izvede
 						{
 							case MENU_TOGGLE_LCD:
-							toggleLCD(); //Task Zaslon se blocka v zaslon tasku
-							exit();
+							toggleLCD();	//Task Zaslon se blocka v zaslon tasku
 							break;
+							
 							case MENU_STRIP_MODE_CHANGE:
 							strip_mode_CHANGE("", strip_mode_handle_arr);
-							exit();
 							break;
+							
 							case MENU_STRIP_DISABLE:
 							strip_mode_CHANGE("off", strip_mode_handle_arr);
-							exit();
 							break;
 							
 							case MENU_MIC_MODE_CHANGE:
 							mic_mode_CHANGE(mic_mode_handle_arr);
-							exit();
 							break;
 						}
+						exit();
 						settings_ui.hold_timer.ponastavi();
 					}
 				}
@@ -165,11 +167,12 @@ void settings_UI(void *paramOdTaska)
 					{
 						settings_ui.menu_seek = (settings_ui.menu_seek + 1) % MENU_end;
 					}
-					show_STATE_SCROLL_Seek();
+					show_SEEK(settings_ui.menu_seek);
 					settings_ui.hold_timer.ponastavi();
 					settings_ui.hold_time = 0;
 				}
 				break;
+				/*****	END CASE *****/
 			}
 		}
 		delayFREERTOS(10);

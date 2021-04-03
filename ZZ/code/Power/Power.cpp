@@ -32,11 +32,12 @@ void power(void *paramOdTaska)
 	/************************************************************************/
 	class_TIMER VOLT_timer;
 	class_TIMER stikaloOFFtime;
+	class_VHOD(1, 'K', 0);
 	class_VHOD stikalo(1, 'K', 0);
 	
 	while (true)
 	{ 
-	
+
 		/************************************************************************/
 		/*							VOLTAGE READING                             */
 		/************************************************************************/
@@ -72,9 +73,9 @@ void power(void *paramOdTaska)
 			spanje();
 		}
 		
-		/************************************************************************/
-		/*							 POWER SWITCH	                            */
-		/************************************************************************/
+		/*************************************************************************************/
+		/*									 POWER SWITCH						             */
+		/*************************************************************************************/
 		
 		if (napajalnik.vrednost() && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER) == false)
 		{
@@ -89,13 +90,13 @@ void power(void *paramOdTaska)
 		/*************************************************************************************/
 		
 		
-		delayFREERTOS(15);
+		delayFREERTOS(10);
 	}
 }
 
 void Shutdown()
 {
-	writeOUTPUT(_12V_line_pin, _12V_line_port, 0); // izklopi izhod
+	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
 	STRIP_MODE = enum_STRIP_MODES::STRIP_OFF;
@@ -104,7 +105,7 @@ void Shutdown()
 void Power_UP()
 {
 	STRIP_MODE = EEPROM.beri(audiomode_eeprom_addr);
-	writeOUTPUT(_12V_line_pin, _12V_line_port, 1); // izklopi izhod
+	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
 }

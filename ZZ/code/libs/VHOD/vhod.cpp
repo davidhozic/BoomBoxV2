@@ -1,6 +1,7 @@
 #include "VHOD/Vhod.h"
 #include "avr/io.h"
 #include "castimer/castimer.h"
+#include "global.h"
 
 bool class_VHOD::vrednost()
 {
@@ -8,57 +9,50 @@ bool class_VHOD::vrednost()
 	switch (port)
 	{
 		case 'D':
-			trenutno_stanje = (PIND & (1 << pin)) > 0;
-			break;
+			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PIND, pin));
+			break;	
 
 		case 'B':
-			trenutno_stanje = (PINB & (1 << pin)) > 0;
+			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PINB, pin));
 			break;
-			
+
 		case 'K':
-			trenutno_stanje = (PINK & (1 << pin)) > 0;
+			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PINK, pin));
 			break;	
 		
 		case 'G':
-			trenutno_stanje = (PING & (1 << pin)) > 0;
+			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PING, pin));
 			break;
 	}
 
-	if (default_state)
-		trenutno_stanje = !(trenutno_stanje);
+	if (default_state)																								// If unpressed state is 1, invert to return 0 if unpressed
+		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, !readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));	//Inverts current state
 
-	if (prejsnje_stanje != trenutno_stanje && trenutno_stanje)
+	if (readBIT(status_register, VHOD_REG_PREJSNJE_STANJE) != readBIT(status_register, VHOD_REG_TRENUTNO_STANJE) && readBIT(status_register, VHOD_REG_TRENUTNO_STANJE))
 	{
-		rs_edge = true;
-		prejsnje_stanje = trenutno_stanje;
+ 		writeBIT(status_register, VHOD_REG_RISING_EDGE, 1);															// Rising edge = 1	
+ 		writeBIT(status_register, VHOD_REG_PREJSNJE_STANJE, readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));	// Previous value = current value
 	}
-	else if (prejsnje_stanje != trenutno_stanje)
+	else if (readBIT(status_register, VHOD_REG_PREJSNJE_STANJE) != readBIT(status_register, VHOD_REG_TRENUTNO_STANJE))
 	{
-		fl_edge = true;
-		prejsnje_stanje = trenutno_stanje;
+		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 1);
+		writeBIT(status_register, VHOD_REG_PREJSNJE_STANJE, readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));
 	}
 
-	if (trenutno_stanje)
-		off_timer.ponastavi();	//Resetira timer za filtriranje
-
-	if (!trenutno_stanje && off_timer.vrednost() > 20) //Filtrira lazne izklope
-		return 0;
-
-	return 1;
-	
+	return readBIT(status_register, VHOD_REG_TRENUTNO_STANJE);
 
 }
 
 bool class_VHOD::risingEdge()
 {
 	vrednost();
-	if (trenutno_stanje == 0)
+	if (readBIT(status_register, VHOD_REG_TRENUTNO_STANJE) == 0)
 	{
-		rs_edge = false;
+		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
 	}
-	else if (rs_edge)
+	else if (readBIT(status_register, VHOD_REG_RISING_EDGE))
 	{
-		rs_edge = false;
+		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
 		return true;
 	}
 	return false;
@@ -67,14 +61,22 @@ bool class_VHOD::risingEdge()
 bool class_VHOD::fallingEdge()
 {
 	vrednost();
-	if (trenutno_stanje)
+	if (readBIT(status_register, VHOD_REG_TRENUTNO_STANJE))
 	{
-		fl_edge = false;
+		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
 	}
-	else if (fl_edge)
+	else if (readBIT(status_register, VHOD_REG_FALLING_EDGE))
 	{
-		fl_edge = false;
+		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
 		return true;
 	}
 	return false;
+}
+
+class_VHOD::class_VHOD(unsigned char pin, char port, char default_state)
+{
+	this->port = port;
+	this->pin = pin;
+	this->default_state = default_state;
+	status_register = 0;
 }

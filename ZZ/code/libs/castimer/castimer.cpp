@@ -1,11 +1,12 @@
 
-
 #include "castimer/castimer.h"
 #include "common/inc/global.h"
 #include "FreeRTOS.h"
 #include "avr/interrupt.h"
 #include <stdlib.h>
 #include <string.h>
+#include "task.h"
+
 
 class_TIMER_framework timer_control;										// Control object for all the timers
 
@@ -42,11 +43,12 @@ void class_TIMER::increment(){
 
 
 void class_TIMER_framework::add_timer_to_list(class_TIMER* timer_to_add){
-	timer_list[timer_num++] = timer_to_add;									//Add timer to list and increase length
+	timer_list.push_back(timer_to_add);									//Add timer to list and increase length
+	timer_num++;
 }
 
 void class_TIMER_framework::increment_timers(){									
-	for (uint8_t index = 0; timer_list[index] != NULL; index++){
+	for (uint8_t index = 0; index < timer_num; index++){
 		timer_list[index]->increment();										// Increments timer value by one
 	}
 }
