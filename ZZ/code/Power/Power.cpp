@@ -32,7 +32,6 @@ void power(void *paramOdTaska)
 	/************************************************************************/
 	class_TIMER VOLT_timer;
 	class_TIMER stikaloOFFtime;
-	class_VHOD(1, 'K', 0);
 	class_VHOD stikalo(1, 'K', 0);
 	
 	while (true)
@@ -44,7 +43,7 @@ void power(void *paramOdTaska)
 
 		if (VOLT_timer.vrednost() > 500)
 		{
-			Hardware.battery_voltage = readANALOG(vDIV_pin) * adc_milivolt_ref/1023.00f;
+			Hardware.battery_voltage = readANALOG(vDIV_pin) *	(double) adc_milivolt_ref/1023.00f;
 			VOLT_timer.ponastavi();
 		}
 			
@@ -72,6 +71,9 @@ void power(void *paramOdTaska)
 			Shutdown();
 			spanje();
 		}
+		
+		
+
 		
 		/*************************************************************************************/
 		/*									 POWER SWITCH						             */

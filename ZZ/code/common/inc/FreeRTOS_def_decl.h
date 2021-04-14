@@ -4,37 +4,16 @@
 #ifndef namespaces_H
 #define namespaces_H
 #include "semphr.h"
+#include <vector>
 
 /************************************************************************/
-/*							Safe FreeRTOS macros                        */
+/*					  Safe FreeRTOS functions/macros		            */
 /************************************************************************/
-#define holdTASK(task)										\
-if (eTaskGetState(task) != eSuspended && task != NULL)		\
-{															\
-	vTaskSuspend(task);										\
-}
-
-#define resumeTASK(task)									\
-if (eTaskGetState(task) == eSuspended && task != NULL)	    \
-{															\
-	vTaskResume(task);										\
-}
-
-#define deleteTASK(task)									\
-if (task != NULL)											\
-{															\
-	vTaskDelete(task);										\
-	task = NULL;											\
-	delayFREERTOS(2);										\
-}
-
-#define deleteTASK_REC(handle_array)						\
-for (uint8_t i = 0; handle_array[i] != NULL; i++)			\
-{															\
-	deleteTASK(handle_array[i]);							\
-}
-
 #define delayFREERTOS(x)					 vTaskDelay(x/portTICK_PERIOD_MS)	//pretvori ms v FreeRTOS ticke
+
+void holdTASK(TaskHandle_t* task);
+void resumeTASK(TaskHandle_t* task);
+void deleteTASK(TaskHandle_t* task);
 
 /************************************************************************/
 /*					      Global FreeRTOS structs	                    */

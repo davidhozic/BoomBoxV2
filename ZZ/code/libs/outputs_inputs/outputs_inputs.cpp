@@ -19,6 +19,10 @@ void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 		case 'H':
 			vrednost == 1 ? PORTH |= (1 << pin) : PORTH &= ~(1 << pin);
 			break;
+		case 'E':
+			vrednost == 1 ? PORTE |= (1 << pin) : PORTE &= ~(1 << pin);
+		break;
+		
 	}
 }
 
@@ -88,7 +92,6 @@ unsigned short readANALOG(uint8_t pin)
 	ADMUX = (1 << REFS0) | pin;
 	ADCSRA |= (1 << ADSC); //Start konverzija
 	while (ADCSRA & (1 << ADSC)); //Dokler se bit ne resetira
-	/* DODAJ */
 	ADMUX &= ~(pin);
 	taskEXIT_CRITICAL();
 	return ADC;

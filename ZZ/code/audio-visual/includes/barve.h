@@ -1,18 +1,17 @@
-#ifndef barvna_lista
-#define barvna_lista
+#pragma once
 
-enum enum_BARVE
-{
-	BELA=0,
-	ZELENA,
-	RDECA,
-	MODRA,
-	RUMENA,
-	SVETLO_MODRA,
-	VIJOLICNA,
-	ROZA,
-	barve_end
-};
+	enum enum_BARVE
+	{
+		BELA=0,
+		ZELENA,
+		RDECA,
+		MODRA,
+		RUMENA,
+		SVETLO_MODRA,
+		VIJOLICNA,
+		ROZA,
+		barve_end
+	};
 
 	struct struct_MOZNE_BARVE
 	{
@@ -28,4 +27,4 @@ enum enum_BARVE
 	};
 extern struct_MOZNE_BARVE mozne_barve;
 	
-#endif
+

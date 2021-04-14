@@ -27,8 +27,8 @@ void settings_UI(void *paramOdTaska);
 /************************************************************************/
 /*						Main thread handles			                    */
 /************************************************************************/
-	TaskHandle_t handle_audio_system = NULL;		
-	TaskHandle_t handle_capacity_display = NULL;	
+TaskHandle_t handle_audio_system = NULL;
+TaskHandle_t handle_capacity_display = NULL;
 /************************************************************************/
 
 
@@ -39,7 +39,7 @@ void init()
 	/************************************************************************/
 	DDRE = 1;
 	DDRH = 1 << PH3 | 1 << PH4 | 1 << PH5;
-	DDRB = 1 << PB7 | 1 << PB6 | 1 << PB5 | 1 << PB4;
+	DDRB = 1 << PB4 | 1 << PB5 | 1 << PB6 | 1 << PB7;
 
 	/************************************************************************/
 	/*						SETUP TIMER FOR TIMER OBJECS                    */
@@ -61,20 +61,22 @@ void init()
 	/*							  SETUP OTHER                               */
 	/************************************************************************/
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED ,EEPROM.beri(battery_eeprom_addr));
-
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,1);
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
 	xTaskCreate(power, "power", 256, NULL, 1, NULL);
-	xTaskCreate(settings_UI, "settings", 256, NULL, 2, NULL);
+	xTaskCreate(settings_UI, "settings", 256, NULL, 3, NULL);
 	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &handle_capacity_display);
 	xTaskCreate(polnjenje, "CHRG", 256, NULL, 1, NULL);
 	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 3, &handle_audio_system);
 	vTaskStartScheduler();
 }
 
+
+
 int main()
-{
+{	
 	init();
 	return 0;
 }

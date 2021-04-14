@@ -10,18 +10,10 @@
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
-
-// Strip mode handles
-TaskHandle_t handle_normal_fade;
-TaskHandle_t handle_inverse_normal_fade;
-TaskHandle_t handle_color_fade;
-TaskHandle_t handle_breathe_fade;
-
+TaskHandle_t active_strip_mode; //Holds address of the active strip mode task handle
+	
 // Microphone measuring tasks
 TaskHandle_t handle_average_volume;
-
-TaskHandle_t strip_mode_handle_arr [] = {handle_normal_fade, handle_inverse_normal_fade, handle_color_fade, handle_breathe_fade, NULL}; // TaskHandle_t is a TaskControlBlock pointer, no need to make TaskHandle pointer
-TaskHandle_t mic_mode_handle_arr[] = {handle_average_volume, NULL};	
 	
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
@@ -56,6 +48,10 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 	
 	while (true)
 	{
+		
+		if (audio_system.strip_mode == STRIP_OFF)		// Turn off task if strip isn't enabled
+			holdTASK(&handle_audio_system);
+		
 		switch (audio_system.mic_mode)
 		{
 		case POTENCIOMETER:
@@ -80,29 +76,21 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			// STRIP task creation
 			switch (audio_system.strip_mode)
 			{
-
+				
 			case NORMAL_FADE: //Prizig in fade izklop
-				deleteTASK(handle_normal_fade);
-				xTaskCreate(normal_fade_task, "NormalFade", 128, &barva_selekt, 4, &handle_normal_fade);
+				create_strip_mode(normal_fade_task, "Normal fade", &barva_selekt, &active_strip_mode);
 				break;
 			
 			case INVERSE_NORMAL_FADE:
-				deleteTASK(handle_inverse_normal_fade);
-				xTaskCreate(inverse_normal_fade_task, "InverseNF", 128, &barva_selekt, 4, &handle_inverse_normal_fade);
+				create_strip_mode(inverse_normal_fade_task, "Inverse fade", &barva_selekt, &active_strip_mode);
 				break;
 			
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-				deleteTASK(handle_color_fade);
-				xTaskCreate(color_fade_task, "ColorFade", 128, &barva_selekt, 4, &handle_color_fade);
+				create_strip_mode(color_fade_task, "Color shift", &barva_selekt, &active_strip_mode);
 				break;
 
 			case BREATHE_FADE: //Dihalni nacin
-				deleteTASK(handle_normal_fade);
-				xTaskCreate(breathe_fade_task, "BreatheFade", 128, &barva_selekt, 4, &handle_breathe_fade);
-				break;
-
-			case STRIP_OFF:
-				holdTASK(handle_audio_system); //Ne rabi hoditi v task ce je izkljucen
+				create_strip_mode(breathe_fade_task, "Breathing", &barva_selekt, &active_strip_mode);
 				break;
 			}
 		}
@@ -120,36 +108,32 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 {
 	STRIP_CURRENT_BRIGHT = 255;
-	set_strip_color(*((uint8_t*)BARVA));
+	set_stripCOLOR(*((uint8_t*)BARVA));
 
 	brightDOWN(5);
-
-	handle_normal_fade = NULL;
 	vTaskDelete(NULL);
 }
 
 void inverse_normal_fade_task(void *BARVA){
 	
 	STRIP_CURRENT_BRIGHT = 0;
-	set_strip_color( *( (uint8_t*) BARVA ) );
+	set_stripCOLOR( *( (uint8_t*) BARVA ) );
 	brightUP(12);	
 }
 
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 	STRIP_CURRENT_BRIGHT = 255;
-	colorSHIFT(BARVA, 4); //prehod iz ene barve v drugo
-	handle_color_fade = NULL;
+	colorSHIFT(*(uint8_t*)BARVA, 4); //prehod iz ene barve v drugo
 	vTaskDelete(NULL);
 }
 
 void breathe_fade_task(void *BARVA)
 {
 	
-	set_strip_color(*((uint8_t*)BARVA));
+	set_stripCOLOR(*((uint8_t*)BARVA));
 	brightUP(3);
 	brightDOWN(3);
-	handle_breathe_fade = NULL;
 	vTaskDelete(NULL);
 }
 

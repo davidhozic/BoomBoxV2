@@ -11,7 +11,7 @@ void bujenje();
 /************************************************************************/
 
 ISR (TIMER3_COMPA_vect){										// TIMER ISR
-	timer_control.increment_timers();
+	increment_timers();
 }
 
 

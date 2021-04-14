@@ -6,38 +6,13 @@
 #include "common/inc/FreeRTOS_def_decl.h"
 #include "settings.h"
 #include "EEPROM/EEPROM.h"
-
-/*********************************************/
-/*         Prototipi pomoznih funkcij        */
-/*********************************************/
-void update_strip();
-void color_fade_funct(uint8_t *BARVA, uint8_t cas_krog);
-void svetlost_mod_funct(char smer, uint8_t cas_krog);
-void flash_strip();
-/*********************************************/
-
-/*********************************************/
-/*             Prototipi taskov              */
-/*********************************************/
-void normal_fade_task(void* BARVA);
-void inverse_normal_fade_task(void* BARVA);
-void color_fade_task(void* BARVA);
-void breathe_fade_task(void* BARVA);
-void avg_vol_task(void* BARVA);
-/*********************************************/
+#include <string>
 
 /*********************************************/
 /*	           Task related	                 */
 /*********************************************/
-extern TaskHandle_t handle_normal_fade;
-extern TaskHandle_t handle_inverse_normal_fade;
-extern TaskHandle_t handle_color_fade;
-extern TaskHandle_t handle_breathe_fade;
 extern TaskHandle_t handle_average_volume;
-extern TaskHandle_t strip_mode_handle_arr [];
-extern TaskHandle_t mic_mode_handle_arr[];
-
-
+extern TaskHandle_t active_strip_mode;
 /************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
 /************************************************************************/
@@ -51,40 +26,11 @@ extern TaskHandle_t mic_mode_handle_arr[];
 #define STRIP_CURRENT_COL								audio_system.current_color
 #define STRIP_MODE										audio_system.strip_mode
 #define MIC_MODE										audio_system.mic_mode
+
 	/************************ FUNCTION MACROS *************************/
 
-#define brightUP(cas_na_krog)				    		svetlost_mod_funct(1, cas_na_krog);
-#define brightDOWN(cas_na_krog)							svetlost_mod_funct(-1, cas_na_krog);
-#define colorSHIFT(index_barve, cas)					color_fade_funct((uint8_t *)index_barve, cas);
-
-#define stripOFF()															\
-    holdTASK(handle_audio_system);											\
-	deleteTASK_REC(strip_mode_handle_arr);									\
-    brightDOWN(15);
-	
-#define set_strip_color(x)													\
-    STRIP_CURRENT_RED = mozne_barve.barvni_ptr[x][0];						\
-    STRIP_CURRENT_GREEN = mozne_barve.barvni_ptr[x][1];						\
-    STRIP_CURRENT_BLUE = mozne_barve.barvni_ptr[x][2];
-		
-#define strip_mode_CHANGE(ch, strip_list)									\
-	if (strcmp(ch,"off"))													\
-		STRIP_MODE = STRIP_OFF;												\
-	else if (STRIP_MODE == STRIP_OFF)										\
-		STRIP_MODE = NORMAL_FADE;											\
-	else																	\
-		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;					\
-	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);							\
-	deleteTASK_REC(strip_list);
-	
-#define mic_mode_CHANGE(mic_mode_list)										\
-	MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;								\
-	deleteTASK_REC(mic_mode_list);											\
-	if (MIC_MODE == AVERAGE_VOLUME)											\
-		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &handle_average_volume);		
-				
-/********************************************************************/
-
+#define brightUP(cas_na_krog)				    		brightnessFADE(1, cas_na_krog);
+#define brightDOWN(cas_na_krog)							brightnessFADE(-1, cas_na_krog);
 
 /*********************************************/
 /*			 ENUM,STRUCT DEFINICIJE          */
@@ -118,9 +64,33 @@ enum enum_MIC_MODES
 	unsigned short average_volume = 2048;
 };
 
-
 extern struct_AUDIO_SYS audio_system;
 
+
+
+/*********************************************/
+/*         Prototipi pomoznih funkcij        */
+/*********************************************/
+void updateSTRIP();
+void colorSHIFT(uint8_t BARVA, uint8_t cas_krog);
+void brightnessFADE(char smer, uint8_t cas_krog);
+void flashSTRIP();
+void set_stripCOLOR(unsigned char barva_index);
+void mic_mode_CHANGE();
+void stripOFF(TaskHandle_t* active_strip_mode);
+void strip_mode_CHANGE(std::string ukaz, TaskHandle_t* active_strip_mode);
+void create_strip_mode(void (funct)(void*), std::string name, unsigned char* barva, TaskHandle_t* active_strip_mode);
+/*********************************************/
+
+/*********************************************/
+/*             Prototipi taskov              */
+/*********************************************/
+void normal_fade_task(void* BARVA);
+void inverse_normal_fade_task(void* BARVA);
+void color_fade_task(void* BARVA);
+void breathe_fade_task(void* BARVA);
+void avg_vol_task(void* BARVA);
+/*********************************************/
 
 
 #endif

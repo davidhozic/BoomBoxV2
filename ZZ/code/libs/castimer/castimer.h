@@ -19,21 +19,14 @@ public:
 };
 
 
-class class_TIMER_framework
-{
-private:
-	std::vector <class_TIMER*> timer_list;
-	unsigned char timer_num = 0;
-	
-public:
-	void add_timer_to_list(class_TIMER* timer_to_add);
-	void increment_timers();	
-	class_TIMER_framework();
-};
+
+
+
+void add_timer_to_list(class_TIMER* timer_to_add);
+void increment_timers();	
 
 
 
 
-extern class_TIMER_framework timer_control;
 
 

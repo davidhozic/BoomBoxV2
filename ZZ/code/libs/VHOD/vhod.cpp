@@ -5,7 +5,6 @@
 
 bool class_VHOD::vrednost()
 {
-
 	switch (port)
 	{
 		case 'D':
@@ -21,8 +20,12 @@ bool class_VHOD::vrednost()
 			break;	
 		
 		case 'G':
-			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PING, pin));
+			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PING, pin) );
 			break;
+			
+		case 'F':
+			writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT(PINF, pin));
+			break;	
 	}
 
 	if (default_state)																								// If unpressed state is 1, invert to return 0 if unpressed
@@ -38,6 +41,14 @@ bool class_VHOD::vrednost()
 		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 1);
 		writeBIT(status_register, VHOD_REG_PREJSNJE_STANJE, readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));
 	}
+	
+	if (readBIT(status_register, VHOD_REG_TRENUTNO_STANJE) == 0)
+	{
+		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
+	}
+	else if(readBIT(status_register, VHOD_REG_TRENUTNO_STANJE)){
+		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
+	}
 
 	return readBIT(status_register, VHOD_REG_TRENUTNO_STANJE);
 
@@ -46,11 +57,8 @@ bool class_VHOD::vrednost()
 bool class_VHOD::risingEdge()
 {
 	vrednost();
-	if (readBIT(status_register, VHOD_REG_TRENUTNO_STANJE) == 0)
-	{
-		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
-	}
-	else if (readBIT(status_register, VHOD_REG_RISING_EDGE))
+
+	if (readBIT(status_register, VHOD_REG_RISING_EDGE))
 	{
 		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
 		return true;
@@ -61,11 +69,7 @@ bool class_VHOD::risingEdge()
 bool class_VHOD::fallingEdge()
 {
 	vrednost();
-	if (readBIT(status_register, VHOD_REG_TRENUTNO_STANJE))
-	{
-		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
-	}
-	else if (readBIT(status_register, VHOD_REG_FALLING_EDGE))
+	if (readBIT(status_register, VHOD_REG_FALLING_EDGE))
 	{
 		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
 		return true;
