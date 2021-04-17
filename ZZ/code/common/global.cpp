@@ -36,7 +36,6 @@ void deleteTASK(TaskHandle_t* task)
 	{
 		vTaskDelete(*task);
 		*task = NULL;
-		delayFREERTOS(2);
 	}
 }
 

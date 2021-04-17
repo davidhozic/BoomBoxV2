@@ -55,7 +55,7 @@ void init()
 	ADMUX   = (1 << REFS0);										// Izberi
 	ADCSRA |= (1 << ADEN);				                        // Vklop adc in zacetek konverzije
 	ADCSRA |= (1 << ADSC);
-	_delay_ms(3);
+	_delay_ms(4);
 
 	/************************************************************************/
 	/*							  SETUP OTHER                               */

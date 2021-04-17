@@ -3,45 +3,19 @@
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "common/inc/global.h"
 
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 {
-
 	pwmOFF(pin, port); // izklopi pwm
-	switch (port)
-	{
-		case 'B':
-			vrednost == 1 ? PORTB |= (1 << pin) : PORTB &= ~(1 << pin);
-			break;
-		case 'D':
-			vrednost == 1 ? PORTD |= (1 << pin) : PORTD &= ~(1 << pin);
-			break;
-		case 'H':
-			vrednost == 1 ? PORTH |= (1 << pin) : PORTH &= ~(1 << pin);
-			break;
-		case 'E':
-			vrednost == 1 ? PORTE |= (1 << pin) : PORTE &= ~(1 << pin);
-		break;
-		
-	}
+	writeBIT( *((unsigned char*)&PORTA + 3*(port - 'A')), pin, vrednost);	
 }
 
 
-void toggleOUTPUT(unsigned char pin, char port){
+void toggleOUTPUT(unsigned char pin, char port)
+{
 	pwmOFF(pin, port); // izklopi pwm
-
-	switch (port)
-	{
-		case 'B':
-			PORTB ^= (1 << pin);
-			break;
-		case 'D':
-			PORTD ^= (1 << pin);
-			break;
-		case 'H':
-			PORTH ^= (1 << pin);
-			break;
-	}
+	*(	(unsigned char*)&PORTA + 3* (port - 'A')  )	^= (1 << pin);	// Move forwared by 3 * (length from A to reg) and XOR 
 }
 
 void pwmOFF(uint8_t pin, char port)
@@ -124,7 +98,6 @@ void writePWM(uint8_t pin, char port, uint8_t vrednost)
 			break;
 			
 		}
-
 		break;
 
 		default:
