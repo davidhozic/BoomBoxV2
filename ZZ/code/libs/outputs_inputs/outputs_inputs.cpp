@@ -8,14 +8,24 @@
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 {
 	pwmOFF(pin, port); // izklopi pwm
-	writeBIT( *((unsigned char*)&PORTA + 3*(port - 'A')), pin, vrednost);	
+	if (port <= 'G')
+		writeBIT( *((unsigned char*)&PORTA + 3*(port - 'A')), pin, vrednost);	
+	else if (port == 'H')
+		writeBIT(PORTH, pin, vrednost);
+	else
+		writeBIT( *((unsigned char*)&PORTJ + 3*(port - 'J')), pin, vrednost);	
 }
 
 
 void toggleOUTPUT(unsigned char pin, char port)
 {
 	pwmOFF(pin, port); // izklopi pwm
-	*(	(unsigned char*)&PORTA + 3* (port - 'A')  )	^= (1 << pin);	// Move forwared by 3 * (length from A to reg) and XOR 
+	if (port <= 'G')
+		*(	(unsigned char*)&PORTA + 3* (port - 'A')  )	^= (1 << pin);	// Move forwared by 3 * (length from A to reg) and XOR 
+	else if (port == 'H')
+		PORTH ^= (1 << pin);
+	else
+		*(	(unsigned char*)&PORTJ + 3* (port - 'J')  )	^= (1 << pin);
 }
 
 void pwmOFF(uint8_t pin, char port)

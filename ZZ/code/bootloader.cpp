@@ -27,56 +27,45 @@ void settings_UI(void *paramOdTaska);
 /************************************************************************/
 /*						Main thread handles			                    */
 /************************************************************************/
-TaskHandle_t handle_audio_system = NULL;
 TaskHandle_t handle_capacity_display = NULL;
 /************************************************************************/
 
 
-void init()
-{
+
+int main()
+{	
 	/************************************************************************/
 	/*						  SET DATA DIRECTION REGISTERS                  */
 	/************************************************************************/
 	DDRE = 1;
 	DDRH = 1 << PH3 | 1 << PH4 | 1 << PH5;
 	DDRB = 1 << PB4 | 1 << PB5 | 1 << PB6 | 1 << PB7;
-
 	/************************************************************************/
 	/*						SETUP TIMER FOR TIMER OBJECS                    */
 	/************************************************************************/
 	TCCR3A  = 0;
-	TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;				// Clear timer on compare match
 	OCR3A	= 249;												// Output compare match na 249 tickov (1ms)
 	TIMSK3	= 1 << OCIE3A;										// Vklopi output compare match ISR
-
+	TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;				// Clear timer on compare match
 	/************************************************************************/
 	/*								SETUP ADC                               */
 	/************************************************************************/
 	ADMUX   = (1 << REFS0);										// Izberi
 	ADCSRA |= (1 << ADEN);				                        // Vklop adc in zacetek konverzije
 	ADCSRA |= (1 << ADSC);
-	_delay_ms(4);
-
 	/************************************************************************/
 	/*							  SETUP OTHER                               */
 	/************************************************************************/
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED ,EEPROM.beri(battery_eeprom_addr));
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,1);
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN, 1);
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_eeprom_addr));
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
-	xTaskCreate(power, "power", 256, NULL, 1, NULL);
-	xTaskCreate(settings_UI, "settings", 256, NULL, 3, NULL);
-	xTaskCreate(zaslon, "LVCHRG", 256, NULL, 1, &handle_capacity_display);
-	xTaskCreate(polnjenje, "CHRG", 256, NULL, 1, NULL);
-	xTaskCreate(audio_visual, "AUSYS", 256, NULL, 3, &handle_audio_system);
+	xTaskCreate(power, "power", 128, NULL, 1, NULL);
+	xTaskCreate(settings_UI, "settings", 128, NULL, 2, NULL);
+	xTaskCreate(zaslon, "LVCHRG", 128, NULL, 1, &handle_capacity_display);
+	xTaskCreate(polnjenje, "CHRG", 128, NULL, 1, NULL);
+	xTaskCreate(audio_visual, "ASYS", 128, NULL, 3, &audio_system.handle_audio_system);
 	vTaskStartScheduler();
-}
-
-
-
-int main()
-{	
-	init();
 	return 0;
 }

@@ -23,7 +23,7 @@
 		unsigned char SVETLO_MODRA[3] = {0, 255, 255};
 		unsigned char VIJOLICNA[3] = {255, 0, 255};
 		unsigned char ROZA[3] = {255, 20, 147};
-		unsigned char *barvni_ptr[8] = {this->BELA, this->ZELENA, this->RDECA, this->MODRA, this->RUMENA, this->SVETLO_MODRA, this->VIJOLICNA, this->ROZA};
+		unsigned char *barvni_ptr[8] = {BELA, ZELENA, RDECA, MODRA, RUMENA, SVETLO_MODRA, VIJOLICNA, ROZA};
 	};
 extern struct_MOZNE_BARVE mozne_barve;
 	

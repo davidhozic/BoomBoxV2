@@ -60,6 +60,7 @@
 #define configSUPPORT_STATIC_ALLOCATION 0
 #define configSUPPORT_DYNAMIC_ALLOCATION 1
 #define configAPPLICATION_ALLOCATED_HEAP 0 //	Reserve heap inside program
+#define configTOTAL_HEAP_SIZE			(	 4096	)
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK 0

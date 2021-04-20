@@ -27,7 +27,7 @@ enum enum_HARDWARE_STATUS_REGISTER
 
 // BIT MANIPULATION
 #define readBIT(reg, bit)				(		((reg >> bit) & 1) 												) 
-#define writeBIT(reg, bit, val)			(		reg = val ? ( reg | (1 << bit) ) : ( reg  &  ~(1 << bit))		)	
+#define writeBIT(reg, bit, val)			(		(reg = val ? ( reg | (1 << bit) ) : ( reg  &  ~(1 << bit)))		)	
 
 
 /****************************************************************************************************************************/
@@ -35,7 +35,6 @@ enum enum_HARDWARE_STATUS_REGISTER
 /****************************************************************************************************************************/
 
 extern class_VHOD napajalnik;
-extern class_TIMER stikaloCAS;
 
 /****************************************************************************************************************************/
 /*													GLOBAL STRUCTS															*/

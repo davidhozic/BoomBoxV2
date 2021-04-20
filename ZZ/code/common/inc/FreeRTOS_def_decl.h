@@ -18,9 +18,7 @@ void deleteTASK(TaskHandle_t* task);
 /************************************************************************/
 /*					      Global FreeRTOS structs	                    */
 /************************************************************************/
-extern TaskHandle_t handle_audio_system;
 extern TaskHandle_t handle_capacity_display;
-extern SemaphoreHandle_t voltage_semaphore;
 /************************************************************************/
 	
 

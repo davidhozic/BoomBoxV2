@@ -82,7 +82,7 @@ void set_stripCOLOR(unsigned char barva_index)
 	STRIP_CURRENT_BLUE	= mozne_barve.barvni_ptr[barva_index][2];
 }
 
-void strip_mode_CHANGE(std::string ukaz, TaskHandle_t *active_strip_mode)
+void strip_mode_CHANGE(std::string ukaz)
 {
 	if (ukaz.find("off") != std::string::npos)
 		STRIP_MODE = STRIP_OFF;
@@ -91,27 +91,21 @@ void strip_mode_CHANGE(std::string ukaz, TaskHandle_t *active_strip_mode)
 	else
 		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
 	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);
-	deleteTASK(active_strip_mode);
 }
 
 void mic_mode_CHANGE()
 {
 	MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;
 	if (MIC_MODE == AVERAGE_VOLUME)
-		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &handle_average_volume);
+		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &audio_system.handle_average_volume);
 	else
-		deleteTASK(&handle_average_volume);
+		deleteTASK(&audio_system.handle_average_volume);
 }
 
-void stripOFF(TaskHandle_t* active_strip_mode)
+void stripOFF()
 {
-	holdTASK(&handle_audio_system);
-	deleteTASK(active_strip_mode);
-	brightDOWN(15);
+	holdTASK(&audio_system.handle_audio_system);
+	deleteTASK(&audio_system.handle_active_strip_mode);	
+	brightDOWN(10);
 }
 
-void create_strip_mode(void (funct)(void*), std::string name, unsigned char* barva, TaskHandle_t* active_strip_mode)
-{
-	deleteTASK(active_strip_mode);
-	xTaskCreate(funct, name.data(), 128, barva, 4, active_strip_mode);
-}

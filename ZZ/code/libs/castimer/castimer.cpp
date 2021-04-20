@@ -7,9 +7,12 @@
 #include <string.h>
 #include "task.h"
 #include "FreeRTOS_def_decl.h"
-#include <vector>
+#include <util/delay.h>
 
-std::vector <class_TIMER *> timer_list;
+
+
+class_TIMER *timer_list[10];
+unsigned char timer_num = 0;
 
 /************************************************************************/
 /*						TIMER OBJECT FUNCTIONS                          */
@@ -27,7 +30,7 @@ void class_TIMER::ponastavi()
 }
 
 class_TIMER::class_TIMER(){
-		add_timer_to_list(this);
+	add_timer_to_list(this);
 }
 
 
@@ -43,12 +46,13 @@ void class_TIMER::increment(){
 
 
 void add_timer_to_list(class_TIMER* timer_to_add){
-	timer_list.push_back(timer_to_add);										//Add timer to list and increase length
+	timer_list[timer_num++] = timer_to_add;										//Add timer to list and increase length
 }
 
 void increment_timers(){									
-	for (class_TIMER* timer : timer_list){
-		timer->increment();													// Increments timer value by one
+	for (class_TIMER *element : timer_list)
+	{
+		element->increment();
 	}
 }
 

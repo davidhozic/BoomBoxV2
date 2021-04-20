@@ -10,11 +10,9 @@
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
-TaskHandle_t active_strip_mode; //Holds address of the active strip mode task handle
 	
 // Microphone measuring tasks
-TaskHandle_t handle_average_volume;
-	
+
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
@@ -36,66 +34,60 @@ struct_MOZNE_BARVE mozne_barve;
 *                                            GLAVNI UPRAVLJALNI SISTEM (TASK)                                             *
 *                                                                                                                         *
 **************************************************************************************************************************/
-
-
+	
 void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
-	bool mikrofon_detect = false;
-	uint8_t barva_selekt = 0;
-	uint16_t ref_glasnost = 2048;
-	class_TIMER lucke_filter_timer;
-	class_TIMER mic_ref_timer;
-	
 	while (true)
 	{
-		
-		if (audio_system.strip_mode == STRIP_OFF)		// Turn off task if strip isn't enabled
-			holdTASK(&handle_audio_system);
 		
 		switch (audio_system.mic_mode)
 		{
 		case POTENCIOMETER:
-			mikrofon_detect = readANALOG(mic_pin) > ref_glasnost; //Gleda ce je vrednost mikrofona nad referencno in se sprozi
-			if (mic_ref_timer.vrednost() > 3000) // Posodobi vsako sekundo
+			audio_system.mikrofon_detect = readANALOG(mic_pin) > audio_system.ref_glasnost; //Gleda ce je vrednost mikrofona nad referencno in se sprozi
+			if (audio_system.mic_ref_timer.vrednost() > 3000) // Posodobi vsako sekundo
 			{
-				mic_ref_timer.ponastavi();
-				ref_glasnost = readANALOG(mic_ref_pin); // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
+				audio_system.mic_ref_timer.ponastavi();
+				audio_system.ref_glasnost = readANALOG(mic_ref_pin); // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 			}
 			break;
 			
 		case AVERAGE_VOLUME:
-			mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 60);
+			audio_system.mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 60);
 			break;
 		}
 		
-		if (lucke_filter_timer.vrednost() > 100 && mikrofon_detect) // AUDIO_M machine
+		
+ 		if (audio_system.lucke_filter_timer.vrednost() > 100 && audio_system.mikrofon_detect) // AUDIO_M machine
 		{
-			lucke_filter_timer.ponastavi();
-			barva_selekt += 1 % barve_end;
-			
+			audio_system.lucke_filter_timer.ponastavi();
+			audio_system.barva_selekt = (audio_system.barva_selekt + 1) % barve_end;
 			// STRIP task creation
 			switch (audio_system.strip_mode)
 			{
 				
 			case NORMAL_FADE: //Prizig in fade izklop
-				create_strip_mode(normal_fade_task, "Normal fade", &barva_selekt, &active_strip_mode);
+				deleteTASK(&audio_system.handle_active_strip_mode);
+				xTaskCreate(normal_fade_task,"normFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case INVERSE_NORMAL_FADE:
-				create_strip_mode(inverse_normal_fade_task, "Inverse fade", &barva_selekt, &active_strip_mode);
+				deleteTASK(&audio_system.handle_active_strip_mode);
+				xTaskCreate(inverse_normal_fade_task,"invNormFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
-				create_strip_mode(color_fade_task, "Color shift", &barva_selekt, &active_strip_mode);
+				deleteTASK(&audio_system.handle_active_strip_mode);
+				xTaskCreate(color_fade_task,"colorFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 
 			case BREATHE_FADE: //Dihalni nacin
-				create_strip_mode(breathe_fade_task, "Breathing", &barva_selekt, &active_strip_mode);
+				deleteTASK(&audio_system.handle_active_strip_mode);
+				xTaskCreate(breathe_fade_task,"breatheFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			}
 		}
 
-		delayFREERTOS(5);
+		delayFREERTOS(2);
 		//End task loop
 	}
 }
@@ -109,32 +101,32 @@ void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 {
 	STRIP_CURRENT_BRIGHT = 255;
 	set_stripCOLOR(*((uint8_t*)BARVA));
-
 	brightDOWN(5);
-	vTaskDelete(NULL);
+	deleteTASK(&audio_system.handle_active_strip_mode);
 }
 
 void inverse_normal_fade_task(void *BARVA){
 	
 	STRIP_CURRENT_BRIGHT = 0;
 	set_stripCOLOR( *( (uint8_t*) BARVA ) );
-	brightUP(12);	
+	brightUP(20);	
+	deleteTASK(&audio_system.handle_active_strip_mode);
 }
 
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 	STRIP_CURRENT_BRIGHT = 255;
 	colorSHIFT(*(uint8_t*)BARVA, 4); //prehod iz ene barve v drugo
-	vTaskDelete(NULL);
+	deleteTASK(&audio_system.handle_active_strip_mode);
 }
 
 void breathe_fade_task(void *BARVA)
 {
 	
 	set_stripCOLOR(*((uint8_t*)BARVA));
-	brightUP(3);
-	brightDOWN(3);
-	vTaskDelete(NULL);
+	brightUP(10);
+	brightDOWN(10);
+	deleteTASK(&audio_system.handle_active_strip_mode);
 }
 
 

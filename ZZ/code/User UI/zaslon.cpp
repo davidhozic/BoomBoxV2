@@ -7,13 +7,12 @@
 #include "common/inc/FreeRTOS_def_decl.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 
+
+
+class_TIMER LCD_timer;	
+
 void zaslon(void *paramOdTaska)
 {
-	/************************************************************************/
-	/*                          LOCAL TASK VARIABLES                        */
-	/************************************************************************/
-	class_TIMER LCD_timer;	
-
     while (1)
     {
         if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))

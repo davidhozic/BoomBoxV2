@@ -5,9 +5,15 @@
 
 bool class_VHOD::vrednost()
 {
+	if (port <= 'G')
+		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin)   ); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
+	else if (port == 'H')
+		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( PORTH, pin)   );
+	else
+		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( *((unsigned char*)&PINJ + 3*(port-'J'))   , pin)   ); 	
+	// END READING OF PORT
+	/************************/
 	
-	writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin)   ); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
-
 	if (readBIT(status_register, VHOD_REG_DEFAULT_STATE))																								// If unpressed state is 1, invert to return 0 if unpressed
 		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, !readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));	//Inverts current state
 

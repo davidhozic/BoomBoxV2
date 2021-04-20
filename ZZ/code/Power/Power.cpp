@@ -19,21 +19,17 @@ void Shutdown();
 void Power_UP();
 void audio_visual();
 void spanje();
-void external_power_switch_ev();
-void internal_power_switch_ev();
+void external_power_switch_ev(class_TIMER* stikalo_on_time);
+void internal_power_switch_ev(class_TIMER* stikalo_on_time);
 /************************************************************************/
 
-
+static class_TIMER VOLT_timer;
+static class_TIMER stikaloOFFtime;
+static class_VHOD stikalo(1, 'K', 0);
+static class_TIMER stikalo_on_time;
 	
 void power(void *paramOdTaska)
 {
-	/************************************************************************/
-	/*                          LOCAL TASK VARIABLES                        */
-	/************************************************************************/
-	class_TIMER VOLT_timer;
-	class_TIMER stikaloOFFtime;
-	class_VHOD stikalo(1, 'K', 0);
-	
 	while (true)
 	{ 
 
@@ -51,7 +47,7 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*								POWER UP/SHUTDOWN                       */
 		/************************************************************************/
-		if (stikaloCAS.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)) && !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
+		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
@@ -60,7 +56,7 @@ void power(void *paramOdTaska)
 		{	
 			if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
 				Shutdown();
-			stikaloCAS.ponastavi();		
+			stikalo_on_time.ponastavi();		
 		}
 		
 		else if (stikalo.vrednost() == 1)
@@ -81,18 +77,18 @@ void power(void *paramOdTaska)
 		
 		if (napajalnik.vrednost() && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER) == false)
 		{
-			external_power_switch_ev();
+			external_power_switch_ev(&stikalo_on_time);
 		}
 
 		else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
 		{
-			internal_power_switch_ev();
+			internal_power_switch_ev(&stikalo_on_time);
 		}
 
 		/*************************************************************************************/
 		
 		
-		delayFREERTOS(10);
+		delayFREERTOS(1);
 	}
 }
 
@@ -106,7 +102,9 @@ void Shutdown()
 
 void Power_UP()
 {
+#if save_strip_mode
 	STRIP_MODE = EEPROM.beri(audiomode_eeprom_addr);
+#endif
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
@@ -114,22 +112,22 @@ void Power_UP()
 
 
 
-void external_power_switch_ev()
+void external_power_switch_ev(class_TIMER* stikalo_on_time)
 {
 	Shutdown();
 	delayFREERTOS(20);
 	writeOUTPUT(menjalnik_pin,menjalnik_port,1);
-	stikaloCAS.ponastavi();
+	stikalo_on_time->ponastavi();
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 1);
 }
 
-void internal_power_switch_ev()
+void internal_power_switch_ev(class_TIMER* stikalo_on_time)
 {
 
 	Shutdown();
 	delayFREERTOS(20);
 	writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
-	stikaloCAS.ponastavi();
+	stikalo_on_time->ponastavi();
 	delayFREERTOS(20);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
 }

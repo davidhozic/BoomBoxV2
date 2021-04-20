@@ -10,20 +10,18 @@ void avg_vol_task(void* param)
 	unsigned short st_branj = 0;
 	unsigned short max_izmerjeno = 0;
 	unsigned short tr_vrednost = 0;
-	class_TIMER average_v_timer;
-
 	while (1){
 
 		tr_vrednost = readANALOG(mic_pin);
 		if (tr_vrednost > max_izmerjeno)
 		max_izmerjeno = tr_vrednost;
 
-		if (average_v_timer.vrednost() >= 12)
+		if (audio_system.average_v_timer.vrednost() >= 12)
 		{
 			vsota_branj += max_izmerjeno;
 			st_branj++;
 			max_izmerjeno = 0;
-			average_v_timer.ponastavi();
+			audio_system.average_v_timer.ponastavi();
 		}
 
 		if (st_branj >= 50)

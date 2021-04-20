@@ -7,12 +7,9 @@
 #include "settings.h"
 #include "EEPROM/EEPROM.h"
 #include <string>
+#include "libs/castimer/castimer.h"
 
-/*********************************************/
-/*	           Task related	                 */
-/*********************************************/
-extern TaskHandle_t handle_average_volume;
-extern TaskHandle_t active_strip_mode;
+
 /************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
 /************************************************************************/
@@ -31,6 +28,8 @@ extern TaskHandle_t active_strip_mode;
 
 #define brightUP(cas_na_krog)				    		brightnessFADE(1, cas_na_krog);
 #define brightDOWN(cas_na_krog)							brightnessFADE(-1, cas_na_krog);
+
+
 
 /*********************************************/
 /*			 ENUM,STRUCT DEFINICIJE          */
@@ -57,29 +56,39 @@ enum enum_MIC_MODES
 	
  struct struct_AUDIO_SYS
 {
-	unsigned short strip_mode = STRIP_OFF;
+	unsigned short strip_mode = NORMAL_FADE;
 	short current_color[3] = {0, 0, 0};
 	short current_brightness = 0;
 	unsigned short mic_mode = POTENCIOMETER;
 	unsigned short average_volume = 2048;
+	
+	class_TIMER lucke_filter_timer;
+	class_TIMER mic_ref_timer;
+	class_TIMER average_v_timer;
+	
+	uint8_t barva_selekt = 0;
+	bool mikrofon_detect = 0;
+	uint16_t ref_glasnost = 2048;
+	
+	TaskHandle_t handle_average_volume = NULL;
+	TaskHandle_t handle_active_strip_mode = NULL;
+	TaskHandle_t handle_audio_system;
 };
 
 extern struct_AUDIO_SYS audio_system;
-
 
 
 /*********************************************/
 /*         Prototipi pomoznih funkcij        */
 /*********************************************/
 void updateSTRIP();
+void stripOFF();
 void colorSHIFT(uint8_t BARVA, uint8_t cas_krog);
 void brightnessFADE(char smer, uint8_t cas_krog);
 void flashSTRIP();
 void set_stripCOLOR(unsigned char barva_index);
 void mic_mode_CHANGE();
-void stripOFF(TaskHandle_t* active_strip_mode);
-void strip_mode_CHANGE(std::string ukaz, TaskHandle_t* active_strip_mode);
-void create_strip_mode(void (funct)(void*), std::string name, unsigned char* barva, TaskHandle_t* active_strip_mode);
+void strip_mode_CHANGE(std::string ukaz);
 /*********************************************/
 
 /*********************************************/
