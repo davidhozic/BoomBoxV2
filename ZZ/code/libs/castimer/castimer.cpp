@@ -10,9 +10,8 @@
 #include <util/delay.h>
 
 
-
-class_TIMER *timer_list[10];
-unsigned char timer_num = 0;
+class_TIMER *timer_list[15];
+uint8_t el_count = 0;
 
 /************************************************************************/
 /*						TIMER OBJECT FUNCTIONS                          */
@@ -29,8 +28,9 @@ void class_TIMER::ponastavi()
 	this->timer_value = 0;
 }
 
-class_TIMER::class_TIMER(){
-	add_timer_to_list(this);
+class_TIMER::class_TIMER()
+{
+	timer_list[el_count++] =  this;								//Add timer to list and increase length
 }
 
 
@@ -44,10 +44,6 @@ void class_TIMER::increment(){
 /*					 TIMER FRAMEWORK FUNCTIONS                          */
 /************************************************************************/
 
-
-void add_timer_to_list(class_TIMER* timer_to_add){
-	timer_list[timer_num++] = timer_to_add;										//Add timer to list and increase length
-}
 
 void increment_timers(){									
 	for (class_TIMER *element : timer_list)

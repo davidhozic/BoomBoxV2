@@ -1,7 +1,6 @@
 #pragma once
 
 
-#include <vector>
 
 
 class class_TIMER
@@ -19,10 +18,6 @@ public:
 };
 
 
-
-
-
-void add_timer_to_list(class_TIMER* timer_to_add);
 void increment_timers();	
 
 

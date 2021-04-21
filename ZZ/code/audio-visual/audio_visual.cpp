@@ -6,7 +6,6 @@
 #include "common/inc/FreeRTOS_def_decl.h"
 #include "util/delay.h"
 
-
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
@@ -57,32 +56,32 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		}
 		
 		
- 		if (audio_system.lucke_filter_timer.vrednost() > 100 && audio_system.mikrofon_detect) // AUDIO_M machine
+ 		if (audio_system.lucke_filter_timer.vrednost() >= 100 && audio_system.mikrofon_detect) // AUDIO_M machine
 		{
 			audio_system.lucke_filter_timer.ponastavi();
-			audio_system.barva_selekt = (audio_system.barva_selekt + 1) % barve_end;
+			audio_system.barva_selekt = random() %  enum_BARVE::barve_end;
 			// STRIP task creation
 			switch (audio_system.strip_mode)
 			{
 				
 			case NORMAL_FADE: //Prizig in fade izklop
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(normal_fade_task,"normFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(normal_fade_task,"normFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case INVERSE_NORMAL_FADE:
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(inverse_normal_fade_task,"invNormFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(inverse_normal_fade_task,"invNormFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(color_fade_task,"colorFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(color_fade_task,"colorFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 
 			case BREATHE_FADE: //Dihalni nacin
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(breathe_fade_task,"breatheFade", 64, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(breathe_fade_task,"breatheFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			}
 		}

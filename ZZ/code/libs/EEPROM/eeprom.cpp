@@ -14,9 +14,9 @@ void EEPROM_t::pisi(uint8_t podatek, uint16_t naslov){
 
 uint8_t EEPROM_t::beri (uint16_t naslov){
 	while(EECR & (1<<EEPE));			// Cakaj da se prejsnje branje/pisanje zakljuci
-	EEAR = naslov;					//Izberi index bajta na eepromu
-	EECR |= (1<<EERE);				//Beri
-	return EEDR;					//Vrni vrednost
+	EEAR = naslov;						//Izberi index bajta na eepromu
+	EECR |= (1<<EERE);					//Beri
+	return EEDR;						//Vrni vrednost
 
 }
 EEPROM_t EEPROM;
