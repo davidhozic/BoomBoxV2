@@ -6,7 +6,6 @@
 #include "common/inc/FreeRTOS_def_decl.h"
 #include "settings.h"
 #include "EEPROM/EEPROM.h"
-#include <string>
 #include "libs/castimer/castimer.h"
 
 
@@ -88,7 +87,7 @@ void brightnessFADE(char smer, uint8_t cas_krog);
 void flashSTRIP();
 void set_stripCOLOR(unsigned char barva_index);
 void mic_mode_CHANGE();
-void strip_mode_CHANGE(std::string ukaz);
+void strip_mode_CHANGE(const char ukaz[]);
 /*********************************************/
 
 /*********************************************/

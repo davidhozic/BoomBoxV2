@@ -4,6 +4,7 @@ template <typename tip>
 class Vozlisce
 {
 private:
+
     class vozlisce_data_obj_t
     {
     public:
@@ -15,8 +16,8 @@ private:
         tip podatek;
     };
 
-    vozlisce_data_obj_t *glava;
-    unsigned short count;
+    vozlisce_data_obj_t *glava = NULL;
+    unsigned short count = 0;
     
     inline void pojdi_zacetek()
     {
@@ -35,11 +36,6 @@ private:
     }
 
 public:
-    Vozlisce()
-    {
-        glava = nullptr;
-        count = 0;
-    }
 
     inline unsigned short length()
     {
@@ -48,7 +44,7 @@ public:
 
     void dodaj_zacetek(tip vrednost)
     {
-        vozlisce_data_obj_t *nov = new vozlisce_data_obj_t;
+        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
         pojdi_zacetek();
 
         if (glava != nullptr)
@@ -64,7 +60,7 @@ public:
 
     void dodaj_konec(tip vrednost)
     {
-        vozlisce_data_obj_t *nov = new vozlisce_data_obj_t;
+        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
 
         pojdi_konec();
         if (glava != nullptr)

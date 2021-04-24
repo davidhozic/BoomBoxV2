@@ -8,8 +8,6 @@
 #include "task.h"
 #include <string.h>
 
-
-
 /******************************************************************************************/
 /*                                  ELEMENTI V STATE_SCROLL MENIJU                        */
 /******************************************************************************************/
@@ -39,29 +37,22 @@ struct struct_settings_UI
 {
 	uint8_t state;
 	uint8_t menu_seek;
-	class_VHOD* SW2;
-	class_TIMER* SW2_off_timer;
-	class_TIMER* state_exit_timer;
-	class_TIMER* hold_timer;
+	class_VHOD SW2;
 	unsigned short hold_time;
 	bool long_press;
+	class_TIMER SW2_off_timer;
+	class_TIMER state_exit_timer;
+	class_TIMER hold_timer;
 };
 
-
+	
 struct_settings_UI settings_ui = {
 	.state = STATE_UNSET,
 	.menu_seek =  MENU_TOGGLE_LCD,
-	.SW2 = new class_VHOD(red_button_pin, red_button_port, 0),
-	.SW2_off_timer = new class_TIMER,
-	.state_exit_timer = new class_TIMER,
-	.hold_timer = new class_TIMER,
+	.SW2 = class_VHOD(red_button_pin, red_button_port, 0),
 	.hold_time = 0,
 	.long_press = false // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 };
-
-
-
-
 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
@@ -82,7 +73,7 @@ void exit_scroll()
 	settings_ui.menu_seek = MENU_TOGGLE_LCD;
 	settings_ui.long_press = true;
 	flashSTRIP();
-	settings_ui.state_exit_timer->ponastavi();
+	settings_ui.state_exit_timer.ponastavi();
 	STRIP_CURRENT_BRIGHT = 255;
 	brightDOWN(15);
 	delayFREERTOS(100);
@@ -95,19 +86,14 @@ void settings_UI(void *paramOdTaska)
 	
 	while (true)
 	{
-		if (settings_ui.SW2->vrednost())
+		if (settings_ui.SW2.vrednost())
 		{
-			settings_ui.SW2_off_timer->ponastavi(); // Filtrira lazne nepritiske
+			settings_ui.SW2_off_timer.ponastavi();							// Filtrira lazne nepritiske
 		}
-		else if (settings_ui.SW2_off_timer->vrednost() > 50)
+		else if (settings_ui.SW2_off_timer.vrednost() > 50)
 		{
 			settings_ui.long_press = false;
-		}
-		
-		delayFREERTOS(500);
-		
-		
-		
+		}	
 		
 		//State machine
 		if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !settings_ui.long_press)
@@ -115,22 +101,22 @@ void settings_UI(void *paramOdTaska)
 			switch (settings_ui.state)
 			{
 				case STATE_UNSET:
-				if (settings_ui.hold_timer->vrednost() > 1000)
+				if (settings_ui.hold_timer.vrednost() > 1000)
 				{
 					stripOFF();
 					settings_ui.state = STATE_SCROLL;
 					settings_ui.menu_seek = MENU_TOGGLE_LCD;
-					settings_ui.state_exit_timer->ponastavi();
-					settings_ui.hold_timer->ponastavi();
+					settings_ui.state_exit_timer.ponastavi();
+					settings_ui.hold_timer.ponastavi();
 					flashSTRIP();
 					showSEEK(settings_ui.menu_seek);
 					delayFREERTOS(200);
 					settings_ui.long_press = true;
 				}
 
-				else if (!settings_ui.SW2->vrednost())
+				else if (!settings_ui.SW2.vrednost())
 				{
-					settings_ui.hold_timer->ponastavi();
+					settings_ui.hold_timer.ponastavi();
 				}
 				break;	
 		
@@ -138,15 +124,15 @@ void settings_UI(void *paramOdTaska)
 			
 				case STATE_SCROLL:
 				
-				if (settings_ui.state_exit_timer->vrednost() > 6000)	// Auto exit_scroll
+				if (settings_ui.state_exit_timer.vrednost() > 6000)	// Auto exit_scroll
 				{
 					exit_scroll();
 				}
 				
-				if (settings_ui.SW2->vrednost())
+				if (settings_ui.SW2.vrednost())
 				{
-					settings_ui.hold_time = settings_ui.hold_timer->vrednost();	// stopa cas pritiska
-					settings_ui.state_exit_timer->ponastavi();
+					settings_ui.hold_time = settings_ui.hold_timer.vrednost();	// stopa cas pritiska
+					settings_ui.state_exit_timer.ponastavi();
 					if (settings_ui.hold_time > 1000)
 					{
 						settings_ui.long_press = true;
@@ -169,7 +155,7 @@ void settings_UI(void *paramOdTaska)
 							break;
 						}
 						exit_scroll();
-						settings_ui.hold_timer->ponastavi();
+						settings_ui.hold_timer.ponastavi();
 					}
 				}
 				else if (settings_ui.hold_time > 0)
@@ -180,7 +166,7 @@ void settings_UI(void *paramOdTaska)
 						settings_ui.menu_seek = (settings_ui.menu_seek + 1) % MENU_end;
 					}
 					showSEEK(settings_ui.menu_seek);
-					settings_ui.hold_timer->ponastavi();
+					settings_ui.hold_timer.ponastavi();
 					settings_ui.hold_time = 0;
 				}
 				break;

@@ -3,6 +3,7 @@
 #include "castimer/castimer.h"
 #include "global.h"
 
+
 bool class_VHOD::vrednost()
 {
 	if (port <= 'G')

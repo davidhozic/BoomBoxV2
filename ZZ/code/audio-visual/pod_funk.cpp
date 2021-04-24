@@ -3,7 +3,7 @@
 #include "libs/EEPROM/EEPROM.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/FreeRTOS_def_decl.h"
-
+#include <string.h>
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *
@@ -82,9 +82,9 @@ void set_stripCOLOR(unsigned char barva_index)
 	STRIP_CURRENT_BLUE	= mozne_barve.barvni_ptr[barva_index][2];
 }
 
-void strip_mode_CHANGE(std::string ukaz)
+void strip_mode_CHANGE(const char ukaz[])
 {
-	if (ukaz.find("off") != std::string::npos)
+	if (strcmp (ukaz, "off") == 0)
 		STRIP_MODE = STRIP_OFF;
 	else if (STRIP_MODE == STRIP_OFF)
 		STRIP_MODE = NORMAL_FADE;

@@ -19,20 +19,24 @@ void Shutdown();
 void Power_UP();
 void audio_visual();
 void spanje();
+void watchdog_on();
+void watchdog_off();
 void external_power_switch_ev(class_TIMER* stikalo_on_time);
 void internal_power_switch_ev(class_TIMER* stikalo_on_time);
 /************************************************************************/
 
-static class_TIMER VOLT_timer;
-static class_TIMER stikaloOFFtime;
-static class_VHOD stikalo(1, 'K', 0);
-static class_TIMER stikalo_on_time;
 	
 void power(void *paramOdTaska)
 {
+	
+	 class_TIMER VOLT_timer;
+	 class_TIMER stikaloOFFtime;
+	 class_VHOD stikalo(1, 'K', 0);
+	 class_TIMER stikalo_on_time;
+	
+	
 	while (true)
 	{ 
-
 		/************************************************************************/
 		/*							VOLTAGE READING                             */
 		/************************************************************************/
@@ -88,7 +92,7 @@ void power(void *paramOdTaska)
 		/*************************************************************************************/
 		
 		
-		delayFREERTOS(1);
+		delayFREERTOS(4);
 	}
 }
 
@@ -97,13 +101,14 @@ void Shutdown()
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
+	writeBIT(Hardware.error_reg,HARDWARE_ERROR_REG_WATCHDOG_FAIL, 0);
 	STRIP_MODE = enum_STRIP_MODES::STRIP_OFF;
 }
 
 void Power_UP()
 {
 #if save_strip_mode
-	STRIP_MODE = EEPROM.beri(audiomode_eeprom_addr);
+	STRIP_MODE = EEPROM.beri(strip_mode_addr);
 #endif
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
@@ -139,10 +144,12 @@ void bujenje()
 	PCIFR = 0;
 	PCMSK2 = 0;
 	_delay_ms(200);
+	watchdog_on();	
 }
 
 void spanje()
 {
+	watchdog_off();	
 	asm("sei");					 //vklop zunanjih interruptov
 	PCICR = (1 << PCIE2);	 // Vklopi PCINT interrupt
 	PCIFR = (1 << PCIF2);	 // Vlopi ISR

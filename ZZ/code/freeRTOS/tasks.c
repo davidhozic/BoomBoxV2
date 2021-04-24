@@ -1989,44 +1989,16 @@ void vTaskStartScheduler( void )
 {
     BaseType_t xReturn;
 
-    /* Add the idle task at the lowest priority. */
-    #if ( configSUPPORT_STATIC_ALLOCATION == 1 )
-        {
-            StaticTask_t * pxIdleTaskTCBBuffer = NULL;
-            StackType_t * pxIdleTaskStackBuffer = NULL;
-            uint32_t ulIdleTaskStackSize;
-
-            /* The Idle task is created using user provided RAM - obtain the
-             * address of the RAM then create the idle task. */
-            vApplicationGetIdleTaskMemory( &pxIdleTaskTCBBuffer, &pxIdleTaskStackBuffer, &ulIdleTaskStackSize );
-            xIdleTaskHandle = xTaskCreateStatic( prvIdleTask,
-                                                 configIDLE_TASK_NAME,
-                                                 ulIdleTaskStackSize,
-                                                 ( void * ) NULL,       /*lint !e961.  The cast is not redundant for all compilers. */
-                                                 portPRIVILEGE_BIT,     /* In effect ( tskIDLE_PRIORITY | portPRIVILEGE_BIT ), but tskIDLE_PRIORITY is zero. */
-                                                 pxIdleTaskStackBuffer,
-                                                 pxIdleTaskTCBBuffer ); /*lint !e961 MISRA exception, justified as it is not a redundant explicit cast to all supported compilers. */
-
-            if( xIdleTaskHandle != NULL )
-            {
-                xReturn = pdPASS;
-            }
-            else
-            {
-                xReturn = pdFAIL;
-            }
-        }
-    #else /* if ( configSUPPORT_STATIC_ALLOCATION == 1 ) */
-        {
-            /* The Idle task is being created using dynamically allocated RAM. */
-            xReturn = xTaskCreate( prvIdleTask,
+        
+   
+           xReturn = xTaskCreate( prvIdleTask,
                                    configIDLE_TASK_NAME,
                                    configMINIMAL_STACK_SIZE,
                                    ( void * ) NULL,
                                    portPRIVILEGE_BIT,  /* In effect ( tskIDLE_PRIORITY | portPRIVILEGE_BIT ), but tskIDLE_PRIORITY is zero. */
                                    &xIdleTaskHandle ); /*lint !e961 MISRA exception, justified as it is not a redundant explicit cast to all supported compilers. */
-        }
-    #endif /* configSUPPORT_STATIC_ALLOCATION */
+        
+
 
     #if ( configUSE_TIMERS == 1 )
         {

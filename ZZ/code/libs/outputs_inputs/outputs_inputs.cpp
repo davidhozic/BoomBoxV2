@@ -5,6 +5,7 @@
 #include "task.h"
 #include "common/inc/global.h"
 
+
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 {
 	pwmOFF(pin, port); // izklopi pwm

@@ -14,7 +14,7 @@ class_VHOD napajalnik(0, 'K', 0);
 /*					          GLOBAL  STRUCTURES                        */
 /************************************************************************/
 struct_HARDWARE Hardware;
-
+TaskHandle_t handle_capacity_display = NULL;
 /************************************************************************/
 /*						SAFE FREERTOS FUNCTIONS                         */
 /************************************************************************/

@@ -4,7 +4,6 @@
 #ifndef namespaces_H
 #define namespaces_H
 #include "semphr.h"
-#include <vector>
 
 /************************************************************************/
 /*					  Safe FreeRTOS functions/macros		            */

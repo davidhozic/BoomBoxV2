@@ -1,34 +1,18 @@
 
-
-#include "VHOD/Vhod.h"
-#include "castimer/castimer.h"
 #include "FreeRTOS.h"
-#include "common/inc/FreeRTOS_def_decl.h"
-#include "audio-visual/includes/audio.h"
+#include "task.h"
+#include "settings.h"
+#include "global.h"
 #include "libs/EEPROM/EEPROM.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "common/inc/global.h"
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
-
-
-
+#include "audio-visual/includes/audio.h"
 /************************************************************************/
 /*						      TASK PROTOS                               */
 /************************************************************************/
 void power(void *paramOdTaska);
-void thermal(void *paramOdTaska);
 void zaslon(void *paramOdTaska);
 void audio_visual(void *p);
 void polnjenje(void *paramOdTaska);
 void settings_UI(void *paramOdTaska);
-
-/************************************************************************/
-/*						Main thread handles			                    */
-/************************************************************************/
-TaskHandle_t handle_capacity_display = NULL;
-/************************************************************************/
 
 int main()
 {	
@@ -66,12 +50,12 @@ int main()
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
 
+	xTaskCreate(power, "Power", 64, NULL, 1, NULL);
+	xTaskCreate(zaslon, "display", 64, NULL, 1, NULL);
+	xTaskCreate(polnjenje, "charing", 64, NULL, 1, NULL);
+	xTaskCreate(settings_UI, "settings_ui", 64, NULL, 2, NULL);
+	xTaskCreate(audio_visual, "audio_system", 64, NULL, 1, NULL);
 	
-	xTaskCreate(power, "power", 128, NULL, 1, NULL);
-	xTaskCreate(settings_UI, "settings", 128, NULL, 2, NULL);
-	xTaskCreate(zaslon, "LVCHRG", 128, NULL, 1, &handle_capacity_display);
-	xTaskCreate(polnjenje, "CHRG", 128, NULL, 1, NULL);
-	xTaskCreate(audio_visual, "ASYS", 128, NULL, 3, &audio_system.handle_audio_system);
 	vTaskStartScheduler();
 	return 0;
 }

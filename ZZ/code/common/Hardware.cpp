@@ -3,12 +3,14 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <avr/wdt.h>
+
 #include "common/inc/global.h"
 /************************************************************************/
 /*								PROTOTYPES                              */
 /************************************************************************/
 void bujenje();
 void Shutdown();
+
 
 void watchdog_off()
 {

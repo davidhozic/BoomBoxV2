@@ -10,6 +10,8 @@
 #include <util/delay.h>
 #include "libs/povezan_seznam/povezan_seznam.h"
 
+
+
 Vozlisce <class_TIMER*> timer_list;
 
 
@@ -18,9 +20,10 @@ Vozlisce <class_TIMER*> timer_list;
 /************************************************************************/
 unsigned long class_TIMER::vrednost()
 {
-	this->timer_enabled = true;
-	return this->timer_value;
+	timer_enabled = true;
+	return timer_value;
 }
+
 
 void class_TIMER::ponastavi()
 {
@@ -28,17 +31,16 @@ void class_TIMER::ponastavi()
 	this->timer_value = 0;
 }
 
-class_TIMER::class_TIMER(class_TIMER* it)
-{
-	if (it != NULL)
-		timer_list.dodaj_konec(it);
-}
 
 void class_TIMER::increment(){
 	if (this->timer_enabled && timer_value < 65535) //Prevent overflow
 		this->timer_value += 1;
 }
 
+class_TIMER::class_TIMER()
+{
+	timer_list.dodaj_konec(this);
+}
 
 /************************************************************************/
 /*					 TIMER FRAMEWORK FUNCTIONS                          */

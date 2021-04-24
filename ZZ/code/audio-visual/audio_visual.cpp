@@ -5,7 +5,7 @@
 #include "common/inc/global.h"
 #include "common/inc/FreeRTOS_def_decl.h"
 #include "util/delay.h"
-
+#include <stdlib.h>
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
@@ -66,22 +66,22 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				
 			case NORMAL_FADE: //Prizig in fade izklop
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(normal_fade_task,"normFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(normal_fade_task,"normFade", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case INVERSE_NORMAL_FADE:
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(inverse_normal_fade_task,"invNormFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(inverse_normal_fade_task,"invNormFade", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(color_fade_task,"colorFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(color_fade_task,"colorFade", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 
 			case BREATHE_FADE: //Dihalni nacin
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(breathe_fade_task,"breatheFade", 80, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				xTaskCreate(breathe_fade_task,"breatheFade", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			}
 		}
@@ -101,7 +101,8 @@ void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 	STRIP_CURRENT_BRIGHT = 255;
 	set_stripCOLOR(*((uint8_t*)BARVA));
 	brightDOWN(5);
-	deleteTASK(&audio_system.handle_active_strip_mode);
+	audio_system.handle_active_strip_mode = NULL;
+	vTaskDelete(NULL);
 }
 
 void inverse_normal_fade_task(void *BARVA){
@@ -109,14 +110,16 @@ void inverse_normal_fade_task(void *BARVA){
 	STRIP_CURRENT_BRIGHT = 0;
 	set_stripCOLOR( *( (uint8_t*) BARVA ) );
 	brightUP(20);	
-	deleteTASK(&audio_system.handle_active_strip_mode);
+	audio_system.handle_active_strip_mode = NULL;
+	vTaskDelete(NULL);
 }
 
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 	STRIP_CURRENT_BRIGHT = 255;
 	colorSHIFT(*(uint8_t*)BARVA, 4); //prehod iz ene barve v drugo
-	deleteTASK(&audio_system.handle_active_strip_mode);
+	audio_system.handle_active_strip_mode = NULL;
+	vTaskDelete(NULL);
 }
 
 void breathe_fade_task(void *BARVA)
@@ -125,7 +128,8 @@ void breathe_fade_task(void *BARVA)
 	set_stripCOLOR(*((uint8_t*)BARVA));
 	brightUP(10);
 	brightDOWN(10);
-	deleteTASK(&audio_system.handle_active_strip_mode);
+	audio_system.handle_active_strip_mode = NULL;
+	vTaskDelete(NULL);
 }
 
 
