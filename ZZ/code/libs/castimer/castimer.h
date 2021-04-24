@@ -1,6 +1,5 @@
+
 #pragma once
-
-
 
 
 class class_TIMER
@@ -14,7 +13,7 @@ public:
     unsigned long vrednost();
     void ponastavi();
 	void increment();
-	class_TIMER();
+	class_TIMER(class_TIMER* it);
 };
 
 

@@ -90,7 +90,9 @@ void strip_mode_CHANGE(std::string ukaz)
 		STRIP_MODE = NORMAL_FADE;
 	else
 		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
-	EEPROM.pisi(audiomode_eeprom_addr, STRIP_MODE);
+#if save_strip_mode		
+	EEPROM.pisi(strip_mode_addr, STRIP_MODE);
+#endif	
 }
 
 void mic_mode_CHANGE()

@@ -8,10 +8,10 @@
 #include "task.h"
 #include "FreeRTOS_def_decl.h"
 #include <util/delay.h>
+#include "libs/povezan_seznam/povezan_seznam.h"
 
+Vozlisce <class_TIMER*> timer_list;
 
-class_TIMER *timer_list[15];
-uint8_t el_count = 0;
 
 /************************************************************************/
 /*						TIMER OBJECT FUNCTIONS                          */
@@ -28,11 +28,11 @@ void class_TIMER::ponastavi()
 	this->timer_value = 0;
 }
 
-class_TIMER::class_TIMER()
+class_TIMER::class_TIMER(class_TIMER* it)
 {
-	timer_list[el_count++] =  this;								//Add timer to list and increase length
+	if (it != NULL)
+		timer_list.dodaj_konec(it);
 }
-
 
 void class_TIMER::increment(){
 	if (this->timer_enabled && timer_value < 65535) //Prevent overflow
@@ -46,9 +46,9 @@ void class_TIMER::increment(){
 
 
 void increment_timers(){									
-	for (class_TIMER *element : timer_list)
+	for (uint8_t i = 0, length = timer_list.length(); i < length ;i++)
 	{
-		element->increment();
+		timer_list[i]->increment();
 	}
 }
 

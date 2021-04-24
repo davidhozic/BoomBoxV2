@@ -30,8 +30,6 @@ void settings_UI(void *paramOdTaska);
 TaskHandle_t handle_capacity_display = NULL;
 /************************************************************************/
 
-
-
 int main()
 {	
 	/************************************************************************/
@@ -58,9 +56,17 @@ int main()
 	/************************************************************************/
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_eeprom_addr));
+	
+	/************************************************************************/
+	/*							  SETUP WATCHDOG                            */
+	/************************************************************************/
+//	WDTCSR = 0x1 << WDIE | 0x1 << WDP2 | 0x1 << WDP1;
+	
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
+
+	
 	xTaskCreate(power, "power", 128, NULL, 1, NULL);
 	xTaskCreate(settings_UI, "settings", 128, NULL, 2, NULL);
 	xTaskCreate(zaslon, "LVCHRG", 128, NULL, 1, &handle_capacity_display);

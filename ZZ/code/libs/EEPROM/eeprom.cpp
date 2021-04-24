@@ -5,6 +5,8 @@
 #include "libs/EEPROM/EEPROM.h"
 
 void EEPROM_t::pisi(uint8_t podatek, uint16_t naslov){
+	if (podatek == beri(naslov))
+		return;
 	while(EECR & (1<<EEPE));			// Cakaj da se prejsnje branje/pisanje zakljuci
 	EEAR = naslov;					//Izberi index bajta na eepromu
 	EEDR = podatek;					//Podatek na zacasen bajt
