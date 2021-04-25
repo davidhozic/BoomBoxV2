@@ -57,18 +57,28 @@ struct_settings_UI settings_ui = {
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
-#define toggleLCD()																																		\
-writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN));		\
-if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))																		         \
-	resumeTASK(&handle_capacity_display);	//Ker se v zaslon tasku blocka v primeru da je display_enabled false
-	
-void showSEEK(uint8_t barva)  // Prikaze element v seeku ce je STATE_SCROLL aktiven
+inline void toggleLCD()			
+{																														
+	writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN));		
+	if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))			
+	{															         
+		resumeTASK(&handle_capacity_display);
+	}
+	else
+	{
+		holdTASK(&handle_capacity_display);
+		writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+	}
+}
+
+
+inline void showSEEK(uint8_t barva)  // Prikaze element v seeku ce je STATE_SCROLL aktiven
 {		
 	STRIP_CURRENT_BRIGHT = 255;				
 	colorSHIFT(barva, 5);		
 }
 
-void exit_scroll()
+inline void exit_scroll()
 {
 	settings_ui.state = STATE_UNSET;
 	settings_ui.menu_seek = MENU_TOGGLE_LCD;
@@ -97,12 +107,12 @@ void settings_UI(void *paramOdTaska)
 		}	
 		
 		//State machine
-		if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !settings_ui.long_press)
+		if (!settings_ui.long_press)
 		{
 			switch (settings_ui.state)
 			{
 				case STATE_UNSET:
-				if (settings_ui.hold_timer.vrednost() > 1000)
+				if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && settings_ui.hold_timer.vrednost() > 1000)
 				{
 					stripOFF();
 					settings_ui.state = STATE_SCROLL;

@@ -46,7 +46,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			if (audio_system.mic_ref_timer.vrednost() > 1000) // Posodobi vsako sekundo
 			{
 				audio_system.mic_ref_timer.ponastavi();
-				audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 350/1023 + 255; // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
+				audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 190/1023 + 300; // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 			}
 			break;
 			
@@ -56,7 +56,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		}
 		
 		
- 		if (audio_system.lucke_filter_timer.vrednost() >= 100 && audio_system.mikrofon_detect) // AUDIO_M machine
+ 		if (audio_system.lucke_filter_timer.vrednost() >= 300 && audio_system.mikrofon_detect) // AUDIO_M machine
 		{
 			audio_system.lucke_filter_timer.ponastavi();
 			audio_system.barva_selekt = random() %  enum_BARVE::barve_end;
@@ -67,11 +67,6 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			case NORMAL_FADE: //Prizig in fade izklop
 				deleteTASK(&audio_system.handle_active_strip_mode);
 				xTaskCreate(normal_fade_task,"normFade", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
-				break;
-			
-			case INVERSE_NORMAL_FADE:
-				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(inverse_normal_fade_task,"invNormFade", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 				break;
 			
 			case COLOR_FADE: //Prehod iz trenutne barve v zeljeno
@@ -86,7 +81,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			}
 		}
 
-		delayFREERTOS(2);
+		delayFREERTOS(4);
 		//End task loop
 	}
 }
@@ -105,15 +100,6 @@ void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 	vTaskDelete(NULL);
 }
 
-void inverse_normal_fade_task(void *BARVA){
-	
-	STRIP_CURRENT_BRIGHT = 0;
-	set_stripCOLOR( *( (uint8_t*) BARVA ) );
-	brightUP(10);	
-	audio_system.handle_active_strip_mode = NULL;
-	vTaskDelete(NULL);
-}
-
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 	STRIP_CURRENT_BRIGHT = 255;
@@ -124,7 +110,6 @@ void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 
 void breathe_fade_task(void *BARVA)
 {
-	
 	set_stripCOLOR(*((uint8_t*)BARVA));
 	brightUP(5);
 	brightDOWN(5);

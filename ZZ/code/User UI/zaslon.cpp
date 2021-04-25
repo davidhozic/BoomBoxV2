@@ -15,7 +15,7 @@ void zaslon(void *paramOdTaska)
 {
     while (1)
     {
-        if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))
+        if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN) || napajalnik.vrednost())
         {
             if (napajalnik.vrednost() == 0)
             {
@@ -39,14 +39,15 @@ void zaslon(void *paramOdTaska)
             else // Ce je napajalnik vkljucen in se ne polni, potem 3s gori
             {
                 writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 1);
-                delayFREERTOS(3000);
-                writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN, 0);
+                delayFREERTOS(5000);
+				writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
+				writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN, 0);
+				holdTASK(&handle_capacity_display);
             }
         }
         else
         {
             writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
-            holdTASK(&handle_capacity_display); //Resuma se v eventih
         }
         delayFREERTOS(15);
 		//END WHILE

@@ -7,7 +7,7 @@
 /************************************************************************/
 /*								GLOBAL OBJECTS	                        */
 /************************************************************************/
-class_VHOD napajalnik(0, 'K', 0);
+class_VHOD napajalnik(_21VPSU_pin, _21VPSU_port, 0);
 
 
 /************************************************************************/
@@ -37,6 +37,7 @@ void deleteTASK(TaskHandle_t* task)
 		vTaskDelete(*task);
 		*task = NULL;
 	}
+	delayFREERTOS(1);
 }
 
 

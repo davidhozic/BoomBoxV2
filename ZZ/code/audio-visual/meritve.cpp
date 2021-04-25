@@ -10,7 +10,6 @@ void avg_vol_task(void* param)
 	unsigned short st_branj = 0;
 	unsigned short max_izmerjeno = 0;
 	unsigned short tr_vrednost = 0;
-	unsigned char over_average_ct = 0;
 	
 	while (1){
 
@@ -18,24 +17,17 @@ void avg_vol_task(void* param)
 		if (tr_vrednost > max_izmerjeno)
 		max_izmerjeno = tr_vrednost;
 
-		if (audio_system.average_v_timer.vrednost() >= 12 && (max_izmerjeno < audio_system.average_volume + 65 || over_average_ct >= 6))
+		if (audio_system.average_v_timer.vrednost() >= 15)
 		{
 			vsota_branj += max_izmerjeno;
 			st_branj++;
 			max_izmerjeno = 0;
 			audio_system.average_v_timer.ponastavi();
-			over_average_ct = 0;
 		}
-		else if (audio_system.average_v_timer.vrednost() >= 12)
+		
+		if (st_branj >= 25)
 		{
-			over_average_ct++;
-			max_izmerjeno = 0;
-			audio_system.average_v_timer.ponastavi();
-		}
-
-		if (st_branj >= 50)
-		{
-			audio_system.average_volume = vsota_branj / st_branj;
+			audio_system.average_volume = (uint32_t) vsota_branj / st_branj;
 			vsota_branj = 0;
 			st_branj = 0;
 			max_izmerjeno = 0;

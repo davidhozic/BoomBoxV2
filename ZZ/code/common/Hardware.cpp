@@ -12,26 +12,12 @@ void bujenje();
 void Shutdown();
 
 
-void watchdog_off()
-{
-	MCUSR &= ~(1<<WDRF);
-	WDTCSR = 0x00;
-}
-
-void watchdog_on()
-{
-	MCUSR &= ~(1<<WDRF);
-	WDTCSR = 0x00;
-}
-
 /************************************************************************/
 /*						INTERRUPT SERVICE ROUTINES		                */
 /************************************************************************/
 
 ISR (TIMER3_COMPA_vect){										// TIMER ISR
-	taskENTER_CRITICAL();
 	increment_timers();
-	taskEXIT_CRITICAL();
 }
 
 
@@ -44,9 +30,9 @@ ISR(PCINT2_vect)												// SLEEP ISR
 ISR(WDT_vect)
 {
 	cli();
+	wdt_disable();
 	Shutdown();
-	watchdog_off();	
 	writeBIT(Hardware.error_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL, 1); // Watchdog got triggered.
-	watchdog_on();
+	wdt_enable(WDTO_2S);
 	sei();
 }

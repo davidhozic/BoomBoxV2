@@ -6,6 +6,7 @@
 #include "libs/EEPROM/EEPROM.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "audio-visual/includes/audio.h"
+#include <util/delay.h>
 /************************************************************************/
 /*						      TASK PROTOS                               */
 /************************************************************************/
@@ -41,12 +42,7 @@ int main()
 	/************************************************************************/
 	/*							  SETUP OTHER                               */
 	/************************************************************************/
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_eeprom_addr));
-	
-	/************************************************************************/
-	/*							  SETUP WATCHDOG                            */
-	/************************************************************************/
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
@@ -58,7 +54,15 @@ int main()
 	xTaskCreate(polnjenje, "charing", 128, NULL, 1, NULL);
 	xTaskCreate(settings_UI, "settings_ui", 128, NULL, 3, NULL);
 	xTaskCreate(audio_visual, "audio_system", 128, NULL, 3, &audio_system.handle_audio_system);
+	_delay_ms(50);
 	
+	/************************************************************************/
+	/*							   SETUP WATCHDOG                           */
+	/************************************************************************/
+	wdt_enable(WDTO_2S);
+	/************************************************************************/
+	/*								START TASKS                             */
+	/************************************************************************/
 	vTaskStartScheduler();
 	return 0;
 }

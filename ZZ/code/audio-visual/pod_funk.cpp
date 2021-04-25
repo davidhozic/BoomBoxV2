@@ -89,7 +89,6 @@ void strip_mode_CHANGE(const char ukaz[])
 		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
 	
 	EEPROM.pisi(STRIP_MODE, strip_mode_addr);
-
 }
 
 void mic_mode_CHANGE()

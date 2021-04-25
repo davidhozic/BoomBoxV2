@@ -37,7 +37,6 @@
 enum enum_STRIP_MODES
 {
 	NORMAL_FADE,
-	INVERSE_NORMAL_FADE,
 	COLOR_FADE,
 	BREATHE_FADE,
 	end_strip_modes,

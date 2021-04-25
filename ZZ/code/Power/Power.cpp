@@ -10,7 +10,7 @@
 #include "FreeRTOS_def_decl.h"
 #include <avr/sleep.h>
 #include <util/delay.h>
-
+#include <avr/interrupt.h>
 
 /************************************************************************/
 /*							PROTOTYPES                                  */
@@ -47,7 +47,7 @@ void power(void *paramOdTaska)
 			VOLT_timer.ponastavi();
 		}
 			
-		
+			wdt_reset();												// Refresh Watchdog
 		/************************************************************************/
 		/*								POWER UP/SHUTDOWN                       */
 		/************************************************************************/
@@ -62,7 +62,7 @@ void power(void *paramOdTaska)
 			{
 				Shutdown();
 			}
-			
+			writeBIT(Hardware.status_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL, 0);
 			stikalo_on_time.ponastavi();		
 		}
 		
@@ -101,6 +101,7 @@ void power(void *paramOdTaska)
 
 void Shutdown()
 {
+
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
@@ -131,7 +132,7 @@ void internal_power_switch_ev(class_TIMER* stikalo_on_time)
 
 	Shutdown();
 	delayFREERTOS(20);
-	writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
+	writeOUTPUT(menjalnik_pin,menjalnik_port, 0);				 
 	stikalo_on_time->ponastavi();
 	delayFREERTOS(20);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
@@ -144,11 +145,13 @@ void bujenje()
 	PCIFR = 0;
 	PCMSK2 = 0;
 	_delay_ms(200);
+	wdt_enable(WDTO_2S);
 }
 
 void spanje()
 {
-	asm("sei");					 //vklop zunanjih interruptov
+	sei();
+	wdt_disable();
 	PCICR = (1 << PCIE2);	 // Vklopi PCINT interrupt
 	PCIFR = (1 << PCIF2);	 // Vlopi ISR
 	PCMSK2 = (1 << PCINT17); //Vklopi vector na 17

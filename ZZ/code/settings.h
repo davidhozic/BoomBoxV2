@@ -35,7 +35,7 @@
 	#define BAT_LCD_pin						0
 	#define BAT_LCD_port				   'E'
 
-	#define _21VPSU_pin						1
+	#define _21VPSU_pin						0
 	#define  _21VPSU_port				   'K'
 
     #define main_mosfet_pin					3			
