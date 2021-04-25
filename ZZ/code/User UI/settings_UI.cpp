@@ -62,10 +62,11 @@ writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !read
 if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))																		         \
 	resumeTASK(&handle_capacity_display);	//Ker se v zaslon tasku blocka v primeru da je display_enabled false
 	
-#define showSEEK(current_el)			\
-STRIP_CURRENT_BRIGHT = 255;				\
-colorSHIFT(current_el, 2);		// ^^ Prikaze element v seeku ce je STATE_SCROLL aktiven
-
+void showSEEK(uint8_t barva)  // Prikaze element v seeku ce je STATE_SCROLL aktiven
+{		
+	STRIP_CURRENT_BRIGHT = 255;				
+	colorSHIFT(barva, 5);		
+}
 
 void exit_scroll()
 {
@@ -139,19 +140,19 @@ void settings_UI(void *paramOdTaska)
 						switch (settings_ui.menu_seek)	// Glede na trenutni menu seek nekaj izvede
 						{
 							case MENU_TOGGLE_LCD:
-							toggleLCD();	//Task Zaslon se blocka v zaslon tasku
+								toggleLCD();	//Task Zaslon se blocka v zaslon tasku
 							break;
 							
 							case MENU_STRIP_MODE_CHANGE:
-							strip_mode_CHANGE("");
+								strip_mode_CHANGE("");
 							break;
 							
 							case MENU_STRIP_DISABLE:
-							strip_mode_CHANGE("off");
+								strip_mode_CHANGE("off");
 							break;
 							
 							case MENU_MIC_MODE_CHANGE:
-							mic_mode_CHANGE();
+								mic_mode_CHANGE();
 							break;
 						}
 						exit_scroll();
@@ -161,11 +162,11 @@ void settings_UI(void *paramOdTaska)
 				else if (settings_ui.hold_time > 0)
 				{
 
-					if (settings_ui.hold_time < 500) //Kratek pritisk
+					if (settings_ui.hold_time > 20 && settings_ui.hold_time < 500) //Kratek pritisk
 					{
 						settings_ui.menu_seek = (settings_ui.menu_seek + 1) % MENU_end;
+						showSEEK(settings_ui.menu_seek);
 					}
-					showSEEK(settings_ui.menu_seek);
 					settings_ui.hold_timer.ponastavi();
 					settings_ui.hold_time = 0;
 				}
@@ -173,7 +174,7 @@ void settings_UI(void *paramOdTaska)
 				/*****	END CASE *****/
 			}
 		}
-		delayFREERTOS(2);
+		delayFREERTOS(10);
 		// END WHILE
 	}
 	// TASK END

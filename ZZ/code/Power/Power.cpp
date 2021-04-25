@@ -43,15 +43,15 @@ void power(void *paramOdTaska)
 
 		if (VOLT_timer.vrednost() > 500)
 		{
-			Hardware.battery_voltage = readANALOG(vDIV_pin) *	(double) adc_milivolt_ref/1023.00f;
+			Hardware.battery_voltage = readANALOG(vDIV_pin) *	(double) adc_milivolt_ref/1023.00;
 			VOLT_timer.ponastavi();
 		}
 			
-
+		
 		/************************************************************************/
 		/*								POWER UP/SHUTDOWN                       */
 		/************************************************************************/
-		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
+		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !readBIT(Hardware.status_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL) && stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
@@ -59,14 +59,17 @@ void power(void *paramOdTaska)
 		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
 		{	
 			if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
+			{
 				Shutdown();
+			}
+			
 			stikalo_on_time.ponastavi();		
 		}
 		
 		else if (stikalo.vrednost() == 1)
 			stikaloOFFtime.ponastavi();
 			
-		if (Hardware.battery_voltage <= sleep_voltage && !napajalnik.vrednost() && Hardware.battery_voltage > 0) //Če je battery_voltage 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
+		if (Hardware.battery_voltage < sleep_voltage && !napajalnik.vrednost() && Hardware.battery_voltage > 0) //Če je battery_voltage 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
 		{
 			Shutdown();
 			spanje();
@@ -92,7 +95,7 @@ void power(void *paramOdTaska)
 		/*************************************************************************************/
 		
 		
-		delayFREERTOS(4);
+		delayFREERTOS(100);
 	}
 }
 
@@ -101,15 +104,12 @@ void Shutdown()
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
-	writeBIT(Hardware.error_reg,HARDWARE_ERROR_REG_WATCHDOG_FAIL, 0);
 	STRIP_MODE = enum_STRIP_MODES::STRIP_OFF;
 }
 
 void Power_UP()
 {
-#if save_strip_mode
 	STRIP_MODE = EEPROM.beri(strip_mode_addr);
-#endif
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
@@ -144,12 +144,10 @@ void bujenje()
 	PCIFR = 0;
 	PCMSK2 = 0;
 	_delay_ms(200);
-	watchdog_on();	
 }
 
 void spanje()
 {
-	watchdog_off();	
 	asm("sei");					 //vklop zunanjih interruptov
 	PCICR = (1 << PCIE2);	 // Vklopi PCINT interrupt
 	PCIFR = (1 << PCIF2);	 // Vlopi ISR

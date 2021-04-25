@@ -19,26 +19,23 @@ void updateSTRIP()
 }
 
 void flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
-{
-	set_stripCOLOR(BELA);						
+{					
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		writeOUTPUT(strip_red_pin, strip_port, 0);
-		writeOUTPUT(strip_green_pin, strip_port, 0);
-		writeOUTPUT(strip_blue_pin, strip_port, 0);
+		STRIP_CURRENT_BRIGHT = 0;
+		updateSTRIP();
 		delayFREERTOS(125);
-		writeOUTPUT(strip_red_pin, strip_port, 1);
-		writeOUTPUT(strip_green_pin, strip_port, 1);
-		writeOUTPUT(strip_blue_pin, strip_port, 1);
+		STRIP_CURRENT_BRIGHT = 255;
+		updateSTRIP();
 		delayFREERTOS(125);
 	}
 }
 
 void colorSHIFT(uint8_t BARVA, uint8_t cas_krog)
 {
+	char smer[3];
 	while (STRIP_CURRENT_RED != mozne_barve.barvni_ptr[BARVA][0] || STRIP_CURRENT_GREEN != mozne_barve.barvni_ptr[BARVA][1] || STRIP_CURRENT_BLUE != mozne_barve.barvni_ptr[BARVA][2]) //Trenutna razlicna od zeljene
 	{
-		char smer[3] = {0, 0, 0};
 		mozne_barve.barvni_ptr[BARVA][0] >= STRIP_CURRENT_RED	? smer[0] = 1 : smer[0] = -1;
 		mozne_barve.barvni_ptr[BARVA][1] >= STRIP_CURRENT_GREEN? smer[1] = 1 : smer[1] = -1;
 		mozne_barve.barvni_ptr[BARVA][2] >= STRIP_CURRENT_BLUE	? smer[2] = 1 : smer[2] = -1;
@@ -90,16 +87,16 @@ void strip_mode_CHANGE(const char ukaz[])
 		STRIP_MODE = NORMAL_FADE;
 	else
 		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
-#if save_strip_mode		
-	EEPROM.pisi(strip_mode_addr, STRIP_MODE);
-#endif	
+	
+	EEPROM.pisi(STRIP_MODE, strip_mode_addr);
+
 }
 
 void mic_mode_CHANGE()
 {
 	MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;
 	if (MIC_MODE == AVERAGE_VOLUME)
-		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 2, &audio_system.handle_average_volume);
+		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 3, &audio_system.handle_average_volume);
 	else
 		deleteTASK(&audio_system.handle_average_volume);
 }
@@ -108,6 +105,7 @@ void stripOFF()
 {
 	holdTASK(&audio_system.handle_audio_system);
 	deleteTASK(&audio_system.handle_active_strip_mode);	
-	brightDOWN(10);
+	delayFREERTOS(1);
+	brightDOWN(15);
 }
 

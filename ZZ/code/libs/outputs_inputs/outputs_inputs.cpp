@@ -73,12 +73,11 @@ void pwmOFF(uint8_t pin, char port)
 
 unsigned short readANALOG(uint8_t pin)
 {
-	taskENTER_CRITICAL();	
+	while (ADCSRA & (1 << ADSC)); //Dokler se bit ne resetira
 	ADMUX = (1 << REFS0) | pin;
 	ADCSRA |= (1 << ADSC); //Start konverzija
 	while (ADCSRA & (1 << ADSC)); //Dokler se bit ne resetira
 	ADMUX &= ~(pin);
-	taskEXIT_CRITICAL();
 	return ADC;
 }
 

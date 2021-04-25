@@ -48,7 +48,6 @@ enum enum_MIC_MODES
 {
 	AVERAGE_VOLUME,
 	POTENCIOMETER,
-	FREQUENCY,
 	end_mic_modes
 };
 	
@@ -56,8 +55,8 @@ enum enum_MIC_MODES
  struct struct_AUDIO_SYS
 {
 	unsigned short strip_mode = NORMAL_FADE;
-	short current_color[3] = {0, 0, 0};
-	short current_brightness = 0;
+	signed short current_color[3] = {0, 0, 0};
+	signed short current_brightness = 0;
 	unsigned short mic_mode = POTENCIOMETER;
 	unsigned short average_volume = 2048;
 	

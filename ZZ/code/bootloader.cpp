@@ -4,6 +4,7 @@
 #include "settings.h"
 #include "global.h"
 #include "libs/EEPROM/EEPROM.h"
+#include "libs/outputs_inputs/outputs_inputs.h"
 #include "audio-visual/includes/audio.h"
 /************************************************************************/
 /*						      TASK PROTOS                               */
@@ -33,7 +34,9 @@ int main()
 	/*								SETUP ADC                               */
 	/************************************************************************/
 	ADMUX   = (1 << REFS0);										// Izberi
-	ADCSRA |= (1 << ADEN);				                        // Vklop adc in zacetek konverzije
+	ADCSRA |= (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1);				                        // Vklop adc in zacetek konverzije
+	ADCSRB = 0;
+	DIDR0 = 0xFF;
 	ADCSRA |= (1 << ADSC);
 	/************************************************************************/
 	/*							  SETUP OTHER                               */
@@ -44,17 +47,17 @@ int main()
 	/************************************************************************/
 	/*							  SETUP WATCHDOG                            */
 	/************************************************************************/
-//	WDTCSR = 0x1 << WDIE | 0x1 << WDP2 | 0x1 << WDP1;
-	
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
-
-	xTaskCreate(power, "Power", 64, NULL, 1, NULL);
-	xTaskCreate(zaslon, "display", 64, NULL, 1, NULL);
-	xTaskCreate(polnjenje, "charing", 64, NULL, 1, NULL);
-	xTaskCreate(settings_UI, "settings_ui", 64, NULL, 2, NULL);
-	xTaskCreate(audio_visual, "audio_system", 64, NULL, 1, NULL);
+	
+	readANALOG(0);
+	
+	xTaskCreate(power, "Power", 128, NULL, 1, NULL);
+	xTaskCreate(zaslon, "display", 128, NULL, 1, &handle_capacity_display);
+	xTaskCreate(polnjenje, "charing", 128, NULL, 1, NULL);
+	xTaskCreate(settings_UI, "settings_ui", 128, NULL, 3, NULL);
+	xTaskCreate(audio_visual, "audio_system", 128, NULL, 3, &audio_system.handle_audio_system);
 	
 	vTaskStartScheduler();
 	return 0;

@@ -43,15 +43,15 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		{
 		case POTENCIOMETER:
 			audio_system.mikrofon_detect = readANALOG(mic_pin) > audio_system.ref_glasnost; //Gleda ce je vrednost mikrofona nad referencno in se sprozi
-			if (audio_system.mic_ref_timer.vrednost() > 3000) // Posodobi vsako sekundo
+			if (audio_system.mic_ref_timer.vrednost() > 1000) // Posodobi vsako sekundo
 			{
 				audio_system.mic_ref_timer.ponastavi();
-				audio_system.ref_glasnost = readANALOG(mic_ref_pin); // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
+				audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 350/1023 + 255; // Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 			}
 			break;
 			
 		case AVERAGE_VOLUME:
-			audio_system.mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 60);
+			audio_system.mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + 65);
 			break;
 		}
 		
@@ -100,7 +100,7 @@ void normal_fade_task(void *BARVA) //Prizig na barbi in pocasen izklop
 {
 	STRIP_CURRENT_BRIGHT = 255;
 	set_stripCOLOR(*((uint8_t*)BARVA));
-	brightDOWN(5);
+	brightDOWN(10);
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
@@ -109,7 +109,7 @@ void inverse_normal_fade_task(void *BARVA){
 	
 	STRIP_CURRENT_BRIGHT = 0;
 	set_stripCOLOR( *( (uint8_t*) BARVA ) );
-	brightUP(20);	
+	brightUP(10);	
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
@@ -117,7 +117,7 @@ void inverse_normal_fade_task(void *BARVA){
 void color_fade_task(void *BARVA) //Fade iz ene barve v drugo
 {
 	STRIP_CURRENT_BRIGHT = 255;
-	colorSHIFT(*(uint8_t*)BARVA, 4); //prehod iz ene barve v drugo
+	colorSHIFT(*(uint8_t*)BARVA, 5); //prehod iz ene barve v drugo
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
@@ -126,8 +126,8 @@ void breathe_fade_task(void *BARVA)
 {
 	
 	set_stripCOLOR(*((uint8_t*)BARVA));
-	brightUP(10);
-	brightDOWN(10);
+	brightUP(5);
+	brightDOWN(5);
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
