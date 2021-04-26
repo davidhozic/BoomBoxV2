@@ -2,7 +2,7 @@
 #include "avr/io.h"
 #include "castimer/castimer.h"
 #include "global.h"
-
+#include <stdio.h>
 
 bool class_VHOD::vrednost()
 {
@@ -67,6 +67,6 @@ class_VHOD::class_VHOD(unsigned char pin, char port, char default_state)
 {
 	this->port = port;
 	this->pin = pin;
-	writeBIT(status_register, VHOD_REG_DEFAULT_STATE, default_state);
 	status_register = 0;
+	writeBIT(status_register, VHOD_REG_DEFAULT_STATE, default_state);
 }

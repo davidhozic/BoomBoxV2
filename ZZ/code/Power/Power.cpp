@@ -19,8 +19,6 @@ void Shutdown();
 void Power_UP();
 void audio_visual();
 void spanje();
-void watchdog_on();
-void watchdog_off();
 void external_power_switch_ev(class_TIMER* stikalo_on_time);
 void internal_power_switch_ev(class_TIMER* stikalo_on_time);
 /************************************************************************/
@@ -33,25 +31,31 @@ void power(void *paramOdTaska)
 	 class_TIMER stikaloOFFtime;
 	 class_VHOD stikalo(1, 'K', 0);
 	 class_TIMER stikalo_on_time;
-	
-	
+	 volatile short switch_voltage_test = 0; 
+
 	while (true)
 	{ 
 		/************************************************************************/
 		/*							VOLTAGE READING                             */
 		/************************************************************************/
-
 		if (VOLT_timer.vrednost() > 500)
 		{
 			Hardware.battery_voltage = readANALOG(vDIV_pin) *	(double) adc_milivolt_ref/1023.00;
+			
+			switch_voltage_test = readANALOG(9) * 5.00/1023;
+			if (switch_voltage_test > 1.5 && switch_voltage_test < 3)	// Checks if switch voltage is above 1.5V and below 3V (testing hardware error) TODO: remove if error does not reproduce
+			{
+				writeBIT(Hardware.error_reg, HARDWARE_ERROR_REG_SWITCH_FAIL, 1);
+				Shutdown();
+			}
+			
 			VOLT_timer.ponastavi();
 		}
-			
-			wdt_reset();												// Refresh Watchdog
 		/************************************************************************/
-		/*								POWER UP/SHUTDOWN                       */
+		/*							POWER UP/SHUTDOWN					        */
 		/************************************************************************/
-		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !readBIT(Hardware.status_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL) && stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 100 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
+		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && Hardware.error_reg &&
+		 stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 250 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 		}
@@ -62,7 +66,7 @@ void power(void *paramOdTaska)
 			{
 				Shutdown();
 			}
-			writeBIT(Hardware.status_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL, 0);
+			Hardware.error_reg = 0;
 			stikalo_on_time.ponastavi();		
 		}
 		
@@ -75,8 +79,6 @@ void power(void *paramOdTaska)
 			spanje();
 		}
 		
-		
-
 		
 		/*************************************************************************************/
 		/*									 POWER SWITCH						             */
@@ -93,27 +95,27 @@ void power(void *paramOdTaska)
 		}
 
 		/*************************************************************************************/
-		
-		
-		delayFREERTOS(100);
+		wdt_reset();
+
+		delayFREERTOS(200);
 	}
 }
 
 void Shutdown()
 {
-
+	stripOFF();
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
-	STRIP_MODE = enum_STRIP_MODES::STRIP_OFF;
 }
 
 void Power_UP()
 {
-	STRIP_MODE = EEPROM.beri(strip_mode_addr);
+	stripON();
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
+	delayFREERTOS(200);
 }
 
 
@@ -145,7 +147,9 @@ void bujenje()
 	PCIFR = 0;
 	PCMSK2 = 0;
 	_delay_ms(200);
-	wdt_enable(WDTO_2S);
+	wdt_enable(watchdog_time);
+	WDTCSR |= (1 << WDIE);
+	
 }
 
 void spanje()

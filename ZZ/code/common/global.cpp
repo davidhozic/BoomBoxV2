@@ -14,7 +14,6 @@ class_VHOD napajalnik(_21VPSU_pin, _21VPSU_port, 0);
 /*					          GLOBAL  STRUCTURES                        */
 /************************************************************************/
 struct_HARDWARE Hardware;
-TaskHandle_t handle_capacity_display = NULL;
 /************************************************************************/
 /*						SAFE FREERTOS FUNCTIONS                         */
 /************************************************************************/
@@ -37,7 +36,6 @@ void deleteTASK(TaskHandle_t* task)
 		vTaskDelete(*task);
 		*task = NULL;
 	}
-	delayFREERTOS(1);
 }
 
 

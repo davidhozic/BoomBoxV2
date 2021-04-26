@@ -13,43 +13,43 @@ class_TIMER LCD_timer;
 
 void zaslon(void *paramOdTaska)
 {
-    while (1)
-    {
-        if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN) || napajalnik.vrednost())
-        {
-            if (napajalnik.vrednost() == 0)
-            {
-                if (LCD_timer.vrednost() >= 9000 || !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
-                {
-                    LCD_timer.ponastavi();
-					writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
-                }
-                else if (LCD_timer.vrednost() > 6000)
-                { //Prižig vsakih 6s za 3s, če zunanje napajanje ni priključeno
-                    writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
-                }
-            }
-
-            else if (readBIT(Hardware.status_reg,HARDWARE_STATUS_REG_CHARGING_EN))
-            {                     //Če je zunanje napajanje priključeno in baterije niso napolnjene, zaslon utripa
-                delayFREERTOS(500); //1Hz utripanje
-                toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
-                LCD_timer.ponastavi();
-            }
-            else // Ce je napajalnik vkljucen in se ne polni, potem 3s gori
-            {
-                writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 1);
-                delayFREERTOS(5000);
-				writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
-				writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN, 0);
-				holdTASK(&handle_capacity_display);
-            }
-        }
-        else
-        {
-            writeOUTPUT(BAT_LCD_pin,BAT_LCD_port, 0);
-        }
-        delayFREERTOS(15);
-		//END WHILE
-    }
+	delayFREERTOS(1000);
+	while(1)
+	{
+		switch(napajalnik.vrednost())
+		{
+			case 1:
+				if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN))		/*	Charging is enabled -> flash lcd  */
+				{
+					toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
+					delayFREERTOS(500);												
+				}
+				else if (napajalnik.risingEdge())		/*	Rising edge resets only after the function call or input going to 0  */
+				{				
+					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);		
+					delayFREERTOS(4000);
+					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+				}
+			break;
+			
+			case 0:
+				if ( (Hardware.status_reg >> HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN) & 0x1)
+				{
+					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+					delayFREERTOS(3000);
+					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
+					delayFREERTOS(1000);
+				}
+				
+				else
+				{
+					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+				}
+			break;	
+		}
+				
+		delayFREERTOS(100);
+		// END WHILE	
+	}
+	// END TASK
 }

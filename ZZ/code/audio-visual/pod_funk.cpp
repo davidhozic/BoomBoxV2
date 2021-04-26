@@ -79,32 +79,21 @@ void set_stripCOLOR(unsigned char barva_index)
 	STRIP_CURRENT_BLUE	= mozne_barve.barvni_ptr[barva_index][2];
 }
 
-void strip_mode_CHANGE(const char ukaz[])
-{
-	if (strcmp (ukaz, "off") == 0)
-		STRIP_MODE = STRIP_OFF;
-	else if (STRIP_MODE == STRIP_OFF)
-		STRIP_MODE = NORMAL_FADE;
-	else
-		STRIP_MODE = (STRIP_MODE + 1) % end_strip_modes;
-	
-	EEPROM.pisi(STRIP_MODE, strip_mode_addr);
-}
-
-void mic_mode_CHANGE()
-{
-	MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;
-	if (MIC_MODE == AVERAGE_VOLUME)
-		xTaskCreate(avg_vol_task, "Average Volume Task", 128,NULL, 3, &audio_system.handle_average_volume);
-	else
-		deleteTASK(&audio_system.handle_average_volume);
-}
 
 void stripOFF()
 {
+	deleteTASK(&audio_system.handle_average_volume);
 	holdTASK(&audio_system.handle_audio_system);
 	deleteTASK(&audio_system.handle_active_strip_mode);	
 	delayFREERTOS(1);
 	brightDOWN(15);
 }
 
+void stripON()
+{
+	resumeTASK(&audio_system.handle_audio_system);
+	if (audio_system.mic_mode == AVERAGE_VOLUME)
+	{	xTaskCreate(avg_vol_task, "avg_vol", 80, NULL, 2, &audio_system.handle_average_volume);}
+	audio_system.strip_mode = EEPROM.beri(strip_mode_address);
+	delayFREERTOS(1);
+}

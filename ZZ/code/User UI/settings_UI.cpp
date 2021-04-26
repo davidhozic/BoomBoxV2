@@ -11,7 +11,7 @@
 /******************************************************************************************/
 /*                                  ELEMENTI V STATE_SCROLL MENIJU                        */
 /******************************************************************************************/
-enum enum_EVENT_MENU_SEEK
+enum enum_MAIN_SCROLL_MENU
 {
 	MENU_TOGGLE_LCD = 0,
 	MENU_STRIP_MODE_CHANGE,
@@ -27,6 +27,7 @@ enum enum_EVENT_STATES
 {
 	STATE_UNSET = 0,
 	STATE_SCROLL,
+	STATE_STRIP_SELECTION,
 	STATE_END //dolzina
 };
 
@@ -59,25 +60,28 @@ struct_settings_UI settings_ui = {
 /******************************************************************************************/
 inline void toggleLCD()			
 {																														
-	writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN));		
-	if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN))			
-	{															         
-		resumeTASK(&handle_capacity_display);
-	}
-	else
-	{
-		holdTASK(&handle_capacity_display);
-		writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
-	}
+	writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN));	
 }
 
 
-inline void showSEEK(uint8_t barva)  // Prikaze element v seeku ce je STATE_SCROLL aktiven
+inline void showSEEK(struct_settings_UI *control_block)  // Prikaze element v seeku ce je STATE_SCROLL aktiven
 {		
-	STRIP_CURRENT_BRIGHT = 255;				
-	colorSHIFT(barva, 5);		
+	switch(control_block->state)
+	{
+		case STATE_SCROLL:
+			STRIP_CURRENT_BRIGHT = 255;
+			colorSHIFT(control_block->menu_seek, 5);
+		break;
+		
+		case STATE_STRIP_SELECTION:
+			if (audio_system.handle_active_strip_mode == NULL)
+			{
+				deleteTASK(&audio_system.handle_active_strip_mode);
+				xTaskCreate(audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, &audio_system.barva_selekt,4,&audio_system.handle_active_strip_mode);
+			}
+		break;
+	}
 }
-
 inline void exit_scroll()
 {
 	settings_ui.state = STATE_UNSET;
@@ -87,8 +91,8 @@ inline void exit_scroll()
 	settings_ui.state_exit_timer.ponastavi();
 	STRIP_CURRENT_BRIGHT = 255;
 	brightDOWN(15);
-	delayFREERTOS(100);
-	resumeTASK(&audio_system.handle_audio_system);
+	delayFREERTOS(1000);
+	stripON();
 }
 /*******************************************************************************************/
 
@@ -120,11 +124,11 @@ void settings_UI(void *paramOdTaska)
 					settings_ui.state_exit_timer.ponastavi();
 					settings_ui.hold_timer.ponastavi();
 					flashSTRIP();
-					showSEEK(settings_ui.menu_seek);
+					showSEEK(&settings_ui);
 					delayFREERTOS(200);
 					settings_ui.long_press = true;
 				}
-
+				
 				else if (!settings_ui.SW2.vrednost())
 				{
 					settings_ui.hold_timer.ponastavi();
@@ -140,13 +144,14 @@ void settings_UI(void *paramOdTaska)
 					exit_scroll();
 				}
 				
-				if (settings_ui.SW2.vrednost())
+				else if (settings_ui.SW2.vrednost())
 				{
 					settings_ui.hold_time = settings_ui.hold_timer.vrednost();	// stopa cas pritiska
 					settings_ui.state_exit_timer.ponastavi();
 					if (settings_ui.hold_time > 1000)
 					{
 						settings_ui.long_press = true;
+						settings_ui.hold_timer.ponastavi();
 						switch (settings_ui.menu_seek)	// Glede na trenutni menu seek nekaj izvede
 						{
 							case MENU_TOGGLE_LCD:
@@ -154,19 +159,22 @@ void settings_UI(void *paramOdTaska)
 							break;
 							
 							case MENU_STRIP_MODE_CHANGE:
-								strip_mode_CHANGE("");
+								settings_ui.state = STATE_STRIP_SELECTION;
+								 audio_system.strip_mode == STRIP_OFF ? settings_ui.menu_seek = 0 : settings_ui.menu_seek = audio_system.strip_mode;
+								brightDOWN(20);
+								delayFREERTOS(500);
+								continue;
 							break;
 							
 							case MENU_STRIP_DISABLE:
-								strip_mode_CHANGE("off");
+								STRIP_MODE = STRIP_OFF;
 							break;
 							
 							case MENU_MIC_MODE_CHANGE:
-								mic_mode_CHANGE();
+								MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;
 							break;
 						}
 						exit_scroll();
-						settings_ui.hold_timer.ponastavi();
 					}
 				}
 				else if (settings_ui.hold_time > 0)
@@ -175,16 +183,51 @@ void settings_UI(void *paramOdTaska)
 					if (settings_ui.hold_time > 20 && settings_ui.hold_time < 500) //Kratek pritisk
 					{
 						settings_ui.menu_seek = (settings_ui.menu_seek + 1) % MENU_end;
-						showSEEK(settings_ui.menu_seek);
+						showSEEK(&settings_ui);
 					}
 					settings_ui.hold_timer.ponastavi();
 					settings_ui.hold_time = 0;
 				}
 				break;
 				/*****	END CASE *****/
+				
+				case STATE_STRIP_SELECTION:
+				
+					if (settings_ui.state_exit_timer.vrednost() > 6000)
+					{
+						exit_scroll();
+					}
+				
+					else if (settings_ui.SW2.vrednost() && !settings_ui.long_press)
+					{
+						settings_ui.state_exit_timer.ponastavi();
+						settings_ui.hold_time = settings_ui.hold_timer.vrednost();
+						
+						if (settings_ui.hold_time >= 1000)
+						{
+							settings_ui.long_press = true;
+							audio_system.strip_mode = settings_ui.menu_seek;
+							exit_scroll();			
+						}
+						
+						else if (settings_ui.hold_time > 0)
+						{
+							if (settings_ui.hold_time > 50 && settings_ui.hold_time < 500)
+							{
+								settings_ui.menu_seek = (settings_ui.menu_seek + 1) % enum_STRIP_MODES::end_strip_modes;
+								deleteTASK(&audio_system.handle_active_strip_mode);
+							}
+							settings_ui.hold_time = 0;
+							settings_ui.hold_timer.ponastavi();
+						}
+				
+						showSEEK(&settings_ui);		
+					}
+					
+				break;
 			}
 		}
-		delayFREERTOS(10);
+		delayFREERTOS(5);
 		// END WHILE
 	}
 	// TASK END

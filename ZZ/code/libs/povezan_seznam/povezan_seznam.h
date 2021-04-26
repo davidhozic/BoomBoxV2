@@ -71,18 +71,16 @@ public:
         nov->naslednji = nullptr;
         nov->podatek = vrednost;
         glava = nov;
-        pojdi_zacetek();
         count++;
     }
 
     tip &operator[](unsigned short index)
     {
-        vozlisce_data_obj_t *temp = glava;
-
+		pojdi_zacetek();
         for (unsigned short ind = 0; ind < index; ind++)
         {
-            temp = temp->naslednji;
+            glava = glava->naslednji;
         }
-        return (temp->podatek);
+        return (glava->podatek);
     }
 };

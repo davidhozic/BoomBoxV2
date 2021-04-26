@@ -8,20 +8,18 @@
 
 enum enum_HARDWARE_STATUS_REGISTER
 {
-	/************************************************************************/
-	/*				  HARDWARE STRUCT STATUS REGISTER BITS                  */
-	/************************************************************************/
-	
-		HARDWARE_STATUS_REG_POWERED_UP = 0,
-		HARDWARE_STATUS_REG_EXTERNAL_POWER,
-		HARDWARE_STATUS_REG_CHARGING_FINISHED,
-		HARDWARE_STATUS_REG_CHARGING_EN,
-		HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN
+
+	HARDWARE_STATUS_REG_POWERED_UP = 0,
+	HARDWARE_STATUS_REG_EXTERNAL_POWER,
+	HARDWARE_STATUS_REG_CHARGING_FINISHED,
+	HARDWARE_STATUS_REG_CHARGING_EN,
+	HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN
 };
 
 enum enum_HARDWARE_ERROR_REGISTER
 {
-HARDWARE_ERROR_REG_WATCHDOG_FAIL = 0
+	HARDWARE_ERROR_REG_WATCHDOG_FAIL = 0,
+	HARDWARE_ERROR_REG_SWITCH_FAIL
 };								
 
 
@@ -33,19 +31,19 @@ HARDWARE_ERROR_REG_WATCHDOG_FAIL = 0
 /****************************************************************************************************************************/
 /*													GLOBAL OBJECTS													        */
 /****************************************************************************************************************************/
-#ifdef __cplusplus
+
 extern class_VHOD napajalnik;
-#endif
+
 /****************************************************************************************************************************/
 /*													GLOBAL STRUCTS															*/
 /****************************************************************************************************************************/
 
-typedef struct
+struct struct_HARDWARE
 {		
 	unsigned char  status_reg	   = 0;
 	unsigned char  error_reg	   = 0;
 	unsigned short battery_voltage = 0;
-}struct_HARDWARE;
+};
 
 extern struct_HARDWARE Hardware;
 

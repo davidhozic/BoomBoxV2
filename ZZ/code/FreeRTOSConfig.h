@@ -40,12 +40,11 @@
 
 #define port_SLICING_USE_TIMERS		1   // If this option is off, WDT will  be used 
 #define portUSE_TIMER0				1	// Select which timer you want to use for RTOS tick generation (portUSE_TIMER0:5)
-#define portUSE_WDTO			 WDTO_15MS	
 /************************************************/
 
 	
 #define configMAX_PRIORITIES 4				// Maximum priority each task can have 
-#define configMINIMAL_STACK_SIZE 256		// Stack size for the idle task
+#define configMINIMAL_STACK_SIZE 128		// Stack size for the idle task
 #define configMAX_TASK_NAME_LEN 8			// Max length of the task name
 #define configUSE_16_BIT_TICKS 1			// Size of the Tick_t type, if 0, will be 32 bit, if 1 then the performance will be improved on 16 bit/8 bit CPUs (but timers will bi limited to max 2^16 -1 ticks)
 #define configIDLE_SHOULD_YIELD 1			// If this option is 1, the idle task and next task in line will share one time slice, if 0, all tasks will have same time slices
@@ -97,7 +96,7 @@
 #define INCLUDE_vTaskDelay 1
 #define INCLUDE_xTaskGetSchedulerState 0
 #define INCLUDE_xTaskGetCurrentTaskHandle 0
-#define INCLUDE_uxTaskGetStackHighWaterMark 0
+#define INCLUDE_uxTaskGetStackHighWaterMark 1
 #define INCLUDE_xTaskGetIdleTaskHandle 1
 #define INCLUDE_eTaskGetState 1
 #define INCLUDE_xEventGroupSetBitFromISR 0
@@ -105,6 +104,7 @@
 #define INCLUDE_xTaskAbortDelay 0
 #define INCLUDE_xTaskGetHandle 0
 #define INCLUDE_xTaskResumeFromISR 0
+
 
 #define pdMS_TO_TICKS(xTimeInMs) ((TickType_t)(((uint32_t)(xTimeInMs) * (uint32_t)configTICK_RATE_HZ) / (uint32_t)1000))
 

@@ -25,7 +25,7 @@
 
 	/************************ FUNCTION MACROS *************************/
 
-#define brightUP(cas_na_krog)				    		brightnessFADE(1, cas_na_krog);
+#define brightUP(cas_na_krog)				    			brightnessFADE(1, cas_na_krog);
 #define brightDOWN(cas_na_krog)							brightnessFADE(-1, cas_na_krog);
 
 
@@ -37,7 +37,6 @@
 enum enum_STRIP_MODES
 {
 	NORMAL_FADE,
-	COLOR_FADE,
 	BREATHE_FADE,
 	end_strip_modes,
 	STRIP_OFF
@@ -50,53 +49,59 @@ enum enum_MIC_MODES
 	end_mic_modes
 };
 	
-	
- struct struct_AUDIO_SYS
-{
-	unsigned short strip_mode = NORMAL_FADE;
-	signed short current_color[3] = {0, 0, 0};
-	signed short current_brightness = 0;
-	unsigned short mic_mode = POTENCIOMETER;
-	unsigned short average_volume = 2048;
-	
-	class_TIMER lucke_filter_timer;
-	class_TIMER mic_ref_timer;
-	class_TIMER average_v_timer;
-	
-	uint8_t barva_selekt = 0;
-	bool mikrofon_detect = 0;
-	uint16_t ref_glasnost = 2048;
-	
-	TaskHandle_t handle_average_volume = NULL;
-	TaskHandle_t handle_active_strip_mode = NULL;
-	TaskHandle_t handle_audio_system;
-};
-
-extern struct_AUDIO_SYS audio_system;
-
-
 /*********************************************/
 /*         Prototipi pomoznih funkcij        */
 /*********************************************/
 void updateSTRIP();
 void stripOFF();
+void stripON();
 void colorSHIFT(uint8_t BARVA, uint8_t cas_krog);
 void brightnessFADE(char smer, uint8_t cas_krog);
 void flashSTRIP();
 void set_stripCOLOR(unsigned char barva_index);
-void mic_mode_CHANGE();
-void strip_mode_CHANGE(const char ukaz[]);
 /*********************************************/
+
 
 /*********************************************/
 /*             Prototipi taskov              */
 /*********************************************/
-void normal_fade_task(void* BARVA);
-void inverse_normal_fade_task(void* BARVA);
-void color_fade_task(void* BARVA);
-void breathe_fade_task(void* BARVA);
+void normal_fade_task(void *input);
+void breathe_fade_task(void *input);
 void avg_vol_task(void* BARVA);
 /*********************************************/
+
+	
+ struct struct_AUDIO_SYS
+{
+	/***  Strip parameters   ***/
+	uint16_t strip_mode;		// Current strip mode
+	uint16_t mic_mode;		// Current spike trigger detection mode
+
+	/*** Strip current state ***/
+	int16_t current_color[3];	// Current RGB color of the strip
+	int16_t current_brightness;			// Current brightness level of the strip
+	
+	/***		Timers		 ***/
+	class_TIMER lucke_filter_timer;			// Timer that prevents strip from triggering too fast after last trigger (filter timer)
+	class_TIMER mic_ref_timer;				// Timer that delays reading in potentiometer spike trigger mode
+	class_TIMER average_v_timer;			// Timer that delays logging of max measured volume voltage 
+	
+	/****   Strip lightup	***/		
+	uint8_t barva_selekt;				// Index of color that strip will turn on
+	bool mikrofon_detect;				// Is set to 1 if spike is detected and then strip is turned on
+	uint16_t ref_glasnost;			// Variable that stores potentiometer setting of minimal spike trigger level
+	uint16_t average_volume;			// Variable that stores the average volume
+
+	/****   Task handles	***/			
+	TaskHandle_t handle_average_volume;	
+	TaskHandle_t handle_active_strip_mode;
+	TaskHandle_t handle_audio_system;
+	
+	/***	Strip mode functions ***/
+	void (*array_strip_modes[2])(void*);	
+};
+extern struct_AUDIO_SYS audio_system;
+
 
 
 #endif

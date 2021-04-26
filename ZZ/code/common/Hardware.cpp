@@ -30,9 +30,10 @@ ISR(PCINT2_vect)												// SLEEP ISR
 ISR(WDT_vect)
 {
 	cli();
-	wdt_disable();
+	MCUSR &= ~(1 << WDRF); 
 	Shutdown();
-	writeBIT(Hardware.error_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL, 1); // Watchdog got triggered.
-	wdt_enable(WDTO_2S);
+	writeBIT(Hardware.error_reg, HARDWARE_ERROR_REG_WATCHDOG_FAIL, 1);		// Watchdog got triggered.
+	wdt_enable(watchdog_time);
+	WDTCSR |= (1 << WDIE);
 	sei();
 }

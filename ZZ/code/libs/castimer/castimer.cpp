@@ -21,7 +21,11 @@ Vozlisce <class_TIMER*> timer_list;
 unsigned long class_TIMER::vrednost()
 {
 	timer_enabled = true;
+#ifdef DEBUG
+	return timer_value*1000; 
+#else
 	return timer_value;
+#endif
 }
 
 

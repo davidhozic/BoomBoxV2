@@ -8,17 +8,18 @@
 /************************************************************************/
 /*					  Safe FreeRTOS functions/macros		            */
 /************************************************************************/
-#define delayFREERTOS(x)					 vTaskDelay(x/portTICK_PERIOD_MS)	//pretvori ms v FreeRTOS ticke
+
+#ifndef DEBUG
+	#define delayFREERTOS(x)	vTaskDelay(x/portTICK_PERIOD_MS);
+#else
+	#include <math.h>
+	#define delayFREERTOS(x)	vTaskDelay(		ceil (	x/(portTICK_PERIOD_MS*2000) 		)		)
+#endif	
 
 void holdTASK(TaskHandle_t* task);
 void resumeTASK(TaskHandle_t* task);
 void deleteTASK(TaskHandle_t* task);
 
-/************************************************************************/
-/*					      Global FreeRTOS structs	                    */
-/************************************************************************/
-extern TaskHandle_t handle_capacity_display;
-/************************************************************************/
 	
 
 #endif

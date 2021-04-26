@@ -13,6 +13,7 @@ enum enum_VHOD_STATUS_REGISTER
 };
 
 
+
 class class_VHOD // pin, port, stanje ko ni pritisnjen
 {
 private:

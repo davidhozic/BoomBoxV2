@@ -34,32 +34,32 @@ int main()
 	/************************************************************************/
 	/*								SETUP ADC                               */
 	/************************************************************************/
-	ADMUX   = (1 << REFS0);										// Izberi
-	ADCSRA |= (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1);				                        // Vklop adc in zacetek konverzije
+	ADMUX   = (1 << REFS0);																		
+	ADCSRA = (1 << ADPS0) | (1 << ADPS2);				                      
 	ADCSRB = 0;
+	ADCSRA |= (1 << ADEN);
 	DIDR0 = 0xFF;
 	ADCSRA |= (1 << ADSC);
 	/************************************************************************/
-	/*							  SETUP OTHER                               */
+	/*							  SETUP OTHER                               */ 
 	/************************************************************************/
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_eeprom_addr));
+	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_stat_addr));		/* Read charging state */
+	
+	/*	Setup watchdog	 */
+	wdt_enable(watchdog_time);
+	WDTCSR |= (1 << WDIE);
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
+	xTaskCreate(power, "Power", 100, NULL, 1, NULL);
+	xTaskCreate(zaslon, "display", 100, NULL, 1, NULL);
+	xTaskCreate(polnjenje, "charing", 100, NULL, 1, NULL);
+	xTaskCreate(settings_UI, "settings_ui", 100, NULL, 3, NULL);
+	xTaskCreate(audio_visual, "audio_system", 100, NULL, 3, &audio_system.handle_audio_system);
 	
-	readANALOG(0);
-	
-	xTaskCreate(power, "Power", 128, NULL, 1, NULL);
-	xTaskCreate(zaslon, "display", 128, NULL, 1, &handle_capacity_display);
-	xTaskCreate(polnjenje, "charing", 128, NULL, 1, NULL);
-	xTaskCreate(settings_UI, "settings_ui", 128, NULL, 3, NULL);
-	xTaskCreate(audio_visual, "audio_system", 128, NULL, 3, &audio_system.handle_audio_system);
-	_delay_ms(50);
-	
-	/************************************************************************/
-	/*							   SETUP WATCHDOG                           */
-	/************************************************************************/
-	wdt_enable(WDTO_2S);
+	#ifndef DEBUG
+	 _delay_ms(25);
+	#endif
 	/************************************************************************/
 	/*								START TASKS                             */
 	/************************************************************************/
