@@ -7,6 +7,7 @@
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "audio-visual/includes/audio.h"
 #include <util/delay.h>
+#include "common/inc/watchdog_functions.h"
 /************************************************************************/
 /*						      TASK PROTOS                               */
 /************************************************************************/
@@ -17,7 +18,7 @@ void polnjenje(void *paramOdTaska);
 void settings_UI(void *paramOdTaska);
 
 int main()
-{	
+ {	
 	/************************************************************************/
 	/*						  SET DATA DIRECTION REGISTERS                  */
 	/************************************************************************/
@@ -44,10 +45,7 @@ int main()
 	/*							  SETUP OTHER                               */ 
 	/************************************************************************/
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_stat_addr));		/* Read charging state */
-	
-	/*	Setup watchdog	 */
-	wdt_enable(watchdog_time);
-	WDTCSR |= (1 << WDIE);
+
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
@@ -56,10 +54,16 @@ int main()
 	xTaskCreate(polnjenje, "charing", 100, NULL, 1, NULL);
 	xTaskCreate(settings_UI, "settings_ui", 100, NULL, 3, NULL);
 	xTaskCreate(audio_visual, "audio_system", 100, NULL, 3, &audio_system.handle_audio_system);
-	
-	#ifndef DEBUG
-	 _delay_ms(25);
-	#endif
+	holdTASK(&audio_system.handle_audio_system);
+#ifndef DEBUG
+	_delay_ms(25);
+#endif
+	/************************************************************************/
+	/*							   Setup watchdog							*/
+	/************************************************************************/
+	disable_watchdog();
+	enable_watchdog(watchdog_time);
+
 	/************************************************************************/
 	/*								START TASKS                             */
 	/************************************************************************/

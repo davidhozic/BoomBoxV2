@@ -96,7 +96,6 @@ void power(void *paramOdTaska)
 
 		/*************************************************************************************/
 		wdt_reset();
-
 		delayFREERTOS(200);
 	}
 }
@@ -111,9 +110,9 @@ void Shutdown()
 
 void Power_UP()
 {
-	stripON();
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
+	stripON();
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
 	delayFREERTOS(200);
 }

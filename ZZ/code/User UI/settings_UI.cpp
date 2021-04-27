@@ -77,6 +77,7 @@ inline void showSEEK(struct_settings_UI *control_block)  // Prikaze element v se
 			if (audio_system.handle_active_strip_mode == NULL)
 			{
 				deleteTASK(&audio_system.handle_active_strip_mode);
+				delayFREERTOS(2);
 				xTaskCreate(audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, &audio_system.barva_selekt,4,&audio_system.handle_active_strip_mode);
 			}
 		break;
@@ -91,7 +92,7 @@ inline void exit_scroll()
 	settings_ui.state_exit_timer.ponastavi();
 	STRIP_CURRENT_BRIGHT = 255;
 	brightDOWN(15);
-	delayFREERTOS(1000);
+	delayFREERTOS(250);
 	stripON();
 }
 /*******************************************************************************************/

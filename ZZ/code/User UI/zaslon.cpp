@@ -13,41 +13,49 @@ class_TIMER LCD_timer;
 
 void zaslon(void *paramOdTaska)
 {
-	delayFREERTOS(1000);
 	while(1)
 	{
-		switch(napajalnik.vrednost())
+		
+		if (Hardware.error_reg)
 		{
-			case 1:
+			delayFREERTOS(500);
+			
+		}
+		else
+		{		
+			if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
+			{
 				if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN))		/*	Charging is enabled -> flash lcd  */
 				{
 					toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
-					delayFREERTOS(500);												
+					delayFREERTOS(2000);												
 				}
 				else if (napajalnik.risingEdge())		/*	Rising edge resets only after the function call or input going to 0  */
 				{				
 					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);		
-					delayFREERTOS(4000);
+					delayFREERTOS(2000);
 					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+					delayFREERTOS(6000);
 				}
-			break;
-			
-			case 0:
-				if ( (Hardware.status_reg >> HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN) & 0x1)
+			}
+			else
+			{
+				if ( readBIT(Hardware.status_reg,HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN) )
 				{
 					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
-					delayFREERTOS(3000);
+					delayFREERTOS(5000);
 					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
 					delayFREERTOS(1000);
 				}
-				
+			
 				else
 				{
 					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
 				}
-			break;	
+			}
 		}
-				
+		/***********************************************************************************************************************/
+		
 		delayFREERTOS(100);
 		// END WHILE	
 	}

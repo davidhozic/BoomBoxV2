@@ -85,7 +85,7 @@ void stripOFF()
 	deleteTASK(&audio_system.handle_average_volume);
 	holdTASK(&audio_system.handle_audio_system);
 	deleteTASK(&audio_system.handle_active_strip_mode);	
-	delayFREERTOS(1);
+	delayFREERTOS(10);
 	brightDOWN(15);
 }
 
@@ -95,5 +95,5 @@ void stripON()
 	if (audio_system.mic_mode == AVERAGE_VOLUME)
 	{	xTaskCreate(avg_vol_task, "avg_vol", 80, NULL, 2, &audio_system.handle_average_volume);}
 	audio_system.strip_mode = EEPROM.beri(strip_mode_address);
-	delayFREERTOS(1);
+	delayFREERTOS(10);
 }
