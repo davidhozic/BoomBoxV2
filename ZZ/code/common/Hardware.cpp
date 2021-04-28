@@ -1,17 +1,37 @@
 #include <avr/interrupt.h>
-#include "castimer/castimer.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include <avr/wdt.h>
 #include "common/inc/global.h"
 #include <util/delay.h>
-
+#include "castimer/castimer.h"
+#include "libs/VHOD/Vhod.h"
 /************************************************************************/
 /*								PROTOTYPES                              */
 /************************************************************************/
 void bujenje();
 void Shutdown();
 
+
+/************************************************************************/
+/*						 HARDWARE RELATED FUNCTIONS		                */
+/************************************************************************/
+
+void increment_timers(Vozlisce <class_TIMER*> &timers)
+{
+	for (uint8_t i = 0, length = timers.length(); i < length ;i++)
+	{
+		timers[i]->increment();
+	}
+}
+
+void update_input_objects(Vozlisce <class_VHOD *> &list)	
+{
+	for (uint8_t i = 0, length = list.length(); i < length; i++)
+	{
+		list[i]->vrednost();
+	}
+}
 
 /************************************************************************/
 /*						INTERRUPT SERVICE ROUTINES		                */
@@ -22,8 +42,8 @@ void enable_watchdog(uint8_t setting)
 {
 #ifndef DEBUG
 	asm("wdr");
-	MCUSR &= ~(0x1 << WDRF); 
-	WDTCSR = (1 << WDCE);
+	MCUSR  &= ~(0x1 << WDRF); 
+	WDTCSR =  (1 << WDCE);
 	WDTCSR |= (0x1 << WDIE) | setting;
 #endif
 }
@@ -39,7 +59,8 @@ void disable_watchdog()
 
 
 ISR (TIMER3_COMPA_vect){										// TIMER ISR
-	increment_timers();
+	increment_timers(Hardware.timer_list);
+	update_input_objects(Hardware.input_objects_list);
 }
 
 

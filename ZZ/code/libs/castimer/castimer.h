@@ -1,5 +1,8 @@
 
 #pragma once
+#ifndef SEZNAM_INC
+#include "./povezan_seznam/povezan_seznam.h"
+#endif
 
 
 class class_TIMER
@@ -12,11 +15,10 @@ public:
     unsigned long vrednost();
     void ponastavi();
 	void increment();
-	class_TIMER();
+	class_TIMER(Vozlisce <class_TIMER*> &timer_list);
 };
 
 
-void increment_timers();	
 
 
 

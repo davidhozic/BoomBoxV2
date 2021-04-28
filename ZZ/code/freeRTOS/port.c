@@ -796,12 +796,12 @@ static void prvSetupTimerInterrupt( void )
 			
 	#elif portUSE_TIMER3
 			outputCompare = configCPU_CLOCK_HZ / configTICK_RATE_HZ ;	//Set Output Compare Register value
-			outputCompare /= configTICK_PRESCALER| 1 << WGM32;
+			outputCompare /= configTICK_PRESCALER;
 			outputCompare -= 1;
 				OCR3A = outputCompare;
 				/* Setup clock source and compare match behaviour. */
 				TCCR3A = 0;
-				TCCR3B = portPRESCALER;
+				TCCR3B = portPRESCALER | 1 << WGM32;
 				TIMSK3 = 1 << OCIE3A;
 				#define portSCHEDULER_ISR TIMER3_COMPA_vect	
 				#warning Using TIMER3 for scheduler!

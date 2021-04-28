@@ -2,9 +2,12 @@
 #ifndef GLOBAL_STRUCTS_HEADER
 #define GLOBAL_STRUCTS_HEADER
 #include "settings.h"
+#include "FreeRTOSConfig.h" 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "FreeRTOS_def_decl.h"
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
-
 
 enum enum_HARDWARE_STATUS_REGISTER
 {
@@ -43,6 +46,8 @@ struct struct_HARDWARE
 	unsigned char  status_reg	   = 0;
 	unsigned char  error_reg	   = 0;
 	unsigned short battery_voltage = 0;
+	Vozlisce <class_TIMER*> timer_list;
+	Vozlisce <class_VHOD *> input_objects_list;
 };
 
 extern struct_HARDWARE Hardware;

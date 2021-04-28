@@ -43,8 +43,8 @@
 /************************************************/
 
 	
-#define configMAX_PRIORITIES 4				// Maximum priority each task can have 
-#define configMINIMAL_STACK_SIZE 128		// Stack size for the idle task
+#define configMAX_PRIORITIES 5				// Maximum priority each task can have 
+#define configMINIMAL_STACK_SIZE 256		// Stack size for the idle task
 #define configMAX_TASK_NAME_LEN 8			// Max length of the task name
 #define configUSE_16_BIT_TICKS 1			// Size of the Tick_t type, if 0, will be 32 bit, if 1 then the performance will be improved on 16 bit/8 bit CPUs (but timers will bi limited to max 2^16 -1 ticks)
 #define configIDLE_SHOULD_YIELD 1			// If this option is 1, the idle task and next task in line will share one time slice, if 0, all tasks will have same time slices
@@ -59,7 +59,7 @@
 #define configSUPPORT_STATIC_ALLOCATION 0
 #define configSUPPORT_DYNAMIC_ALLOCATION 1
 #define configAPPLICATION_ALLOCATED_HEAP 0 //	Reserve heap inside program
-#define configTOTAL_HEAP_SIZE			(5096)
+#define configTOTAL_HEAP_SIZE		  (4096)
 
 /* Hook function related definitions. */
 #define configUSE_IDLE_HOOK 0

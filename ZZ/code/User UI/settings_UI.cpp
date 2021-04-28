@@ -1,12 +1,11 @@
+#include "FreeRTOS.h"
+#include "common/inc/global.h"
+#include "../audio-visual/includes/audio.h"
+#include "libs/outputs_inputs/outputs_inputs.h"
+#include <util/delay.h>
+#include <string.h>
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
-#include "FreeRTOS.h"
-#include "../audio-visual/includes/audio.h"
-#include "common/inc/global.h"
-#include <util/delay.h>
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "task.h"
-#include <string.h>
 
 /******************************************************************************************/
 /*                                  ELEMENTI V STATE_SCROLL MENIJU                        */
@@ -41,16 +40,16 @@ struct struct_settings_UI
 	class_VHOD SW2;
 	unsigned short hold_time;
 	bool long_press;
-	class_TIMER SW2_off_timer;
-	class_TIMER state_exit_timer;
-	class_TIMER hold_timer;
+	class_TIMER SW2_off_timer = class_TIMER(Hardware.timer_list);
+	class_TIMER state_exit_timer = class_TIMER(Hardware.timer_list);
+	class_TIMER hold_timer = class_TIMER(Hardware.timer_list);
 };
 
 	
 struct_settings_UI settings_ui = {
 	.state = STATE_UNSET,
 	.menu_seek =  MENU_TOGGLE_LCD,
-	.SW2 = class_VHOD(red_button_pin, red_button_port, 0),
+	.SW2 = class_VHOD(red_button_pin, red_button_port, 0, Hardware.input_objects_list),
 	.hold_time = 0,
 	.long_press = false // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 };
@@ -69,15 +68,14 @@ inline void showSEEK(struct_settings_UI *control_block)  // Prikaze element v se
 	switch(control_block->state)
 	{
 		case STATE_SCROLL:
-			STRIP_CURRENT_BRIGHT = 255;
-			colorSHIFT(control_block->menu_seek, 5);
+			audio_system.current_brightness = 255;
+			audio_system.colorSHIFT(control_block->menu_seek, 5);
 		break;
 		
 		case STATE_STRIP_SELECTION:
 			if (audio_system.handle_active_strip_mode == NULL)
 			{
 				deleteTASK(&audio_system.handle_active_strip_mode);
-				delayFREERTOS(2);
 				xTaskCreate(audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, &audio_system.barva_selekt,4,&audio_system.handle_active_strip_mode);
 			}
 		break;
@@ -88,12 +86,12 @@ inline void exit_scroll()
 	settings_ui.state = STATE_UNSET;
 	settings_ui.menu_seek = MENU_TOGGLE_LCD;
 	settings_ui.long_press = true;
-	flashSTRIP();
+	audio_system.flashSTRIP();
 	settings_ui.state_exit_timer.ponastavi();
-	STRIP_CURRENT_BRIGHT = 255;
+	audio_system.current_brightness = 255;
 	brightDOWN(15);
 	delayFREERTOS(250);
-	stripON();
+	audio_system.stripON();
 }
 /*******************************************************************************************/
 
@@ -119,12 +117,12 @@ void settings_UI(void *paramOdTaska)
 				case STATE_UNSET:
 				if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && settings_ui.hold_timer.vrednost() > 1000)
 				{
-					stripOFF();
+					audio_system.stripOFF();
 					settings_ui.state = STATE_SCROLL;
 					settings_ui.menu_seek = MENU_TOGGLE_LCD;
 					settings_ui.state_exit_timer.ponastavi();
 					settings_ui.hold_timer.ponastavi();
-					flashSTRIP();
+					audio_system.flashSTRIP();
 					showSEEK(&settings_ui);
 					delayFREERTOS(200);
 					settings_ui.long_press = true;
@@ -161,18 +159,18 @@ void settings_UI(void *paramOdTaska)
 							
 							case MENU_STRIP_MODE_CHANGE:
 								settings_ui.state = STATE_STRIP_SELECTION;
-								 audio_system.strip_mode == STRIP_OFF ? settings_ui.menu_seek = 0 : settings_ui.menu_seek = audio_system.strip_mode;
+								settings_ui.menu_seek = NORMAL_FADE;
 								brightDOWN(20);
 								delayFREERTOS(500);
 								continue;
 							break;
 							
 							case MENU_STRIP_DISABLE:
-								STRIP_MODE = STRIP_OFF;
+								audio_system.strip_mode = STRIP_OFF;
 							break;
 							
 							case MENU_MIC_MODE_CHANGE:
-								MIC_MODE = (MIC_MODE + 1) %	end_mic_modes;
+								audio_system.mic_mode = (audio_system.mic_mode + 1) %	end_mic_modes;
 							break;
 						}
 						exit_scroll();
@@ -199,7 +197,7 @@ void settings_UI(void *paramOdTaska)
 						exit_scroll();
 					}
 				
-					else if (settings_ui.SW2.vrednost() && !settings_ui.long_press)
+					else if (settings_ui.SW2.vrednost())
 					{
 						settings_ui.state_exit_timer.ponastavi();
 						settings_ui.hold_time = settings_ui.hold_timer.vrednost();
@@ -226,6 +224,7 @@ void settings_UI(void *paramOdTaska)
 					}
 					
 				break;
+				/*****	END CASE *****/
 			}
 		}
 		delayFREERTOS(5);

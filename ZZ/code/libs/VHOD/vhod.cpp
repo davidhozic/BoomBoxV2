@@ -3,50 +3,55 @@
 #include "castimer/castimer.h"
 #include "global.h"
 #include <stdio.h>
+#include "libs/povezan_seznam/povezan_seznam.h"
+
+
+
+
+
 
 bool class_VHOD::vrednost()
 {
-	if (port <= 'G')
-		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin)   ); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
+	if (port < 'H')
+		curr_state = readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
 	else if (port == 'H')
-		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( PORTH, pin)   );
+		curr_state =  readBIT( PINH, pin);
 	else
-		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, readBIT( *((unsigned char*)&PINJ + 3*(port-'J'))   , pin)   ); 	
+		curr_state = readBIT( *((unsigned char*)&PINJ + 3*(port-'J'))   , pin); 	
 	// END READING OF PORT
 	/************************/
 	
-	if (readBIT(status_register, VHOD_REG_DEFAULT_STATE))																								// If unpressed state is 1, invert to return 0 if unpressed
-		writeBIT(status_register, VHOD_REG_TRENUTNO_STANJE, !readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));	//Inverts current state
+	if (default_state)																// If unpressed state is 1, invert to return 0 if unpressed
+		curr_state =  !curr_state;			//Inverts current state
 
-	if (readBIT(status_register, VHOD_REG_PREJSNJE_STANJE) != readBIT(status_register, VHOD_REG_TRENUTNO_STANJE) && readBIT(status_register, VHOD_REG_TRENUTNO_STANJE))
+	if (prev_state != curr_state && curr_state)
 	{
- 		writeBIT(status_register, VHOD_REG_RISING_EDGE, 1);															// Rising edge = 1	
- 		writeBIT(status_register, VHOD_REG_PREJSNJE_STANJE, readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));	// Previous value = current value
+ 		rising_edge = 1;		
+ 		prev_state = curr_state;
 	}
-	else if (readBIT(status_register, VHOD_REG_PREJSNJE_STANJE) != readBIT(status_register, VHOD_REG_TRENUTNO_STANJE))
+	else if (curr_state != prev_state)
 	{
-		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 1);
-		writeBIT(status_register, VHOD_REG_PREJSNJE_STANJE, readBIT(status_register, VHOD_REG_TRENUTNO_STANJE));
+		falling_edge = 1;
+		prev_state = curr_state;
 	}
 	
-	if (readBIT(status_register, VHOD_REG_TRENUTNO_STANJE) == 0)
+	if (!curr_state)
 	{
-		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
+		rising_edge = 0;
 	}
-	else if(readBIT(status_register, VHOD_REG_TRENUTNO_STANJE)){
-		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
+	else if(curr_state){
+		falling_edge = 0;
 	}
 
-	return readBIT(status_register, VHOD_REG_TRENUTNO_STANJE);
-
+	return curr_state;
 }
 
 bool class_VHOD::risingEdge()
 {
 	vrednost();
-	if (readBIT(status_register, VHOD_REG_RISING_EDGE))
+	if (rising_edge)
 	{
-		writeBIT(status_register, VHOD_REG_RISING_EDGE, 0);			
+		rising_edge = 0;			
 		return true;
 	}
 	return false;
@@ -55,18 +60,20 @@ bool class_VHOD::risingEdge()
 bool class_VHOD::fallingEdge()
 {
 	vrednost();
-	if (readBIT(status_register, VHOD_REG_FALLING_EDGE))
+	if (falling_edge)
 	{
-		writeBIT(status_register, VHOD_REG_FALLING_EDGE, 0);
+		falling_edge = 0;
 		return true;
 	}
 	return false;
 }
 
-class_VHOD::class_VHOD(unsigned char pin, char port, char default_state)
+class_VHOD::class_VHOD(unsigned char pin, char port, char default_state, Vozlisce <class_VHOD *> &input_objects_list)
 {
 	this->port = port;
 	this->pin = pin;
-	status_register = 0;
-	writeBIT(status_register, VHOD_REG_DEFAULT_STATE, default_state);
+	default_state = default_state;
+	input_objects_list.dodaj_konec(this);
 }
+
+

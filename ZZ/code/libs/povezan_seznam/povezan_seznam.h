@@ -1,4 +1,5 @@
-
+#ifndef SEZNAM_INC
+#define SEZNAM_INC
 
 template <typename tip>
 class Vozlisce
@@ -84,3 +85,4 @@ public:
         return (glava->podatek);
     }
 };
+#endif

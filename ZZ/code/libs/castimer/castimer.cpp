@@ -1,5 +1,5 @@
 
-#include "castimer/castimer.h"
+
 #include "common/inc/global.h"
 #include "FreeRTOS.h"
 #include "avr/interrupt.h"
@@ -8,11 +8,9 @@
 #include "task.h"
 #include "FreeRTOS_def_decl.h"
 #include <util/delay.h>
+#include "castimer/castimer.h"
 #include "libs/povezan_seznam/povezan_seznam.h"
 
-
-
-Vozlisce <class_TIMER*> timer_list;
 
 
 /************************************************************************/
@@ -41,21 +39,11 @@ void class_TIMER::increment(){
 		this->timer_value += 1;
 }
 
-class_TIMER::class_TIMER()
+class_TIMER::class_TIMER(Vozlisce <class_TIMER*> &timer_list)
 {
 	timer_list.dodaj_konec(this);
 }
 
-/************************************************************************/
-/*					 TIMER FRAMEWORK FUNCTIONS                          */
-/************************************************************************/
 
-
-void increment_timers(){									
-	for (uint8_t i = 0, length = timer_list.length(); i < length ;i++)
-	{
-		timer_list[i]->increment();
-	}
-}
 
 

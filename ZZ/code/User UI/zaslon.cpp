@@ -9,17 +9,17 @@
 
 
 
-class_TIMER LCD_timer;	
+class_TIMER LCD_timer(Hardware.timer_list);	
 
 void zaslon(void *paramOdTaska)
 {
 	while(1)
 	{
 		
-		if (Hardware.error_reg)
+		if (readBIT(Hardware.error_reg, HARDWARE_ERROR_REG_SWITCH_FAIL))
 		{
-			delayFREERTOS(500);
-			
+			delayFREERTOS(700);
+			toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
 		}
 		else
 		{		

@@ -1,9 +1,9 @@
 
 #include <avr/io.h>
 #include "libs/outputs_inputs/outputs_inputs.h"
-#include "FreeRTOS.h"
-#include "task.h"
 #include "common/inc/global.h"
+
+
 
 
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)

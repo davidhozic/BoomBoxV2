@@ -1,8 +1,9 @@
 
-#include "castimer/castimer.h"
-#include "includes/audio.h"
+
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/global.h"
+#include "includes/audio.h"
+#include "castimer/castimer.h"
 
 #define volume_spike	( (audio_system.average_volume + audio_system.average_volume * 0.18) )
 
@@ -20,7 +21,7 @@ void avg_vol_task(void* param)
 		if (tr_vrednost > max_izmerjeno)
 			max_izmerjeno = tr_vrednost;
 
-		if (audio_system.average_v_timer.vrednost() >= 15 && ( max_izmerjeno < volume_spike || spike_counter >= 6)	)
+		if (audio_system.average_v_timer.vrednost() >= 12 && ( max_izmerjeno < volume_spike || spike_counter >= 6)	)
 		{
 			vsota_branj += max_izmerjeno;
 			st_branj++;

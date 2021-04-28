@@ -1,17 +1,15 @@
 
 
+#include "common/inc/global.h"
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
-#include <FreeRTOS.h>
-#include "audio-visual/includes/audio.h"
 #include "libs/EEPROM/EEPROM.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
-#include "common/inc/global.h"
 #include "FreeRTOS_def_decl.h"
+#include "audio-visual/includes/audio.h"
 #include <avr/sleep.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
 /************************************************************************/
 /*							PROTOTYPES                                  */
 /************************************************************************/
@@ -27,10 +25,10 @@ void internal_power_switch_ev(class_TIMER* stikalo_on_time);
 void power(void *paramOdTaska)
 {
 	
-	 class_TIMER VOLT_timer;
-	 class_TIMER stikaloOFFtime;
-	 class_VHOD stikalo(1, 'K', 0);
-	 class_TIMER stikalo_on_time;
+	 class_TIMER VOLT_timer(Hardware.timer_list);
+	 class_TIMER stikaloOFFtime(Hardware.timer_list);
+	 class_VHOD stikalo(main_switch_pin, main_switch_pin, 0, Hardware.input_objects_list);
+	 class_TIMER stikalo_on_time(Hardware.timer_list);
 	 volatile short switch_voltage_test = 0; 
 
 	while (true)
@@ -54,7 +52,7 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*							POWER UP/SHUTDOWN					        */
 		/************************************************************************/
-		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && Hardware.error_reg &&
+		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !Hardware.error_reg &&
 		 stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 250 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
@@ -102,7 +100,7 @@ void power(void *paramOdTaska)
 
 void Shutdown()
 {
-	stripOFF();
+	audio_system.stripOFF();
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
@@ -112,7 +110,7 @@ void Power_UP()
 {
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
-	stripON();
+	audio_system.stripON();
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
 	delayFREERTOS(200);
 }

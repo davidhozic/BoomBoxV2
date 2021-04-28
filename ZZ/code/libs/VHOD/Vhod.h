@@ -1,30 +1,36 @@
 
 #pragma once
 
+#ifndef INC_FREERTOS_H
+#include "FreeRTOS.h"
+#endif
 #include "castimer/castimer.h"
+#include <stdint.h>
+#ifndef  SEZNAM_INC
+#include "./povezan_seznam/povezan_seznam.h"
+#endif
 
-enum enum_VHOD_STATUS_REGISTER
-{
-	VHOD_REG_TRENUTNO_STANJE=0,
-	VHOD_REG_PREJSNJE_STANJE,
-	VHOD_REG_RISING_EDGE,
-	VHOD_REG_FALLING_EDGE,
-	VHOD_REG_DEFAULT_STATE
-};
 
 
 
 class class_VHOD // pin, port, stanje ko ni pritisnjen
 {
 private:
-	unsigned char status_register;
+	uint8_t curr_state		:	1;
+	uint8_t prev_state		:	1;
+	uint8_t rising_edge		:	1;
+	uint8_t falling_edge	:	1;
+	uint8_t default_state	:	1;
     unsigned char pin;
     char port;
-	
+
 public:
     bool vrednost();
     bool risingEdge();
     bool fallingEdge();
-    class_VHOD(unsigned char pin, char port, char default_state);
+	class_VHOD(unsigned char pin, char port, char default_state, Vozlisce <class_VHOD *> &input_objects_list);
 };
+
+
+
 

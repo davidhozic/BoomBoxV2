@@ -1,6 +1,4 @@
 
-#include <avr/io.h>
-
 
 #ifndef SETTINGS_HH
 #define SETTINGS_HH
@@ -8,7 +6,7 @@
 /*								EEPROM IDs                              */
 /************************************************************************/
 /**/    #define battery_stat_addr			0						  /**/
-/**/    #define strip_mode_address				1						  /**/
+/**/    #define strip_mode_address			1						  /**/
 /************************************************************************/
 
 
@@ -16,8 +14,8 @@
 /*					        VOLTAGE CONSTANTS					        */
 /************************************************************************/
 
-#define adc_milivolt_ref				   5000
-#define adc_volt_ref					   5.00f
+	#define adc_milivolt_ref				   5000
+	#define adc_volt_ref					   5.00f
 
 /************************************************************************/                             
 /*							  ADC PIN MACROS               		        */
@@ -37,7 +35,10 @@
 
 	#define _21VPSU_pin						0
 	#define  _21VPSU_port				   'K'
-
+	
+	#define main_switch_pin				    1
+	#define main_switch_port			   'K'
+		
     #define main_mosfet_pin					3			
 	#define main_mosfet_port			   'H'	
 
@@ -64,8 +65,8 @@
 /************************************************************************/
 /*								OTHER                                   */
 /************************************************************************/
-    #define sleep_voltage				  3100   
-	#define F_CPU					   16000000UL  
-	#define  watchdog_time				WDTO_1S
+    #define		sleep_voltage				  3100   
+	#define	 F_CPU						 16000000UL  
+	#define  watchdog_time					WDTO_1S
  
 #endif
