@@ -52,6 +52,9 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*							POWER UP/SHUTDOWN					        */
 		/************************************************************************/
+		
+
+		
 		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !Hardware.error_reg &&
 		 stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 250 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
@@ -114,7 +117,6 @@ void Power_UP()
 	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
 	delayFREERTOS(200);
 }
-
 
 
 void external_power_switch_ev(class_TIMER* stikalo_on_time)

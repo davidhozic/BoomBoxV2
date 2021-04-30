@@ -1,4 +1,3 @@
-
 #include "global.h"
 #include "includes/audio.h"
 #include "libs/EEPROM/EEPROM.h"
@@ -21,7 +20,7 @@ void class_AUDIO_SYS::updateSTRIP()
 }
 
 void class_AUDIO_SYS::flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
-{					
+{
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		audio_system.current_brightness = 0;
@@ -36,9 +35,9 @@ void class_AUDIO_SYS::flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / me
 void class_AUDIO_SYS::colorSHIFT(uint8_t BARVA, uint8_t cas_krog)
 {
 	char smer[3];
-	while (audio_system.current_color[RED]	 != mozne_barve.barvni_ptr[BARVA][0] ||	
-		   audio_system.current_color[GREEN] != mozne_barve.barvni_ptr[BARVA][1] ||
-		   audio_system.current_color[BLUE]	 != mozne_barve.barvni_ptr[BARVA][2])	// While current colors different from wanted
+	while (audio_system.current_color[RED]	 != mozne_barve.barvni_ptr[BARVA][0] ||
+	audio_system.current_color[GREEN] != mozne_barve.barvni_ptr[BARVA][1] ||
+	audio_system.current_color[BLUE]	 != mozne_barve.barvni_ptr[BARVA][2])	// While current colors different from wanted
 	{
 		mozne_barve.barvni_ptr[BARVA][0] >= audio_system.current_color[RED]	? smer[0] = 1 : smer[0] = -1;
 		mozne_barve.barvni_ptr[BARVA][1] >= audio_system.current_color[GREEN]? smer[1] = 1 : smer[1] = -1;
@@ -81,7 +80,7 @@ void class_AUDIO_SYS::stripOFF()
 {
 	deleteTASK(&handle_average_volume);
 	holdTASK(&handle_audio_system);
-	deleteTASK(&handle_active_strip_mode);	
+	deleteTASK(&handle_active_strip_mode);
 	delayFREERTOS(10);
 	brightDOWN(15);
 }
@@ -95,6 +94,6 @@ void class_AUDIO_SYS::stripON()
 	strip_mode = EEPROM.beri(strip_mode_address) % 255; // EEPROM is by default 255 if nothing is writen on it
 
 	if (strip_mode > STRIP_OFF);
-		resumeTASK(&handle_audio_system);
+	resumeTASK(&handle_audio_system);
 	delayFREERTOS(10);
 }

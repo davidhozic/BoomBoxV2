@@ -10,14 +10,14 @@
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
-	
+
 // Microphone measuring tasks
 
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
 class_AUDIO_SYS audio_system;
-struct_MOZNE_BARVE mozne_barve = 
+struct_MOZNE_BARVE mozne_barve =
 {
 	.BELA	 =		{255, 255, 255},
 	.ZELENA	 =		{0, 255, 0},
@@ -53,21 +53,21 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		{
 			switch (audio_system.mic_mode)															/* Microphone spike trigger level measurement */
 			{
-			case POTENTIOMETER:
+				case POTENTIOMETER:
 				audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.ref_glasnost;		//Gleda ce je vrednost mikrofona nad referencno in se sprozi
 				if (audio_system.mic_ref_timer.vrednost() > 1000)									// Posodobi vsako sekundo
 				{
 					audio_system.mic_ref_timer.ponastavi();
 					audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 500/1023 + 330;	// Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 				}
-			break;
-			
-			case AVERAGE_VOLUME:
+				break;
+				
+				case AVERAGE_VOLUME:
 				audio_system.mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + audio_system.average_volume * 0.20);
-			break;
+				break;
 			}
 
- 			if (audio_system.lucke_filter_timer.vrednost() >= 400 && audio_system.mikrofon_detect)	 // STRIP task creation
+			if (audio_system.lucke_filter_timer.vrednost() >= 400 && audio_system.mikrofon_detect)	 // STRIP task creation
 			{
 				audio_system.lucke_filter_timer.ponastavi();
 				audio_system.barva_selekt = random() %  enum_BARVE::barve_end; // Color is randomly chosen
@@ -103,5 +103,4 @@ void breathe_fade_task(void *input)
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
-
 

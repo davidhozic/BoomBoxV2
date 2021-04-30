@@ -52,10 +52,10 @@ void breathe_fade_task(void *input);
 void avg_vol_task(void* BARVA);
 /*********************************************/
 
-	
+
 class class_AUDIO_SYS
 {
-public:
+	public:
 	void updateSTRIP();
 	void stripOFF();
 	void stripON();
@@ -67,23 +67,23 @@ public:
 	inline void select_strip_color(unsigned char barva_index)
 	{
 		for(uint8_t i = 0; i < 3; i++)
-			current_color[i] = mozne_barve.barvni_ptr[barva_index][i];
+		current_color[i] = mozne_barve.barvni_ptr[barva_index][i];
 	}
 
 	/****************************************************************************/
 	/***  Strip parameters   ***/
 	int8_t strip_mode = NORMAL_FADE;			// Current strip mode
 	uint8_t mic_mode = POTENTIOMETER;		// Current spike trigger detection mode
-		
+	
 	/*** Strip current state ***/
 	int16_t current_color[3] = {0, 0, 0};	// Current RGB color of the strip
 	int16_t current_brightness = 0;	// Current brightness level of the strip
-		
+	
 	/***		Timers		 ***/
 	class_TIMER lucke_filter_timer	= class_TIMER(Hardware.timer_list);				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	class_TIMER mic_ref_timer		= class_TIMER(Hardware.timer_list);				// Timer that delays reading in potentiometer spike trigger mode
 	class_TIMER average_v_timer		= class_TIMER(Hardware.timer_list);				// Timer that delays logging of max measured volume voltage
-		
+	
 	/****   Strip lightup	***/
 	uint8_t barva_selekt = 0;				// Index of color that strip will turn on
 	bool mikrofon_detect = 0;				// Is set to 1 if spike is detected and then strip is turned on
@@ -95,7 +95,7 @@ public:
 	TaskHandle_t handle_audio_system = NULL;
 	
 	/***	Strip mode functions ***/
-	void (*array_strip_modes[enum_STRIP_MODES::end_strip_modes])(void*) = {normal_fade_task, breathe_fade_task};	
+	void (*array_strip_modes[enum_STRIP_MODES::end_strip_modes])(void*) = {normal_fade_task, breathe_fade_task};
 };
 extern class_AUDIO_SYS audio_system;
 
