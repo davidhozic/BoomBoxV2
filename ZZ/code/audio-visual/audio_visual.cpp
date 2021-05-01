@@ -1,11 +1,10 @@
 #include <stdlib.h>
-#include "common/inc/global.h"
+#include "includes/audio.h"
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/FreeRTOS_def_decl.h"
-#include "includes/audio.h"
-#include "util/delay.h"
+
 
 /************************************************************************/
 /*                            TASK HANDLES                              */
@@ -49,28 +48,28 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 	while (true)
 	{
 		
-		if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
+		if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && audio_system.strip_mode != STRIP_OFF)
 		{
 			switch (audio_system.mic_mode)															/* Microphone spike trigger level measurement */
 			{
 				case POTENTIOMETER:
-				audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.ref_glasnost;		//Gleda ce je vrednost mikrofona nad referencno in se sprozi
-				if (audio_system.mic_ref_timer.vrednost() > 1000)									// Posodobi vsako sekundo
-				{
-					audio_system.mic_ref_timer.ponastavi();
-					audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 500/1023 + 330;	// Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
-				}
+					audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.ref_glasnost;		//Gleda ce je vrednost mikrofona nad referencno in se sprozi
+					if (audio_system.mic_ref_timer.vrednost() > 1000)									// Posodobi vsako sekundo
+					{
+						audio_system.mic_ref_timer.ponastavi();
+						audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 500/1023 + 330;	// Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
+					}
 				break;
 				
 				case AVERAGE_VOLUME:
-				audio_system.mikrofon_detect = readANALOG(mic_pin) >= (audio_system.average_volume + audio_system.average_volume * 0.20);
+					audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.average_volume + audio_system.average_volume * 0.18;
 				break;
 			}
 
 			if (audio_system.lucke_filter_timer.vrednost() >= 400 && audio_system.mikrofon_detect)	 // STRIP task creation
 			{
 				audio_system.lucke_filter_timer.ponastavi();
-				audio_system.barva_selekt = random() %  enum_BARVE::barve_end; // Color is randomly chosen
+				audio_system.barva_selekt = random() %  enum_BARVE::barve_end;	// Color is randomly chosen
 				deleteTASK(&audio_system.handle_active_strip_mode);
 				xTaskCreate(audio_system.array_strip_modes[audio_system.strip_mode], "strip mode", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 			}

@@ -28,7 +28,7 @@ public:
     bool vrednost();
     bool risingEdge();
     bool fallingEdge();
-	class_VHOD(unsigned char pin, char port, char default_state, Vozlisce <class_VHOD *> &input_objects_list);
+	class_VHOD(unsigned char pin, char port, char default_state);
 };
 
 

@@ -4,7 +4,7 @@
 #include "global.h"
 #include <stdio.h>
 #include "libs/povezan_seznam/povezan_seznam.h"
-
+#include <util/atomic.h>
 
 
 
@@ -68,12 +68,11 @@ bool class_VHOD::fallingEdge()
 	return false;
 }
 
-class_VHOD::class_VHOD(unsigned char pin, char port, char default_state, Vozlisce <class_VHOD *> &input_objects_list)
+class_VHOD::class_VHOD(unsigned char pin, char port, char default_state)
 {
 	this->port = port;
 	this->pin = pin;
-	default_state = default_state;
-	input_objects_list.dodaj_konec(this);
+	this->default_state = default_state;
 }
 
 

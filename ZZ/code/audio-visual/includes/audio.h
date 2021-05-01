@@ -1,6 +1,9 @@
 
 #ifndef AUDIO_H
 #define AUDIO_H
+#ifndef GLOBAL_H
+#include "common/inc/global.h"
+#endif
 #include "audio-visual/includes/barve.h"
 #include "settings.h"
 #include "EEPROM/EEPROM.h"
@@ -72,7 +75,7 @@ class class_AUDIO_SYS
 
 	/****************************************************************************/
 	/***  Strip parameters   ***/
-	int8_t strip_mode = NORMAL_FADE;			// Current strip mode
+	int8_t strip_mode = STRIP_OFF;			// Current strip mode
 	uint8_t mic_mode = POTENTIOMETER;		// Current spike trigger detection mode
 	
 	/*** Strip current state ***/
@@ -91,9 +94,7 @@ class class_AUDIO_SYS
 	uint16_t average_volume = 2048;			// Variable that stores the average volume
 	/****   Task handles	***/
 	TaskHandle_t handle_average_volume = NULL;
-	TaskHandle_t handle_active_strip_mode = NULL;
-	TaskHandle_t handle_audio_system = NULL;
-	
+	TaskHandle_t handle_active_strip_mode = NULL;	
 	/***	Strip mode functions ***/
 	void (*array_strip_modes[enum_STRIP_MODES::end_strip_modes])(void*) = {normal_fade_task, breathe_fade_task};
 };

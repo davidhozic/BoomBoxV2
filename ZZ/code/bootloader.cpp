@@ -52,8 +52,8 @@ int main()
 	xTaskCreate(zaslon, "display", 256, NULL, 1, NULL);
 	xTaskCreate(polnjenje, "charing", 256, NULL, 1, NULL);
 	xTaskCreate(settings_UI, "settings_ui", 256, NULL, 3, NULL);
-	xTaskCreate(audio_visual, "audio_system", 256, NULL, 3, &audio_system.handle_audio_system);
-	holdTASK(&audio_system.handle_audio_system);
+	xTaskCreate(audio_visual, "audio_system", 256, NULL, 3, NULL);
+
 #ifndef DEBUG
 	_delay_ms(25);
 #endif

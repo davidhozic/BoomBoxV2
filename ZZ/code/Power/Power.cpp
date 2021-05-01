@@ -17,19 +17,23 @@ void Shutdown();
 void Power_UP();
 void audio_visual();
 void spanje();
-void external_power_switch_ev(class_TIMER* stikalo_on_time);
-void internal_power_switch_ev(class_TIMER* stikalo_on_time);
+void power_switch_ev(uint8_t mode);
 /************************************************************************/
 
+enum enum_power_switch_modes
+{
+	INTERNAL,
+	EXTERNAL
+}power_switch_modes;
 	
 void power(void *paramOdTaska)
 {
 	
 	 class_TIMER VOLT_timer(Hardware.timer_list);
 	 class_TIMER stikaloOFFtime(Hardware.timer_list);
-	 class_VHOD stikalo(main_switch_pin, main_switch_pin, 0, Hardware.input_objects_list);
-	 class_TIMER stikalo_on_time(Hardware.timer_list);
-	 volatile short switch_voltage_test = 0; 
+	 class_VHOD stikalo(main_switch_pin, main_switch_port, 0);
+	 class_TIMER power_up_delay_timer(Hardware.timer_list);
+	 short switch_voltage_test = 0; 
 
 	while (true)
 	{ 
@@ -46,19 +50,17 @@ void power(void *paramOdTaska)
 				writeBIT(Hardware.error_reg, HARDWARE_ERROR_REG_SWITCH_FAIL, 1);
 				Shutdown();
 			}
-			
 			VOLT_timer.ponastavi();
 		}
 		/************************************************************************/
 		/*							POWER UP/SHUTDOWN					        */
 		/************************************************************************/
-		
-
-		
 		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !Hardware.error_reg &&
-		 stikalo_on_time.vrednost() >= 2000 && (Hardware.battery_voltage > sleep_voltage + 250 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)))
+		   (Hardware.battery_voltage > sleep_voltage + 250 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)) &&
+		   power_up_delay_timer.vrednost() >= 2000)
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
+			power_up_delay_timer.ponastavi();
 		}
 		
 		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
@@ -68,7 +70,7 @@ void power(void *paramOdTaska)
 				Shutdown();
 			}
 			Hardware.error_reg = 0;
-			stikalo_on_time.ponastavi();		
+			power_up_delay_timer.ponastavi();		
 		}
 		
 		else if (stikalo.vrednost() == 1)
@@ -85,18 +87,20 @@ void power(void *paramOdTaska)
 		/*									 POWER SWITCH						             */
 		/*************************************************************************************/
 		
-		if (napajalnik.vrednost() && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER) == false)
+		if (napajalnik.vrednost() && !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
 		{
-			external_power_switch_ev(&stikalo_on_time);
+			power_up_delay_timer.ponastavi();	// To make sure it waits 2 seconds before trying to turn on again
+			power_switch_ev(EXTERNAL);
 		}
 
 		else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
 		{
-			internal_power_switch_ev(&stikalo_on_time);
+			power_up_delay_timer.ponastavi();
+			power_switch_ev(INTERNAL);
 		}
 
 		/*************************************************************************************/
-		wdt_reset();
+		wdt_reset();	/*	 Refresh watchdog timer		*/
 		delayFREERTOS(200);
 	}
 }
@@ -119,25 +123,28 @@ void Power_UP()
 }
 
 
-void external_power_switch_ev(class_TIMER* stikalo_on_time)
+void power_switch_ev(uint8_t mode)
 {
-	Shutdown();
-	delayFREERTOS(20);
-	writeOUTPUT(menjalnik_pin,menjalnik_port,1);
-	stikalo_on_time->ponastavi();
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 1);
+	switch(mode)
+	{
+		case EXTERNAL:
+			Shutdown();
+			delayFREERTOS(20);
+			writeOUTPUT(menjalnik_pin,menjalnik_port,1);
+			writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 1);
+			delayFREERTOS(500);
+		break;
+		
+		case INTERNAL:
+				Shutdown();
+				delayFREERTOS(20);
+				writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
+				writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
+				delayFREERTOS(500);
+		break;
+	}
 }
 
-void internal_power_switch_ev(class_TIMER* stikalo_on_time)
-{
-
-	Shutdown();
-	delayFREERTOS(20);
-	writeOUTPUT(menjalnik_pin,menjalnik_port, 0);				 
-	stikalo_on_time->ponastavi();
-	delayFREERTOS(20);
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
-}
 
 void bujenje()
 { //Avtomaticno rising edge, saj se interrupt vklopi sele ob spanju

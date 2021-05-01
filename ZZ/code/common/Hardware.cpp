@@ -25,14 +25,6 @@ void increment_timers(Vozlisce <class_TIMER*> &timers)
 	}
 }
 
-void update_input_objects(Vozlisce <class_VHOD *> &list)	
-{
-	for (uint8_t i = 0, length = list.length(); i < length; i++)
-	{
-		list[i]->vrednost();
-	}
-}
-
 /************************************************************************/
 /*						INTERRUPT SERVICE ROUTINES		                */
 /************************************************************************/
@@ -60,7 +52,6 @@ void disable_watchdog()
 
 ISR (TIMER3_COMPA_vect){										// TIMER ISR
 	increment_timers(Hardware.timer_list);
-	update_input_objects(Hardware.input_objects_list);
 }
 
 

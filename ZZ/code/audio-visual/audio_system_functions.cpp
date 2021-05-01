@@ -78,8 +78,8 @@ void class_AUDIO_SYS::brightnessFADE(char smer, uint8_t cas_krog)
 
 void class_AUDIO_SYS::stripOFF()
 {
+	strip_mode = STRIP_OFF;
 	deleteTASK(&handle_average_volume);
-	holdTASK(&handle_audio_system);
 	deleteTASK(&handle_active_strip_mode);
 	delayFREERTOS(10);
 	brightDOWN(15);
@@ -91,9 +91,7 @@ void class_AUDIO_SYS::stripON()
 	{
 		xTaskCreate(avg_vol_task, "avg_vol", 80, NULL, 2, &handle_average_volume);
 	}
-	strip_mode = EEPROM.beri(strip_mode_address) % 255; // EEPROM is by default 255 if nothing is writen on it
-
-	if (strip_mode > STRIP_OFF);
-	resumeTASK(&handle_audio_system);
+	volatile uint8_t temp = EEPROM.beri(strip_mode_address); 
+	strip_mode = temp <  end_strip_modes ? temp : NORMAL_FADE;	// Checks if reading returned value in range
 	delayFREERTOS(10);
 }

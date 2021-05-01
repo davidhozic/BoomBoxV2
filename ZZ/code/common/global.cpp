@@ -8,7 +8,7 @@
 /*								GLOBAL OBJECTS	                        */
 /************************************************************************/
 
-class_VHOD napajalnik(_21VPSU_pin, _21VPSU_port, 0, Hardware.input_objects_list);
+class_VHOD napajalnik(_21VPSU_pin, _21VPSU_port, 0);
 
 
 

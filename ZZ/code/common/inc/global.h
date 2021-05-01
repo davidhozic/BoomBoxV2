@@ -1,6 +1,6 @@
 
-#ifndef GLOBAL_STRUCTS_HEADER
-#define GLOBAL_STRUCTS_HEADER
+#ifndef GLOBAL_H
+#define GLOBAL_H
 #include "settings.h"
 #include "FreeRTOSConfig.h" 
 #include "FreeRTOS.h"
@@ -27,8 +27,8 @@ enum enum_HARDWARE_ERROR_REGISTER
 
 
 // BIT MANIPULATION
-#define readBIT(reg, bit)				(		((reg >> bit) & 0x1) 												)
-#define writeBIT(reg, bit, val)			(		(reg = val ? ( reg | (0x1 << bit) ) : ( reg  &  ~(0x1 << bit)))		)
+#define readBIT(reg, bit)				(		((reg >> bit) & 0x1) 													)
+#define writeBIT(reg, bit, val)			(		(reg = val ? ( reg | (0x1 << bit) ) : ( reg  &  ~(0x1 << bit)))			)
 
 
 /****************************************************************************************************************************/
@@ -47,7 +47,6 @@ struct struct_HARDWARE
 	unsigned char  error_reg	   = 0;
 	unsigned short battery_voltage = 0;
 	Vozlisce <class_TIMER*> timer_list;
-	Vozlisce <class_VHOD *> input_objects_list;
 };
 
 extern struct_HARDWARE Hardware;

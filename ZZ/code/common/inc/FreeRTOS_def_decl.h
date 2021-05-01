@@ -13,7 +13,7 @@
 	#define delayFREERTOS(x)	vTaskDelay(x/portTICK_PERIOD_MS);
 #else
 	#include <math.h>
-	#define delayFREERTOS(x)	vTaskDelay(		ceil (	x/(portTICK_PERIOD_MS*2000) 		)		)
+	#define delayFREERTOS(x)	vTaskDelay(			2		)
 #endif	
 
 void holdTASK(TaskHandle_t* task);

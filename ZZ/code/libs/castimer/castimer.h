@@ -12,7 +12,7 @@ private:
 	unsigned short timer_value = 0;
 	
 public:
-    unsigned long vrednost();
+    unsigned short vrednost();
     void ponastavi();
 	void increment();
 	class_TIMER(Vozlisce <class_TIMER*> &timer_list);
