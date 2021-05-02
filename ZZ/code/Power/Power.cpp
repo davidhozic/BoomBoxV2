@@ -31,7 +31,7 @@ void power(void *paramOdTaska)
 	
 	 class_TIMER VOLT_timer(Hardware.timer_list);
 	 class_TIMER stikaloOFFtime(Hardware.timer_list);
-	 class_VHOD stikalo(main_switch_pin, main_switch_port, 0);
+	 class_VHOD stikalo(main_power_switch_pin, main_power_switch_port, 0);
 	 class_TIMER power_up_delay_timer(Hardware.timer_list);
 	 short switch_voltage_test = 0; 
 
@@ -55,9 +55,9 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*							POWER UP/SHUTDOWN					        */
 		/************************************************************************/
-		if (!readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && !Hardware.error_reg &&
-		   (Hardware.battery_voltage > sleep_voltage + 250 || readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER)) &&
-		   power_up_delay_timer.vrednost() >= 2000)
+		if (!Hardware.status_reg.powered_up && Hardware.error_reg == 0 &&
+		   (Hardware.battery_voltage > sleep_voltage + 250 || Hardware.status_reg.external_power) 
+		   && power_up_delay_timer.vrednost() >= 2000)
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 			power_up_delay_timer.ponastavi();
@@ -65,7 +65,7 @@ void power(void *paramOdTaska)
 		
 		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
 		{	
-			if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP))
+			if (Hardware.status_reg.powered_up)
 			{
 				Shutdown();
 			}
@@ -87,13 +87,13 @@ void power(void *paramOdTaska)
 		/*									 POWER SWITCH						             */
 		/*************************************************************************************/
 		
-		if (napajalnik.vrednost() && !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
+		if (napajalnik.vrednost() && !Hardware.status_reg.external_power)
 		{
 			power_up_delay_timer.ponastavi();	// To make sure it waits 2 seconds before trying to turn on again
 			power_switch_ev(EXTERNAL);
 		}
 
-		else if (napajalnik.vrednost() == 0 && readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
+		else if (napajalnik.vrednost() == 0 && Hardware.status_reg.external_power)
 		{
 			power_up_delay_timer.ponastavi();
 			power_switch_ev(INTERNAL);
@@ -110,7 +110,7 @@ void Shutdown()
 	audio_system.stripOFF();
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 0);					 
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 0);
+	Hardware.status_reg.powered_up = 0;
 }
 
 void Power_UP()
@@ -118,7 +118,7 @@ void Power_UP()
 	writeOUTPUT(_12V_line_pin, _12V_line_port, 1);				
 	writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 	audio_system.stripON();
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP, 1);
+	Hardware.status_reg.powered_up = 1;
 	delayFREERTOS(200);
 }
 
@@ -131,7 +131,7 @@ void power_switch_ev(uint8_t mode)
 			Shutdown();
 			delayFREERTOS(20);
 			writeOUTPUT(menjalnik_pin,menjalnik_port,1);
-			writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 1);
+			Hardware.status_reg.external_power = 1;
 			delayFREERTOS(500);
 		break;
 		
@@ -139,7 +139,7 @@ void power_switch_ev(uint8_t mode)
 				Shutdown();
 				delayFREERTOS(20);
 				writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
-				writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER, 0);
+				Hardware.status_reg.external_power = 0;
 				delayFREERTOS(500);
 		break;
 	}

@@ -23,9 +23,9 @@ void zaslon(void *paramOdTaska)
 		}
 		else
 		{		
-			if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_EXTERNAL_POWER))
+			if (Hardware.status_reg.external_power)
 			{
-				if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_EN))		/*	Charging is enabled -> flash lcd  */
+				if (Hardware.status_reg.capacity_lcd_en)		/*	Charging is enabled -> flash lcd  */
 				{
 					toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
 					delayFREERTOS(2000);												
@@ -40,7 +40,7 @@ void zaslon(void *paramOdTaska)
 			}
 			else
 			{
-				if ( readBIT(Hardware.status_reg,HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN) )
+				if ( Hardware.status_reg.capacity_lcd_en )
 				{
 					writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
 					delayFREERTOS(5000);

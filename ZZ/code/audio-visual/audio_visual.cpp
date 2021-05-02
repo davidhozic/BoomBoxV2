@@ -47,8 +47,8 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
 	while (true)
 	{
-		
-		if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && audio_system.strip_mode != STRIP_OFF)
+
+		if (Hardware.status_reg.powered_up && audio_system.strip_mode != STRIP_OFF)
 		{
 			switch (audio_system.mic_mode)															/* Microphone spike trigger level measurement */
 			{

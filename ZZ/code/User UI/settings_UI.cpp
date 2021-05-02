@@ -69,7 +69,7 @@ struct struct_settings_UI
 /******************************************************************************************/
 inline void toggleLCD()			
 {																														
-	writeBIT(  Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN ,  !readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN));	
+	Hardware.status_reg.capacity_lcd_en = !Hardware.status_reg.capacity_lcd_en;
 }
 
 
@@ -121,7 +121,7 @@ void settings_UI(void *paramOdTaska)
 			switch (settings_ui.state)
 			{
 				case STATE_UNSET:
-					if (readBIT(Hardware.status_reg, HARDWARE_STATUS_REG_POWERED_UP) && settings_ui.hold_timer.vrednost() > 1000)
+					if (Hardware.status_reg.powered_up && settings_ui.hold_timer.vrednost() > 1000)
 					{
 						audio_system.stripOFF();
 						settings_ui.state = STATE_SCROLL;

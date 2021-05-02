@@ -9,15 +9,6 @@
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
 
-enum enum_HARDWARE_STATUS_REGISTER
-{
-
-	HARDWARE_STATUS_REG_POWERED_UP = 0,
-	HARDWARE_STATUS_REG_EXTERNAL_POWER,
-	HARDWARE_STATUS_REG_CHARGING_FINISHED,
-	HARDWARE_STATUS_REG_CHARGING_EN,
-	HARDWARE_STATUS_REG_CAPACITY_DISPLAY_EN
-};
 
 enum enum_HARDWARE_ERROR_REGISTER
 {
@@ -43,7 +34,15 @@ extern class_VHOD napajalnik;
 
 struct struct_HARDWARE
 {		
-	unsigned char  status_reg	   = 0;
+	struct bitfield_status_reg
+	{
+		uint8_t powered_up			: 1;
+		uint8_t external_power		: 1;
+		uint8_t charging_finished	: 1;
+		uint8_t charging_enabled	: 1;
+		uint8_t capacity_lcd_en		: 1;
+	}status_reg = {0};
+
 	unsigned char  error_reg	   = 0;
 	unsigned short battery_voltage = 0;
 	Vozlisce <class_TIMER*> timer_list;

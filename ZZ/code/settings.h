@@ -36,8 +36,8 @@
 	#define _21VPSU_pin						0
 	#define  _21VPSU_port				   'K'
 	
-	#define main_switch_pin				    1
-	#define main_switch_port			   'K'
+	#define	main_power_switch_pin		    1
+	#define main_power_switch_port		   'K'
 		
     #define main_mosfet_pin					3			
 	#define main_mosfet_port			   'H'	

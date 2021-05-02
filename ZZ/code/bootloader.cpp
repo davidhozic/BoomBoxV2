@@ -43,7 +43,7 @@ int main()
 	/************************************************************************/
 	/*							  SETUP OTHER                               */ 
 	/************************************************************************/
-	writeBIT(Hardware.status_reg, HARDWARE_STATUS_REG_CHARGING_FINISHED, EEPROM.beri(battery_stat_addr));		/* Read charging state */
+	 Hardware.status_reg.charging_finished = EEPROM.beri(battery_stat_addr);		/* Read charging state */
 
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
