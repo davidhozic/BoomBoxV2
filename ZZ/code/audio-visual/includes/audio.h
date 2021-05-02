@@ -6,7 +6,7 @@
 #endif
 #include "audio-visual/includes/barve.h"
 #include "settings.h"
-#include "EEPROM/EEPROM.h"
+
 #include "libs/castimer/castimer.h"
 
 
@@ -26,8 +26,8 @@
 
 enum enum_STRIP_MODES
 {
-	STRIP_OFF = -1,
-	NORMAL_FADE = 0,
+	STRIP_OFF = 0,
+	NORMAL_FADE = 1,
 	BREATHE_FADE,
 	end_strip_modes,
 };
@@ -55,10 +55,13 @@ void breathe_fade_task(void *input);
 void avg_vol_task(void* BARVA);
 /*********************************************/
 
+/************************************************************************/
+/*							FUNCTION PROTOS                             */
+/************************************************************************/
 
 class class_AUDIO_SYS
 {
-	public:
+public:
 	void updateSTRIP();
 	void stripOFF();
 	void stripON();
@@ -85,7 +88,6 @@ class class_AUDIO_SYS
 	/***		Timers		 ***/
 	class_TIMER lucke_filter_timer	= class_TIMER(Hardware.timer_list);				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	class_TIMER mic_ref_timer		= class_TIMER(Hardware.timer_list);				// Timer that delays reading in potentiometer spike trigger mode
-	class_TIMER average_v_timer		= class_TIMER(Hardware.timer_list);				// Timer that delays logging of max measured volume voltage
 	
 	/****   Strip lightup	***/
 	uint8_t barva_selekt = 0;				// Index of color that strip will turn on

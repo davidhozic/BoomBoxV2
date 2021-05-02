@@ -6,7 +6,7 @@
 #include <string.h>
 #include "VHOD/Vhod.h"
 #include "castimer/castimer.h"
-
+#include "libs/EEPROM/EEPROM.h"
 /******************************************************************************************/
 /*                                  ELEMENTI V STATE_SCROLL MENIJU                        */
 /******************************************************************************************/

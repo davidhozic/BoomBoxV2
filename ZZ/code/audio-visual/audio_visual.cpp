@@ -57,7 +57,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 					if (audio_system.mic_ref_timer.vrednost() > 1000)									// Posodobi vsako sekundo
 					{
 						audio_system.mic_ref_timer.ponastavi();
-						audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 500/1023 + 330;	// Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
+						audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 693/1023 + 330;	// Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
 					}
 				break;
 				
@@ -75,7 +75,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			}
 		}
 		
-		delayFREERTOS(4);
+		delayFREERTOS(2);
 		//End task loop
 	}
 }

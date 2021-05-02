@@ -65,8 +65,9 @@
 /************************************************************************/
 /*								OTHER                                   */
 /************************************************************************/
-    #define		sleep_voltage				  3100   
+    #define  sleep_voltage				 3100   
 	#define	 F_CPU						 16000000UL  
-	#define  watchdog_time					WDTO_1S
+	#define  watchdog_time				 WDTO_1S
+	#define  USE_TIMED_AVERAGE			 1
  
 #endif

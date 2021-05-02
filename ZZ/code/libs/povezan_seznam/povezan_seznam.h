@@ -1,5 +1,8 @@
 #ifndef SEZNAM_INC
 #define SEZNAM_INC
+#ifndef INC_FREERTOS_H
+#include "FreeRTOS.h"
+#endif
 
 template <typename tip>
 class Vozlisce

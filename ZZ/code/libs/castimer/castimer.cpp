@@ -16,20 +16,18 @@
 /************************************************************************/
 /*						TIMER OBJECT FUNCTIONS                          */
 /************************************************************************/
+
 unsigned short class_TIMER::vrednost()
 {
 	timer_enabled = true;
-	
-	ATOMIC_BLOCK(ATOMIC_FORCEON)	// Prevents an interrupt from corrupting 16-bit variable (8-bit cpu)
+	unsigned short temp_timer_value;
+	ATOMIC_BLOCK(ATOMIC_FORCEON)
 	{
-	#ifdef DEBUG
-		return timer_value*500; 
-	#else
-		return timer_value;
-	#endif
+		temp_timer_value = timer_value;	// 16-bit variable gets incremented during interrupt -> this disables interrupts temporarily
 	}
+	return temp_timer_value; 
+	
 }
-
 
 void class_TIMER::ponastavi()
 {
@@ -40,8 +38,14 @@ void class_TIMER::ponastavi()
 
 void class_TIMER::increment()
 {
-	if (this->timer_enabled && timer_value < 65535) //Prevent overflow
-		this->timer_value += 1;
+	if (timer_enabled && timer_value < 65535) //Prevent overflow
+	{
+		#ifndef DEBUG
+		timer_value += 1;
+		#else
+		timer_value += 250;
+		#endif
+	}
 }
 
 class_TIMER::class_TIMER(Vozlisce <class_TIMER*> &timer_list)

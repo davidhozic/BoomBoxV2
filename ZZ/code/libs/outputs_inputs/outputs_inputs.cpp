@@ -92,7 +92,12 @@ unsigned short readANALOG(uint8_t channel)
 	ADCSRA |= (1 << ADSC); //Start konverzija			
 	while (ADCSRA & (1 << ADSC)); //Dokler se bit ne resetira
 	ADMUX &= ~(channel);
+#ifndef DEBUG
 	return ADC;
+#else
+	return 800;
+#endif
+
 }
 
 void writePWM(uint8_t pin, char port, uint8_t vrednost)

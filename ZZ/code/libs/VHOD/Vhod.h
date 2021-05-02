@@ -1,9 +1,7 @@
 
-#pragma once
+#ifndef VHOD_H
+#define	VHOD_H
 
-#ifndef INC_FREERTOS_H
-#include "FreeRTOS.h"
-#endif
 #include "castimer/castimer.h"
 #include <stdint.h>
 #ifndef  SEZNAM_INC
@@ -31,6 +29,6 @@ public:
 	class_VHOD(unsigned char pin, char port, char default_state);
 };
 
-
+#endif
 
 
