@@ -6,7 +6,7 @@
 #include "castimer/castimer.h"
 
 /************************************************************************/
-	#define volume_spike		( (audio_system.average_volume + audio_system.average_volume * 0.15) )
+	#define volume_spike		( (audio_system.average_volume + audio_system.average_volume * (audio_system.trigger_level_percent - 0.5)) ) 
 	#define	max_readings_num	( 25 )
 	#define reading_period_ms	( 15 )
 /************************************************************************/
@@ -22,8 +22,8 @@ struct struct_average_volume
 	bool	  value_logged : 1;
 	uint16_t  current_value  = 0;
 	uint16_t  previous_value = 0;
-	class_TIMER average_v_timer		= class_TIMER(Hardware.timer_list);				// Timer that delays logging of max measured volume voltage
-	
+	class_TIMER average_v_timer			= class_TIMER(Hardware.timer_list);				// Timer that delays logging of max measured volume voltage
+	class_TIMER trigger_percent_timer	= class_TIMER(Hardware.timer_list);
 	struct_average_volume()
 	{
 		readings_num = 0;
@@ -38,11 +38,18 @@ void avg_vol_task(void* param)
 {	
 	while (1)
 	{
+		
+		if (average_volume.trigger_percent_timer.vrednost() > 2000)
+		{
+			average_volume.trigger_percent_timer.ponastavi();
+			audio_system.trigger_level_percent = round((readANALOG(mic_ref_pin) * (double) 80/1023 + 20))/100.00; //Calculate %, round and divide by 100 to get ratio
+		}
+		
 		average_volume.current_value = readANALOG(mic_pin);
 		if (average_volume.current_value > average_volume.max_value)
 			average_volume.max_value = average_volume.current_value;
 
-		if (average_volume.average_v_timer.vrednost() >= reading_period_ms && (average_volume.max_value < volume_spike || average_volume.spike_counter > max_readings_num) )
+		if (average_volume.average_v_timer.vrednost() >= reading_period_ms && (average_volume.max_value < volume_spike || average_volume.spike_counter > max_readings_num))
 		{
 			average_volume.readings_sum += average_volume.max_value;
 			average_volume.max_value = 0;

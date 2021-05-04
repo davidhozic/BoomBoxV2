@@ -15,7 +15,6 @@ enum enum_MAIN_SCROLL_MENU
 	MENU_TOGGLE_LCD = 0,
 	MENU_STRIP_MODE_CHANGE,
 	MENU_STRIP_DISABLE,
-	MENU_MIC_MODE_CHANGE,
 	MENU_end															  //dolzina
 };
 
@@ -174,10 +173,7 @@ void settings_UI(void *paramOdTaska)
 							
 								case MENU_STRIP_DISABLE:
 									audio_system.strip_mode = STRIP_OFF;
-								break;
-							
-								case MENU_MIC_MODE_CHANGE:
-									audio_system.mic_mode = (audio_system.mic_mode + 1) %	end_mic_modes;
+									EEPROM.pisi(audio_system.strip_mode, eeprom_addr_strip_mode);
 								break;
 							}
 							exit_scroll();
@@ -198,7 +194,6 @@ void settings_UI(void *paramOdTaska)
 				/*****	END CASE *****/
 				
 				case STATE_STRIP_SELECTION:
-				
 					if (settings_ui.state_exit_timer.vrednost() > 6000)
 					{
 						exit_scroll();
@@ -215,7 +210,7 @@ void settings_UI(void *paramOdTaska)
 							settings_ui.hold_timer.ponastavi();
 							settings_ui.hold_time = 0;
 							audio_system.strip_mode = settings_ui.menu_seek;
-							EEPROM.pisi(audio_system.strip_mode, strip_mode_address);
+							EEPROM.pisi(audio_system.strip_mode, eeprom_addr_strip_mode);
 							exit_scroll();			
 						}
 						

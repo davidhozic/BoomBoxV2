@@ -32,14 +32,6 @@ enum enum_STRIP_MODES
 	end_strip_modes,
 };
 
-enum enum_MIC_MODES
-{
-	POTENTIOMETER,
-	AVERAGE_VOLUME,
-	end_mic_modes
-};
-
-
 enum enum_COLOR_SPACE_indexes
 {
 	RED = 0,
@@ -79,7 +71,6 @@ public:
 	/****************************************************************************/
 	/***  Strip parameters   ***/
 	int8_t strip_mode = STRIP_OFF;			// Current strip mode
-	uint8_t mic_mode = POTENTIOMETER;		// Current spike trigger detection mode
 	
 	/*** Strip current state ***/
 	int16_t current_color[3] = {0, 0, 0};	// Current RGB color of the strip
@@ -87,12 +78,11 @@ public:
 	
 	/***		Timers		 ***/
 	class_TIMER lucke_filter_timer	= class_TIMER(Hardware.timer_list);				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
-	class_TIMER mic_ref_timer		= class_TIMER(Hardware.timer_list);				// Timer that delays reading in potentiometer spike trigger mode
 	
 	/****   Strip lightup	***/
 	uint8_t barva_selekt = 0;				// Index of color that strip will turn on
 	bool mikrofon_detect = 0;				// Is set to 1 if spike is detected and then strip is turned on
-	uint16_t ref_glasnost = 2048;			// Variable that stores potentiometer setting of minimal spike trigger level
+	float trigger_level_percent = 100;	// Variable that stores potentiometer setting of minimal spike trigger level
 	uint16_t average_volume = 2048;			// Variable that stores the average volume
 	/****   Task handles	***/
 	TaskHandle_t handle_average_volume = NULL;

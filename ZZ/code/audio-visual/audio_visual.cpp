@@ -4,7 +4,7 @@
 #include "VHOD/Vhod.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/FreeRTOS_def_decl.h"
-
+#include "libs/EEPROM/EEPROM.h"
 
 /************************************************************************/
 /*                            TASK HANDLES                              */
@@ -50,22 +50,8 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 
 		if (Hardware.status_reg.powered_up && audio_system.strip_mode != STRIP_OFF)
 		{
-			switch (audio_system.mic_mode)															/* Microphone spike trigger level measurement */
-			{
-				case POTENTIOMETER:
-					audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.ref_glasnost;		//Gleda ce je vrednost mikrofona nad referencno in se sprozi
-					if (audio_system.mic_ref_timer.vrednost() > 1000)									// Posodobi vsako sekundo
-					{
-						audio_system.mic_ref_timer.ponastavi();
-						audio_system.ref_glasnost = readANALOG(mic_ref_pin) * (float) 693/1023 + 330;	// Mic_ref = referencna adc vrednost za logicno enko mikrofon_detecta
-					}
-				break;
-				
-				case AVERAGE_VOLUME:
-					audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.average_volume + audio_system.average_volume * 0.18;
-				break;
-			}
-
+			audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.average_volume + audio_system.average_volume * audio_system.trigger_level_percent; // n % more
+			
 			if (audio_system.lucke_filter_timer.vrednost() >= 400 && audio_system.mikrofon_detect)	 // STRIP task creation
 			{
 				audio_system.lucke_filter_timer.ponastavi();

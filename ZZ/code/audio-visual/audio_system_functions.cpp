@@ -87,11 +87,8 @@ void class_AUDIO_SYS::stripOFF()
 
 void class_AUDIO_SYS::stripON()
 {
-	if (mic_mode == AVERAGE_VOLUME)
-	{
-		xTaskCreate(avg_vol_task, "avg_vol", 80, NULL, 3, &handle_average_volume);
-	}
-	volatile uint8_t temp = EEPROM.beri(strip_mode_address);
+	xTaskCreate(avg_vol_task, "avg_vol", 80, NULL, 3, &handle_average_volume);
+	volatile uint8_t temp = EEPROM.beri(eeprom_addr_strip_mode);
 	strip_mode = temp >= STRIP_OFF && temp <  end_strip_modes ? temp : NORMAL_FADE;	// Checks if reading returned value in range
 	delayFREERTOS(10);
 }
