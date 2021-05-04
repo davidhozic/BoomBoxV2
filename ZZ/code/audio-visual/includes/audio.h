@@ -18,7 +18,7 @@
 #define brightUP(cas_na_krog)				    			audio_system.brightnessFADE(1, cas_na_krog)
 #define brightDOWN(cas_na_krog)								audio_system.brightnessFADE(-1, cas_na_krog)
 
-
+#define  trigger_level_percent									(  (double)0.35  )
 
 /*********************************************/
 /*			 ENUM,STRUCT DEFINICIJE          */
@@ -26,9 +26,9 @@
 
 enum enum_STRIP_MODES
 {
-	STRIP_OFF = 0,
-	NORMAL_FADE = 1,
+	NORMAL_FADE = 0,
 	BREATHE_FADE,
+	STRIP_OFF,
 	end_strip_modes,
 };
 
@@ -82,13 +82,12 @@ public:
 	/****   Strip lightup	***/
 	uint8_t barva_selekt = 0;				// Index of color that strip will turn on
 	bool mikrofon_detect = 0;				// Is set to 1 if spike is detected and then strip is turned on
-	float trigger_level_percent = 100;	// Variable that stores potentiometer setting of minimal spike trigger level
 	uint16_t average_volume = 2048;			// Variable that stores the average volume
 	/****   Task handles	***/
 	TaskHandle_t handle_average_volume = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
 	/***	Strip mode functions ***/
-	void (*array_strip_modes[enum_STRIP_MODES::end_strip_modes])(void*) = {normal_fade_task, breathe_fade_task};
+	void (*array_strip_modes[enum_STRIP_MODES::end_strip_modes-1])(void*) = {normal_fade_task, breathe_fade_task};
 };
 extern class_AUDIO_SYS audio_system;
 

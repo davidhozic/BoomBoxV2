@@ -33,7 +33,6 @@ void power(void *paramOdTaska)
 	 class_TIMER stikaloOFFtime(Hardware.timer_list);
 	 class_VHOD stikalo(main_power_switch_pin, main_power_switch_port, 0);
 	 class_TIMER power_up_delay_timer(Hardware.timer_list);
-	 short switch_voltage_test = 0; 
 
 	while (true)
 	{ 
@@ -43,13 +42,6 @@ void power(void *paramOdTaska)
 		if (VOLT_timer.vrednost() > 500)
 		{
 			Hardware.battery_voltage = readANALOG(vDIV_pin) *	(double) adc_milivolt_ref/1023.00;
-			
-			switch_voltage_test = readANALOG(9) * 5.00/1023;
-			if (switch_voltage_test > 1.5 && switch_voltage_test < 3)	// Checks if switch voltage is above 1.5V and below 3V (testing hardware error) TODO: remove if error does not reproduce
-			{
-				writeBIT(Hardware.error_reg, HARDWARE_ERROR_REG_SWITCH_FAIL, 1);
-				Shutdown();
-			}
 			VOLT_timer.ponastavi();
 		}
 		/************************************************************************/
@@ -100,7 +92,6 @@ void power(void *paramOdTaska)
 		}
 
 		/*************************************************************************************/
-		wdt_reset();	/*	 Refresh watchdog timer		*/
 		delayFREERTOS(200);
 	}
 }

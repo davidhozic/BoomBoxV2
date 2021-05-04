@@ -50,7 +50,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 
 		if (Hardware.status_reg.powered_up && audio_system.strip_mode != STRIP_OFF)
 		{
-			audio_system.mikrofon_detect = readANALOG(mic_pin) >= audio_system.average_volume + audio_system.average_volume * audio_system.trigger_level_percent; // n % more
+			audio_system.mikrofon_detect = readANALOG(mic_pin) > audio_system.average_volume + (double)audio_system.average_volume * trigger_level_percent; // n % more
 			
 			if (audio_system.lucke_filter_timer.vrednost() >= 400 && audio_system.mikrofon_detect)	 // STRIP task creation
 			{
@@ -61,6 +61,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 			}
 		}
 		
+
 		delayFREERTOS(2);
 		//End task loop
 	}
@@ -75,7 +76,17 @@ void normal_fade_task(void *input) //Prizig na barbi in pocasen izklop
 {
 	audio_system.current_brightness = 255;
 	audio_system.select_strip_color(*(uint8_t*)input);
-	brightDOWN(10);
+	
+	if (audio_system.strip_mode == STRIP_OFF)	//If strip is off that means the task is called through settings ui to show selected strip mode
+	{
+		brightDOWN(25);
+	}
+	
+	else
+	{
+		brightDOWN(10);
+	}
+
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
@@ -83,8 +94,18 @@ void normal_fade_task(void *input) //Prizig na barbi in pocasen izklop
 void breathe_fade_task(void *input)
 {
 	audio_system.select_strip_color(*(uint8_t*)input);
-	brightUP(5);
-	brightDOWN(5);
+	
+	if (audio_system.strip_mode == STRIP_OFF)	//If strip is off that means the task is called through settings ui to show selected strip mode
+	{
+		brightUP(25);
+		brightDOWN(25);	
+	}
+	else
+	{
+		brightUP(5);
+		brightDOWN(5);	
+	}
+
 	audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }

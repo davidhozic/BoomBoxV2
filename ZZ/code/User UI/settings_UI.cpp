@@ -61,7 +61,11 @@ struct struct_settings_UI
 	}
 }settings_ui;
 
-	
+	/************************************************************************/
+	/*							SETTINGS                                    */
+	/************************************************************************/
+
+	#define auto_exit_timeout			(15000)
 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
@@ -143,7 +147,7 @@ void settings_UI(void *paramOdTaska)
 			
 				case STATE_SCROLL:
 				
-					if (settings_ui.state_exit_timer.vrednost() > 6000)	// Auto exit_scroll
+					if (settings_ui.state_exit_timer.vrednost() > auto_exit_timeout)	// Auto exit_scroll
 					{
 						exit_scroll();
 					}
@@ -167,7 +171,7 @@ void settings_UI(void *paramOdTaska)
 									settings_ui.state = STATE_STRIP_SELECTION;
 									settings_ui.menu_seek = NORMAL_FADE;
 									brightDOWN(20);
-									delayFREERTOS(500);
+									delayFREERTOS(100);
 									continue;
 								break;
 							
@@ -194,7 +198,7 @@ void settings_UI(void *paramOdTaska)
 				/*****	END CASE *****/
 				
 				case STATE_STRIP_SELECTION:
-					if (settings_ui.state_exit_timer.vrednost() > 6000)
+					if (settings_ui.state_exit_timer.vrednost() > auto_exit_timeout)
 					{
 						exit_scroll();
 					}
@@ -213,20 +217,24 @@ void settings_UI(void *paramOdTaska)
 							EEPROM.pisi(audio_system.strip_mode, eeprom_addr_strip_mode);
 							exit_scroll();			
 						}
-						
-						else if (settings_ui.hold_time > 0)
-						{
-							if (settings_ui.hold_time > 20 && settings_ui.hold_time < 500)
-							{
-								settings_ui.menu_seek = (settings_ui.menu_seek + 1) % enum_STRIP_MODES::end_strip_modes;
-								deleteTASK(&audio_system.handle_active_strip_mode);
-							}
-							settings_ui.hold_time = 0;
-							settings_ui.hold_timer.ponastavi();
-						}
-				
-						showSEEK(&settings_ui);		
 					}
+					
+					else if (settings_ui.hold_time > 0)
+					{
+						if (settings_ui.hold_time > 20 && settings_ui.hold_time < 500)
+						{
+							settings_ui.menu_seek = (settings_ui.menu_seek + 1);
+						}
+						settings_ui.hold_time = 0;
+						settings_ui.hold_timer.ponastavi();
+					}
+											
+					if (settings_ui.menu_seek >= STRIP_OFF)
+					{
+						settings_ui.menu_seek = NORMAL_FADE;
+					}
+											
+						showSEEK(&settings_ui);
 					
 				break;
 				/*****	END CASE *****/
