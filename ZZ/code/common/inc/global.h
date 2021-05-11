@@ -10,15 +10,8 @@
 #include "VHOD/Vhod.h"
 
 
-enum enum_HARDWARE_ERROR_REGISTER
-{
-	HARDWARE_ERROR_REG_WATCHDOG_FAIL = 0,
-	HARDWARE_ERROR_REG_SWITCH_FAIL
-};								
-
-
 // BIT MANIPULATION
-#define readBIT(reg, bit)				(		((reg >> bit) & 0x1) 													)
+#define readBIT(reg, bit)				(		(	(reg >> bit) & 0x1	)												)
 #define writeBIT(reg, bit, val)			(		(reg = val ? ( reg | (0x1 << bit) ) : ( reg  &  ~(0x1 << bit)))			)
 
 
@@ -43,7 +36,6 @@ struct struct_HARDWARE
 		uint8_t capacity_lcd_en		: 1;
 	}status_reg = {0};
 
-	unsigned char  error_reg	   = 0;
 	unsigned short battery_voltage = 0;
 	Vozlisce <class_TIMER*> timer_list;
 };

@@ -10,7 +10,7 @@
 /************************************************************************/
 
 #ifndef DEBUG
-	#define delayFREERTOS(x)	vTaskDelay(x/portTICK_PERIOD_MS);
+	#define delayFREERTOS(x)	vTaskDelay((double)x/portTICK_PERIOD_MS);
 #else
 	#include <math.h>
 	#define delayFREERTOS(x)	vTaskDelay(			2		)

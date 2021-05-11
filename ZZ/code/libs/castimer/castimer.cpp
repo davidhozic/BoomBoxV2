@@ -21,9 +21,10 @@ unsigned short class_TIMER::vrednost()
 {
 	timer_enabled = true;
 	unsigned short temp_timer_value;
+	
 	ATOMIC_BLOCK(ATOMIC_FORCEON)
 	{
-		temp_timer_value = timer_value;	// 16-bit variable gets incremented during interrupt -> this disables interrupts temporarily
+		temp_timer_value = timer_value;			// 16-bit variable gets incremented during interrupt -> this disables interrupts temporarily
 	}
 	return temp_timer_value; 
 	

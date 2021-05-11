@@ -18,6 +18,7 @@ void settings_UI(void *paramOdTaska);
 
 int main()
  {	
+	
 	/************************************************************************/
 	/*						  SET DATA DIRECTION REGISTERS                  */
 	/************************************************************************/
@@ -28,9 +29,9 @@ int main()
 	/*						SETUP TIMER FOR TIMER OBJECS                    */
 	/************************************************************************/
 	TCCR3A  = 0;
-	OCR3A	= 249;												// Output compare match na 249 tickov (1ms)
+	OCR3A = 249;												// Output compare match na 249 tickov (1ms)
 	TIMSK3	= 1 << OCIE3A;										// Vklopi output compare match ISR
-	TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;				// Clear timer on compare match	
+	TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;				// Clear timer on compare match	, /64 prescaler 
 	/************************************************************************/
 	/*								SETUP ADC                               */
 	/************************************************************************/
@@ -39,12 +40,13 @@ int main()
 	ADCSRB  =	 0;
 	ADCSRA |=	(1 << ADEN);
 	DIDR0   =	0xFF;
+	ADMUX = 1;
 	ADCSRA |=	(1 << ADSC);
 	/************************************************************************/
 	/*							  SETUP OTHER                               */ 
 	/************************************************************************/
 	 Hardware.status_reg.charging_finished = EEPROM.beri(eeprom_addr_battery_stat);		/* Read charging state */
-
+	
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
@@ -53,12 +55,6 @@ int main()
 	xTaskCreate(polnjenje, "charing", 256, NULL, 1, NULL);
 	xTaskCreate(settings_UI, "settings_ui", 256, NULL, 3, NULL);
 	xTaskCreate(audio_visual, "audio_system", 256, NULL, 3, NULL);
-
-#ifndef DEBUG
-	_delay_ms(25);
-#endif
-
-
 	/************************************************************************/
 	/*								START TASKS                             */
 	/************************************************************************/

@@ -65,7 +65,7 @@ struct struct_settings_UI
 	/*							SETTINGS                                    */
 	/************************************************************************/
 
-	#define auto_exit_timeout			(15000)
+	#define auto_exit_timeout			(20000)
 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
@@ -88,7 +88,7 @@ inline void showSEEK(struct_settings_UI *control_block)  // Prikaze element v se
 		case STATE_STRIP_SELECTION:
 			if (audio_system.handle_active_strip_mode == NULL)
 			{
-				xTaskCreate(audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, &audio_system.barva_selekt,4,&audio_system.handle_active_strip_mode);
+				xTaskCreate(audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, NULL, 4,&audio_system.handle_active_strip_mode);
 			}
 		break;
 	}
@@ -99,7 +99,7 @@ inline void exit_scroll()
 	audio_system.flashSTRIP();
 	audio_system.current_brightness = 255;
 	brightDOWN(15);
-	delayFREERTOS(250);
+	delayFREERTOS(500);
 	audio_system.stripON();
 }
 /*******************************************************************************************/
@@ -129,6 +129,7 @@ void settings_UI(void *paramOdTaska)
 						audio_system.stripOFF();
 						settings_ui.state = STATE_SCROLL;
 						settings_ui.menu_seek = MENU_TOGGLE_LCD;
+						audio_system.select_strip_color(BELA);
 						settings_ui.state_exit_timer.ponastavi();
 						settings_ui.hold_timer.ponastavi();
 						audio_system.flashSTRIP();
@@ -170,7 +171,9 @@ void settings_UI(void *paramOdTaska)
 								case MENU_STRIP_MODE_CHANGE:
 									settings_ui.state = STATE_STRIP_SELECTION;
 									settings_ui.menu_seek = NORMAL_FADE;
+									audio_system.strip_loop_time = 25;
 									brightDOWN(20);
+									audio_system.select_strip_color(BELA);
 									delayFREERTOS(100);
 									continue;
 								break;

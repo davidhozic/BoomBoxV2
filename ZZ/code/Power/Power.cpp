@@ -22,9 +22,9 @@ void power_switch_ev(uint8_t mode);
 
 enum enum_power_switch_modes
 {
-	INTERNAL,
+	INTERNAL = 0,
 	EXTERNAL
-}power_switch_modes;
+};
 	
 void power(void *paramOdTaska)
 {
@@ -33,7 +33,6 @@ void power(void *paramOdTaska)
 	 class_TIMER stikaloOFFtime(Hardware.timer_list);
 	 class_VHOD stikalo(main_power_switch_pin, main_power_switch_port, 0);
 	 class_TIMER power_up_delay_timer(Hardware.timer_list);
-
 	while (true)
 	{ 
 		/************************************************************************/
@@ -47,13 +46,13 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*							POWER UP/SHUTDOWN					        */
 		/************************************************************************/
-		if (!Hardware.status_reg.powered_up && Hardware.error_reg == 0 &&
-		   (Hardware.battery_voltage > sleep_voltage + 250 || Hardware.status_reg.external_power) 
-		   && power_up_delay_timer.vrednost() >= 2000)
+		if (!Hardware.status_reg.powered_up && (Hardware.battery_voltage > sleep_voltage + 250 || Hardware.status_reg.external_power) && power_up_delay_timer.vrednost() >= 2000)
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
 			Power_UP();
 			power_up_delay_timer.ponastavi();
 		}
+		
+		
 		
 		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
 		{	
@@ -61,7 +60,6 @@ void power(void *paramOdTaska)
 			{
 				Shutdown();
 			}
-			Hardware.error_reg = 0;
 			power_up_delay_timer.ponastavi();		
 		}
 		

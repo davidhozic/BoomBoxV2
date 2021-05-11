@@ -21,6 +21,7 @@ void class_AUDIO_SYS::updateSTRIP()
 
 void class_AUDIO_SYS::flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
 {
+	select_strip_color(BELA);
 	for (uint8_t i = 0; i < 5; i++)
 	{
 		audio_system.current_brightness = 0;
@@ -90,5 +91,6 @@ void class_AUDIO_SYS::stripON()
 	xTaskCreate(avg_vol_task, "avg_vol", 128, NULL, 3, &handle_average_volume);
 	volatile uint8_t temp = EEPROM.beri(eeprom_addr_strip_mode);
 	strip_mode = temp < end_strip_modes ? temp : NORMAL_FADE;	// Checks if reading returned value in range
+	audio_system.strip_loop_time = 10;
 	delayFREERTOS(5);
 }
