@@ -2,7 +2,7 @@
 #include "FreeRTOS.h"
 #include "global.h"
 #include "common/inc/FreeRTOS_def_decl.h"
-
+#include "libs/VHOD/Vhod.h"
 
 /************************************************************************/
 /*								GLOBAL OBJECTS	                        */

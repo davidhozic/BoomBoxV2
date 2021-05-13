@@ -11,9 +11,7 @@
 *.lss
 *.eep
 *.elf
-.atsuo
 ZZ/Debug/Makefile
-*.atsuo
-
+.atsuo
 *.json
 ZZ/Release/Makefile

@@ -51,12 +51,10 @@ void class_TIMER::increment()
 
 class_TIMER::class_TIMER(Vozlisce <class_TIMER*> &timer_list)
 {
-	ATOMIC_BLOCK(ATOMIC_FORCEON)
-	{
-		timer_list.dodaj_konec(this);
-	}
+	asm("cli");
+	timer_list.dodaj_konec(this);
+	asm("sei");
 }
-
 
 
 

@@ -9,8 +9,6 @@
 
 
 
-class_TIMER LCD_timer(Hardware.timer_list);	
-bool display_edge = true;
 
 
 void zaslon(void *paramOdTaska)
@@ -23,14 +21,14 @@ void zaslon(void *paramOdTaska)
 			if (Hardware.status_reg.charging_enabled)		/*	Charging is enabled -> flash lcd  */
 			{
 				toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
-				display_edge = true;
-				delayFREERTOS(2000);												
+				Hardware.status_reg.display_edge = true;
+				delayFREERTOS(1000);												
 			}
-			else if (display_edge)
+			else if (Hardware.status_reg.display_edge)
 			{				
-				display_edge = false;
+				Hardware.status_reg.display_edge = false;
 				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
-				delayFREERTOS(4000);
+				delayFREERTOS(6000);
 				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
 			}
 		}
@@ -42,7 +40,7 @@ void zaslon(void *paramOdTaska)
 				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
 				delayFREERTOS(5000);
 				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
-				delayFREERTOS(2000);
+				delayFREERTOS(3000);
 			}
 		
 			else

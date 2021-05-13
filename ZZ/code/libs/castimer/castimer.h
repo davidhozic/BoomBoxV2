@@ -1,5 +1,8 @@
 
-#pragma once
+#ifndef CASTIMER_H
+
+
+#define CASTIMER_H
 #ifndef SEZNAM_INC
 #include "./povezan_seznam/povezan_seznam.h"
 #endif
@@ -18,7 +21,7 @@ public:
 	class_TIMER(Vozlisce <class_TIMER*> &timer_list);
 };
 
-
+#endif
 
 
 

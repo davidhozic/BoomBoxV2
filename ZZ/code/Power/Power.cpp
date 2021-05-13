@@ -3,7 +3,7 @@
 #include "common/inc/global.h"
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
-
+#include "common/inc/global_inputs.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "FreeRTOS_def_decl.h"
 #include "audio-visual/includes/audio.h"
@@ -25,14 +25,19 @@ enum enum_power_switch_modes
 	INTERNAL = 0,
 	EXTERNAL
 };
-	
+
+
+
 void power(void *paramOdTaska)
 {
 	
-	 class_TIMER VOLT_timer(Hardware.timer_list);
-	 class_TIMER stikaloOFFtime(Hardware.timer_list);
-	 class_VHOD stikalo(main_power_switch_pin, main_power_switch_port, 0);
-	 class_TIMER power_up_delay_timer(Hardware.timer_list);
+	/*		TIMER objects		*/
+	class_TIMER VOLT_timer(Hardware.timer_list);
+	class_TIMER power_up_delay_timer(Hardware.timer_list);
+	
+	/*		INPUT objects		*/
+	class_VHOD stikalo(main_power_switch_pin, main_power_switch_port, 0);
+	
 	while (true)
 	{ 
 		/************************************************************************/
@@ -54,7 +59,7 @@ void power(void *paramOdTaska)
 		
 		
 		
-		if (stikalo.vrednost() == 0 && stikaloOFFtime.vrednost() > 30)
+		if (stikalo.vrednost() == 0)
 		{	
 			if (Hardware.status_reg.powered_up)
 			{
@@ -63,8 +68,6 @@ void power(void *paramOdTaska)
 			power_up_delay_timer.ponastavi();		
 		}
 		
-		else if (stikalo.vrednost() == 1)
-			stikaloOFFtime.ponastavi();
 			
 		if (Hardware.battery_voltage < sleep_voltage && !napajalnik.vrednost() && Hardware.battery_voltage > 0) //Če je battery_voltage 0V, to pomeni da baterij še ni prebral ; V spanje gre pri 8% napolnjenosti
 		{
@@ -121,7 +124,7 @@ void power_switch_ev(uint8_t mode)
 			delayFREERTOS(20);
 			writeOUTPUT(menjalnik_pin,menjalnik_port,1);
 			Hardware.status_reg.external_power = 1;
-			delayFREERTOS(500);
+			delayFREERTOS(200);
 		break;
 		
 		case INTERNAL:
@@ -129,7 +132,7 @@ void power_switch_ev(uint8_t mode)
 				delayFREERTOS(20);
 				writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
 				Hardware.status_reg.external_power = 0;
-				delayFREERTOS(500);
+				delayFREERTOS(200);
 		break;
 	}
 }

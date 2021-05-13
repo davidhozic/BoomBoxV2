@@ -6,7 +6,7 @@
 #include "common/inc/FreeRTOS_def_decl.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "libs/EEPROM/EEPROM.h"
-
+#include "common/inc/global_inputs.h"
 
 void polnjenje(void *paramOdTaska)
 {

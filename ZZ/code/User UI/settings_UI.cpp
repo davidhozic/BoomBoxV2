@@ -52,7 +52,6 @@ struct struct_settings_UI
 		long_press = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 		hold_timer.ponastavi();
 		state_exit_timer.ponastavi();
-		SW2_off_timer.ponastavi();
 	}
 	
 	struct_settings_UI()
@@ -73,6 +72,7 @@ struct struct_settings_UI
 inline void toggleLCD()			
 {																														
 	Hardware.status_reg.capacity_lcd_en = !Hardware.status_reg.capacity_lcd_en;
+	Hardware.status_reg.display_edge = false;
 }
 
 
@@ -109,14 +109,11 @@ void settings_UI(void *paramOdTaska)
 	
 	while (true)
 	{
-		if (settings_ui.SW2.vrednost())
-		{
-			settings_ui.SW2_off_timer.ponastavi();							// Filtrira lazne nepritiske
-		}
-		else if (settings_ui.SW2_off_timer.vrednost() > 50)
+		/* RESET long press */
+		if (settings_ui.SW2.fallingEdge())
 		{
 			settings_ui.long_press = false;
-		}	
+		}		
 		
 		//State machine
 		if (!settings_ui.long_press)

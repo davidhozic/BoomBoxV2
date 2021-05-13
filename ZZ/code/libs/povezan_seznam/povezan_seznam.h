@@ -3,6 +3,9 @@
 #ifndef INC_FREERTOS_H
 #include "FreeRTOS.h"
 #endif
+#ifndef _STDLIB_H_
+#include <stdlib.h>
+#endif
 
 template <typename tip>
 class Vozlisce
@@ -48,7 +51,7 @@ public:
 
     void dodaj_zacetek(tip vrednost)
     {
-        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
+        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) malloc(sizeof(vozlisce_data_obj_t));
         pojdi_zacetek();
 
         if (glava != nullptr)
@@ -64,7 +67,7 @@ public:
 
     void dodaj_konec(tip vrednost)
     {
-        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
+        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) malloc(sizeof(vozlisce_data_obj_t));
 
         pojdi_konec();
         if (glava != nullptr)
