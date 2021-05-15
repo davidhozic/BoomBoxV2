@@ -8,9 +8,6 @@
 #include "FreeRTOS_def_decl.h"
 #include "castimer/castimer.h"
 
-// BIT MANIPULATION
-#define readBIT(reg, bit)				(		(	(reg >> bit) & 0x1	)												)
-#define writeBIT(reg, bit, val)			(		(reg = val ? ( reg | (0x1 << bit) ) : ( reg  &  ~(0x1 << bit)))			)
 
 /****************************************************************************************************************************/
 /*													GLOBAL STRUCTS															*/
@@ -29,7 +26,6 @@ struct struct_HARDWARE
 	}status_reg = {0};
 
 	unsigned short battery_voltage = 0;
-	Vozlisce <class_TIMER*> timer_list;
 };
 
 extern struct_HARDWARE Hardware;

@@ -1,26 +1,34 @@
 #include "VHOD/Vhod.h"
+#include "bit_manipulation.h"
 #include "avr/io.h"
-#include "castimer/castimer.h"
-#include "global.h"
-#include <stdio.h>
-#include "libs/povezan_seznam/povezan_seznam.h"
-#include <util/atomic.h>
-
-#define FILTER_TIME_MS				50
 
 bool class_VHOD::vrednost()
 {
 	if (port < 'H')
-		unfiltered_curr_state = readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
+	{
+		unfiltered_curr_state =	readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
+	}
 	else if (port == 'H')
-		unfiltered_curr_state =  readBIT( PINH, pin);
+	{
+		unfiltered_curr_state = readBIT(PINH, pin);
+	}
 	else
-		unfiltered_curr_state = readBIT( *((unsigned char*)&PINJ + 3*(port-'J'))   , pin); 	
+	{
+		unfiltered_curr_state =	readBIT( *((unsigned char*)&PINJ + 3*(port-'J'))   , pin); 	
+	}
 	// END READING OF PIN
 	/************************/
 	
+	/*		Invert output if unpressed input state is 1		*/
+	if (default_state)
+	{
+		unfiltered_curr_state = !unfiltered_curr_state;
+	}	
+	
+#if (USE_FILTERING == 1)
 	/* Filter input with a timer */
-	if (unfiltered_curr_state != filtered_curr_state && filter_timer.vrednost() >= FILTER_TIME_MS)
+	if (unfiltered_curr_state != filtered_curr_state
+		&& filter_timer.vrednost() >= FILTER_TIME_MS)
 	{
 		filtered_curr_state = unfiltered_curr_state;
 	}
@@ -28,9 +36,12 @@ bool class_VHOD::vrednost()
 	{
 		filter_timer.ponastavi();
 	}
+#else
+	filtered_curr_state = unfiltered_curr_state;
+#endif
 	/* END OF FILTERING*/
 	
-	/* Filter input */
+	/* Edge detection */
 	if (prev_state != filtered_curr_state)
 	{
 		/* If state has changed and input is high -> rising edge*/
@@ -43,10 +54,10 @@ bool class_VHOD::vrednost()
 		{
 			falling_edge = 1;
 			prev_state = filtered_curr_state;
-		}
-		
+		}	
 	}
 	
+	/* Clear edges if input state doesn't match */
 	if (!filtered_curr_state)
 	{
 		rising_edge = 0;
@@ -55,11 +66,8 @@ bool class_VHOD::vrednost()
 		falling_edge = 0;
 	}
 	
-	/* Return inverted value if input is pull down to return logical 1 when pressed instead of 0*/
-	if (default_state)
-		return !filtered_curr_state;
-	else	
-		return filtered_curr_state;
+
+	return filtered_curr_state;
 }
 
 bool class_VHOD::risingEdge()

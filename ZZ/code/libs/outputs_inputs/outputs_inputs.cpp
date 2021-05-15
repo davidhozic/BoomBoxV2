@@ -1,10 +1,10 @@
 
 #include <avr/io.h>
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "common/inc/global.h"
+#include "outputs_inputs.h"
 
+#include "bit_manipulation.h"
 
-
+#include "util/atomic.h"
 
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 {

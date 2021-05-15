@@ -17,7 +17,7 @@
 #define brightUP(cas_na_krog)				    			audio_system.brightnessFADE(1, cas_na_krog)
 #define brightDOWN(cas_na_krog)								audio_system.brightnessFADE(-1, cas_na_krog)
 
-#define  trigger_level_percent								 ( ((double) 11.5/600 * audio_system.average_volume + 7)/100.00    )
+#define  mic_trigger_level_percent							( (((double) 30/600 * audio_system.average_volume + 6)/100.00)    )
 
 /*********************************************/
 /*			 ENUM,STRUCT DEFINICIJE          */
@@ -45,7 +45,7 @@ enum enum_COLOR_SPACE_indexes
 void normal_fade_task(void *input);
 void inverted_fade_task(void *input);
 void breathe_fade_task(void *input);
-void avg_vol_task(void* BARVA);
+void signal_measure(void* BARVA);
 /*********************************************/
 
 /************************************************************************/
@@ -70,21 +70,24 @@ public:
 	}
 
 	/****************************************************************************/
-	/***  Strip parameters   ***/
+	/****  Strip parameters   ****/
 	int8_t strip_mode = NORMAL_FADE;			// Current strip mode
 	
-	/*** Strip current state ***/
+	/**** Strip current state ****/
 	int16_t current_color[3] = {0, 0, 0};	// Current RGB color of the strip
 	int16_t current_brightness = 0;	// Current brightness level of the strip
 	uint16_t strip_loop_time = 10;
-	/***		Timers		 ***/
-	class_TIMER lucke_filter_timer	= class_TIMER(Hardware.timer_list);				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
+	/****		Timers		 ****/
+	class_TIMER lucke_filter_timer;				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	
-	/****   Strip lightup	***/
+	/****   Strip lightup	****/
 	uint8_t barva_selekt = 0;				// Index of color that strip will turn on
 	bool mikrofon_detect = 0;				// Is set to 1 if spike is detected and then strip is turned on
+	
+	/****	Measurements	****/
 	uint16_t average_volume = 2048;			// Variable that stores the average volume
-	/****   Task handles	***/
+	
+	/****   Task handles	****/
 	TaskHandle_t handle_average_volume = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
 	/***	Strip mode functions ***/

@@ -32,8 +32,8 @@ void power(void *paramOdTaska)
 {
 	
 	/*		TIMER objects		*/
-	class_TIMER VOLT_timer(Hardware.timer_list);
-	class_TIMER power_up_delay_timer(Hardware.timer_list);
+	class_TIMER VOLT_timer;
+	class_TIMER power_up_delay_timer;
 	
 	/*		INPUT objects		*/
 	class_VHOD stikalo(main_power_switch_pin, main_power_switch_port, 0);
@@ -43,7 +43,7 @@ void power(void *paramOdTaska)
 		/************************************************************************/
 		/*							VOLTAGE READING                             */
 		/************************************************************************/
-		if (VOLT_timer.vrednost() > 500)
+		if (VOLT_timer.vrednost() > 200)
 		{
 			Hardware.battery_voltage = readANALOG(vDIV_pin) *	(double) adc_milivolt_ref/1023.00;
 			VOLT_timer.ponastavi();
@@ -56,8 +56,6 @@ void power(void *paramOdTaska)
 			Power_UP();
 			power_up_delay_timer.ponastavi();
 		}
-		
-		
 		
 		if (stikalo.vrednost() == 0)
 		{	
@@ -128,11 +126,11 @@ void power_switch_ev(uint8_t mode)
 		break;
 		
 		case INTERNAL:
-				Shutdown();
-				delayFREERTOS(20);
-				writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
-				Hardware.status_reg.external_power = 0;
-				delayFREERTOS(200);
+			Shutdown();
+			delayFREERTOS(20);
+			writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
+			Hardware.status_reg.external_power = 0;
+			delayFREERTOS(200);
 		break;
 	}
 }

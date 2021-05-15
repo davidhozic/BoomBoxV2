@@ -25,7 +25,7 @@ struct_MOZNE_BARVE mozne_barve =
 	.RUMENA  =		{255, 255, 0},
 	.SVETLO_MODRA =	{0, 255, 255},
 	.VIJOLICNA =	{255, 0, 255},
-	.ROZA =			{255, 20, 147},
+	.ROZA =			{255, 20, 100},
 	.barvni_ptr  = {mozne_barve.BELA, mozne_barve.ZELENA, mozne_barve.RDECA, mozne_barve.MODRA, mozne_barve.RUMENA, mozne_barve.SVETLO_MODRA, mozne_barve.VIJOLICNA, mozne_barve.ROZA}
 };
 /**************************************************************************************************************************
@@ -47,11 +47,9 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 {
 	while (true)
 	{
-
+		
 		if (Hardware.status_reg.powered_up && audio_system.strip_mode != STRIP_OFF)
-		{
-			audio_system.mikrofon_detect = readANALOG(mic_pin) > audio_system.average_volume + (double)audio_system.average_volume * trigger_level_percent; 
-			
+		{	
 			if (audio_system.lucke_filter_timer.vrednost() >= 200 && audio_system.mikrofon_detect)	 // STRIP task creation
 			{
 				audio_system.lucke_filter_timer.ponastavi();
@@ -60,7 +58,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				xTaskCreate(audio_system.array_strip_modes[audio_system.strip_mode], "strip mode", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
 			}
 		}
-		
+
 
 		delayFREERTOS(1);
 		//End task loop

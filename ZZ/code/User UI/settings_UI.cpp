@@ -39,9 +39,9 @@ struct struct_settings_UI
 	class_VHOD SW2 = class_VHOD(red_button_pin, red_button_port, 0);
 	unsigned short hold_time;
 	bool long_press;
-	class_TIMER SW2_off_timer = class_TIMER(Hardware.timer_list);
-	class_TIMER state_exit_timer = class_TIMER(Hardware.timer_list);
-	class_TIMER hold_timer = class_TIMER(Hardware.timer_list);
+	class_TIMER SW2_off_timer = class_TIMER();
+	class_TIMER state_exit_timer = class_TIMER();
+	class_TIMER hold_timer = class_TIMER();
 	
 	void init()
 	{

@@ -1,20 +1,22 @@
 
 #ifndef VHOD_H
 #define	VHOD_H
-#include "castimer/castimer.h"
-#include <stdint.h>
 
-#ifndef  SEZNAM_INC
-#include "./povezan_seznam/povezan_seznam.h"
+typedef unsigned char uint8_t;
+
+/************************************************************/
+					/*		 SETTINGS		*/
+					
+#define FILTER_TIME_MS									50
+#define USE_FILTERING									0
+/************************************************************/
+
+
+#if (USE_FILTERING == 1)
+	#include "povezan_seznam.h"
+	#include "castimer.h"
 #endif
 
-#ifndef CASTIMER_H
-#include "castimer/castimer.h"
-#endif
-
-#ifndef GLOBAL_H
-#include "common/inc/global.h"
-#endif
 
 class class_VHOD // pin, port, stanje ko ni pritisnjen
 {
@@ -26,16 +28,17 @@ private:
 	uint8_t falling_edge			:	1;
 	uint8_t default_state			:	1;
 	
-    unsigned char pin;
+    uint8_t pin;
     char port;
-	
-	class_TIMER filter_timer = class_TIMER(Hardware.timer_list);
-	
+#if (USE_FILTERING == 1)
+	class_TIMER filter_timer;
+#endif
+
 public:
     bool vrednost();
     bool risingEdge();
     bool fallingEdge();
-	class_VHOD(unsigned char pin, char port, char default_state);
+	class_VHOD(uint8_t pin, char port, char default_state);
 };
 
 
