@@ -1,11 +1,5 @@
 #include <avr/interrupt.h>
-#include "FreeRTOS.h"
-#include "task.h"
-#include <avr/wdt.h>
 #include "common/inc/global.h"
-#include <util/delay.h>
-#include "castimer/castimer.h"
-#include "libs/VHOD/Vhod.h"
 /************************************************************************/
 /*								PROTOTYPES                              */
 /************************************************************************/
@@ -16,8 +10,11 @@ void bujenje();
 /************************************************************************/
 ISR(PCINT2_vect)												// SLEEP ISR
 {
-	bujenje();
+	if (m_Hardware.status_reg.sleeping)
+		bujenje();
 }
+
+
 
 
 

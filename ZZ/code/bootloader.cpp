@@ -45,8 +45,7 @@ int main()
 	/************************************************************************/
 	/*							  SETUP OTHER                               */ 
 	/************************************************************************/
-	 Hardware.status_reg.charging_finished = EEPROM.beri(eeprom_addr_battery_stat);		/* Read charging state */
-	
+	 m_Hardware.status_reg.charging_finished = EEPROM.beri(EEPROM_ADDRESS_BATTERY_CHARGING_STATUS);	/* Read charging state */
 	/************************************************************************/
 	/*							   SETUP TASKS                              */
 	/************************************************************************/
@@ -54,7 +53,7 @@ int main()
 	xTaskCreate(zaslon, "display", 256, NULL, 1, NULL);
 	xTaskCreate(polnjenje, "charing", 256, NULL, 1, NULL);
 	xTaskCreate(settings_UI, "settings_ui", 256, NULL, 3, NULL);
-	xTaskCreate(audio_visual, "audio_system", 256, NULL, 3, NULL);
+	xTaskCreate(audio_visual, "m_audio_system", 256, NULL, 3, NULL);
 	/************************************************************************/
 	/*								START TASKS                             */
 	/************************************************************************/

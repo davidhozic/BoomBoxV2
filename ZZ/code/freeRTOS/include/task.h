@@ -1262,7 +1262,7 @@ void vTaskStartScheduler( void ) PRIVILEGED_FUNCTION;
  *
  * vTaskEndScheduler () requires an exit function to be defined within the
  * portable layer (see vPortEndScheduler () in port. c for the PC port).  This
- * performs hardware specific operations such as stopping the kernel tick.
+ * performs m_Hardware specific operations such as stopping the kernel tick.
  *
  * vTaskEndScheduler () will cause all of the resources allocated by the
  * kernel to be freed - but will not free resources allocated by application

@@ -1,21 +1,96 @@
-#include "VHOD/Vhod.h"
-#include "bit_manipulation.h"
-#include "avr/io.h"
+#include "Vhod.h"
+
 
 bool class_VHOD::vrednost()
 {
-	if (port < 'H')
+
+	switch (port)
 	{
-		unfiltered_curr_state =	readBIT( *((unsigned char*)&PINA + 3*(port-'A'))   , pin); // Write bit in status register read from PINA + (port - 'A')* 3 (start at port A and then move forward thru addresses to get to other PINs) (0x20 = PINA)	
+	#ifdef PINA
+		case 'A':
+			unfiltered_curr_state = readBIT(PINA, pin);
+		break;
+	#endif
+
+	#ifdef PINB
+		case 'B':
+			unfiltered_curr_state = readBIT(PINB, pin);
+		break;
+	#endif
+
+	#ifdef PINC
+		case 'C':
+			unfiltered_curr_state = readBIT(PINC, pin);
+		break;
+	#endif
+
+	#ifdef PIND
+		case 'D':
+			unfiltered_curr_state = readBIT(PIND, pin);
+		break;
+	#endif
+
+	#ifdef PINE
+		case 'E':
+			unfiltered_curr_state = readBIT(PINE, pin);
+		break;
+	#endif
+
+	#ifdef PINF
+		case 'F':
+			unfiltered_curr_state = readBIT(PINF, pin);
+		break;
+	#endif
+
+	#ifdef PING
+		case 'G':
+			unfiltered_curr_state = readBIT(PING, pin);
+		break;
+	#endif
+
+	#ifdef PINH
+		case 'H':
+			unfiltered_curr_state = readBIT(PINH, pin);
+		break;
+	#endif
+
+	#ifdef PINI
+		case 'I':
+			unfiltered_curr_state = readBIT(PINI, pin);
+		break;
+	#endif
+
+	#ifdef PINJ
+		case 'J':
+			unfiltered_curr_state = readBIT(PINJ, pin);
+		break;
+	#endif
+
+
+	#ifdef PINK
+		case 'K':
+			unfiltered_curr_state = readBIT(PINK, pin);
+		break;
+	#endif
+
+	#ifdef PINL
+		case 'L':
+			unfiltered_curr_state = readBIT(PINL, pin);
+		break;
+	#endif
+
+	#ifdef PINM
+		case 'M':
+			unfiltered_curr_state = readBIT(PINM, pin);
+		break;
+	#endif
+
+		default:
+		break;
 	}
-	else if (port == 'H')
-	{
-		unfiltered_curr_state = readBIT(PINH, pin);
-	}
-	else
-	{
-		unfiltered_curr_state =	readBIT( *((unsigned char*)&PINJ + 3*(port-'J'))   , pin); 	
-	}
+
+
+
 	// END READING OF PIN
 	/************************/
 	
@@ -97,6 +172,10 @@ class_VHOD::class_VHOD(unsigned char pin, char port, char default_state)
 	this->port = port;
 	this->pin = pin;
 	this->default_state = default_state;
+	filtered_curr_state = 0;
+	unfiltered_curr_state = 0;
+	rising_edge = 0;
+	falling_edge = 0;
 }
 
 

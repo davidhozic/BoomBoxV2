@@ -1,35 +1,43 @@
 
 
-#ifndef SETTINGS_HH
-#define SETTINGS_HH
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
+
+/************************************************************************/
+/*					 	   AUDIO SYSTEM SETTINGS                       */
+/************************************************************************/
+	#define  NORMAL_ANIMATION_TIME_MS		500		// Animation time for mic detection light up
+	#define	 SLOW_ANIMATION_TIME_MS			1500	// Animation time for exit animations and settings ui showcase
 /************************************************************************/
 /*								EEPROM IDs                              */
 /************************************************************************/
-/**/    #define eeprom_addr_battery_stat					0		  /**/
-/**/    #define eeprom_addr_strip_mode						1		  /**/
+    #define EEPROM_ADDRESS_BATTERY_CHARGING_STATUS		0x0		  
+    #define EEPROM_ADDRESS_STRIP_MODE					0x1		  
 /************************************************************************/
 
 
 /************************************************************************/
-/*					        VOLTAGE CONSTANTS					        */
+/*					        VOLTAGE SETTINGS					        */
 /************************************************************************/
-
-	#define adc_milivolt_ref				   5000
-	#define adc_volt_ref					   5.00f
+	#define adc_milivolt_ref							5000	  
+	#define adc_volt_ref								5.00	  
+	#define min_battery_voltage							3000L	  
+	#define max_battery_voltage							4150L	  
+	#define polnilna_histereza							10		  // When charging finishes, the speaker needs to discharge for atleast this percent
+/************************************************************************/
 
 /************************************************************************/                             
 /*							  ADC PIN MACROS               		        */
 /************************************************************************/    
-/**/	#define mic_pin						0	//ADC				  /**/
-/**/    #define vDIV_pin					2	//ADC				  /**/
-/**/	#define mic_ref_pin					3	//ADC				  /**/
+	#define mic_pin						0	//ADC				  
+    #define vDIV_pin					2	//ADC				  
 /************************************************************************/
 
 
 /************************************************************************/
 /*						  DIGITAL PINS & PORTS                          */
 /************************************************************************/
-    
 	#define BAT_LCD_pin						0
 	#define BAT_LCD_port				   'E'
 
@@ -39,10 +47,10 @@
 	#define	main_power_switch_pin		    1
 	#define main_power_switch_port		   'K'
 		
-    #define main_mosfet_pin					3			
+	#define main_mosfet_pin					3			
 	#define main_mosfet_port			   'H'	
 
-    #define menjalnik_pin					4	
+	#define menjalnik_pin					4	
 	#define menjalnik_port			       'H'	
 	
 	#define bat_charge_pin					5			
@@ -58,16 +66,8 @@
 	#define strip_green_pin					5
 	#define strip_blue_pin					6
 	#define strip_port					   'B'
-
-
-
-
 /************************************************************************/
 /*								OTHER                                   */
 /************************************************************************/
-    #define  sleep_voltage				 3100   
 	#define	 F_CPU						 16000000UL  
-	#define  watchdog_time				 WDTO_1S
-	#define  USE_TIMED_AVERAGE			 1
- 
 #endif

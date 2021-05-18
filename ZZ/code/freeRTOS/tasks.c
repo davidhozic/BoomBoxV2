@@ -2055,7 +2055,7 @@ void vTaskStartScheduler( void )
 
         traceTASK_SWITCHED_IN();
 
-        /* Setting up the timer tick is hardware specific and thus in the
+        /* Setting up the timer tick is m_Hardware specific and thus in the
          * portable interface. */
         if( xPortStartScheduler() != pdFALSE )
         {

@@ -2,7 +2,11 @@
 
 
 #include "./castimer.h"
-#include "util/atomic.h"
+
+
+#if (SOURCE_INTERUPT == 1)
+	#include "util/atomic.h"
+#endif
 
 /************************************************************************/
 /*							ERRORS AND WARNINGS                         */
@@ -10,12 +14,12 @@
 #if (	SOURCE_INTERUPT == 1	)
 #warning "Timer must be set manually to trigger interrupt every TIMER_INCREMENT_VALUE_MS"
 #warning "Timer library will use interrupt as a source."
-#ifndef TIMER_VECTOR
-#error TIMER_VECTOR "is not defined!"
+#ifndef TIMER_ISR_VECTOR
+#error TIMER_ISR_VECTOR "is not defined!"
 #endif
 
 #elif ( SOURCE_SYSTEM_TIME == 1 )
-#ifndef (SYSTEM_TIME_FUNCTION)
+#ifndef SYSTEM_TIME_FUNCTION
 #error "SYSTEM_TIME_FUNCTION is not defined!"
 #endif
 #warning "Timer library will use system time as a source."
@@ -23,29 +27,32 @@
 /************************************************************************/
 
 /* Initialization of timer list */
-Vozlisce_t <class_TIMER*> class_TIMER::timer_list;
+#if (SOURCE_INTERUPT == 1)
+	Vozlisce_t <class_TIMER*> class_TIMER::timer_list;
+#endif
 
-unsigned short class_TIMER::vrednost()
+unsigned long class_TIMER::vrednost()
 {
 #if (SOURCE_INTERUPT == 1)
-	timer_enabled = true;
+	timer_enabled = true;				
 	unsigned short temp_timer_value;
 	ATOMIC_BLOCK(ATOMIC_FORCEON)
 	{
-		temp_timer_value = timer_value;			// 16-bit variable gets incremented during interrupt -> this disables interrupts temporarily
+		temp_timer_value = timer_value;		
 	}
+		
 	return temp_timer_value; 
 
-#elif (SOURCE_SYSTEM_TIME == 1)
+#elif (SOURCE_SYSTEM_TIME == 1)					// Use System time as source for the timer
 
 	if (timer_enabled == false)
 	{
 		timer_enabled = true;
-		timer_value = SYSTEM_TIME_FUNCTION;	 // Old Timer Value
+		timer_value = SYSTEM_TIME_FUNCTION;	 // Start value
 		return 0;
 	}
 
-	return	SYSTEM_TIME_FUNCTION - timer_value;
+	return	SYSTEM_TIME_FUNCTION - timer_value;		
 #endif
 }
 
@@ -77,15 +84,15 @@ void class_TIMER::ponastavi()
 
 	class_TIMER::class_TIMER()
 	{
-		asm("cli");
-		class_TIMER::timer_list.dodaj_konec(this);
-		asm("sei");
+		ATOMIC_BLOCK(ATOMIC_FORCEON)
+		{
+			class_TIMER::timer_list.dodaj_konec(this);
+		}
 	}
-		
-	ISR(TIMER_VECTOR)
-	{
 
-		for (uint16_t ind = 0, len = class_TIMER::timer_list.length(); ind < len ; ind++)
+	ISR(TIMER_ISR_VECTOR)
+	{
+		for (uint16_t ind = 0, len = class_TIMER::timer_list.length() ; ind < len ; ind++)
 		{
 			class_TIMER::timer_list[ind]->increment();
 		}

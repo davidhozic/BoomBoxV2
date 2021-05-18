@@ -1,10 +1,11 @@
 #include <stdlib.h>
+#include "libs/EEPROM/EEPROM.h"
 #include "includes/audio.h"
 #include "castimer/castimer.h"
 #include "VHOD/Vhod.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/FreeRTOS_def_decl.h"
-#include "libs/EEPROM/EEPROM.h"
+
 
 /************************************************************************/
 /*                            TASK HANDLES                              */
@@ -15,8 +16,8 @@
 /************************************************************************/
 /*							AUDIO VISUAL STRUCTS                        */
 /************************************************************************/
-class_AUDIO_SYS audio_system;
-struct_MOZNE_BARVE mozne_barve =
+class_AUDIO_SYS m_audio_system;
+struct_MOZNE_BARVE m_mozne_barve =
 {
 	.BELA	 =		{255, 255, 255},
 	.ZELENA	 =		{0, 255, 0},
@@ -26,7 +27,7 @@ struct_MOZNE_BARVE mozne_barve =
 	.SVETLO_MODRA =	{0, 255, 255},
 	.VIJOLICNA =	{255, 0, 255},
 	.ROZA =			{255, 20, 100},
-	.barvni_ptr  = {mozne_barve.BELA, mozne_barve.ZELENA, mozne_barve.RDECA, mozne_barve.MODRA, mozne_barve.RUMENA, mozne_barve.SVETLO_MODRA, mozne_barve.VIJOLICNA, mozne_barve.ROZA}
+	.barvni_ptr  = {m_mozne_barve.BELA, m_mozne_barve.ZELENA, m_mozne_barve.RDECA, m_mozne_barve.MODRA, m_mozne_barve.RUMENA, m_mozne_barve.SVETLO_MODRA, m_mozne_barve.VIJOLICNA, m_mozne_barve.ROZA}
 };
 /**************************************************************************************************************************
 *                                                                                                                         *
@@ -48,14 +49,14 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 	while (true)
 	{
 		
-		if (Hardware.status_reg.powered_up && audio_system.strip_mode != STRIP_OFF)
+		if (m_Hardware.status_reg.powered_up && m_audio_system.strip_mode != STRIP_OFF)
 		{	
-			if (audio_system.lucke_filter_timer.vrednost() >= 200 && audio_system.mikrofon_detect)	 // STRIP task creation
+			if (m_audio_system.lucke_filter_timer.vrednost() >= 200 && m_audio_system.mikrofon_detect)	 // STRIP task creation
 			{
-				audio_system.lucke_filter_timer.ponastavi();
-				audio_system.barva_selekt = (audio_system.barva_selekt + 1) %  enum_BARVE::barve_end;	// Color is randomly chosen
-				deleteTASK(&audio_system.handle_active_strip_mode);
-				xTaskCreate(audio_system.array_strip_modes[audio_system.strip_mode], "strip mode", 128, &audio_system.barva_selekt, 4, &audio_system.handle_active_strip_mode);
+				m_audio_system.lucke_filter_timer.ponastavi();
+				m_audio_system.barva_selekt = (m_audio_system.barva_selekt + 1) %  enum_BARVE::barve_end;	
+				deleteTASK(&m_audio_system.handle_active_strip_mode);
+				xTaskCreate(m_audio_system.array_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
 			}
 		}
 
@@ -72,38 +73,36 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 **************************************************************************************************************************/
 void normal_fade_task(void *input) //Prizig na barbi in pocasen izklop
 {
-	audio_system.current_brightness = 255;
-	audio_system.select_strip_color(*(uint8_t*)input);
+	m_audio_system.current_brightness = 255;
+	m_audio_system.select_strip_color(*(uint8_t*)input);
 	
 
-	brightDOWN(audio_system.strip_loop_time);
-	
+	brightDOWN(m_audio_system.animation_time);
 
-	audio_system.handle_active_strip_mode = NULL;
+	m_audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
 
 void breathe_fade_task(void *input)
 {
-	audio_system.select_strip_color(*(uint8_t*)input);
+	m_audio_system.select_strip_color(*(uint8_t*)input);
 	
-	brightUP(audio_system.strip_loop_time/2);
-	brightDOWN(audio_system.strip_loop_time/2);	
-
-	audio_system.handle_active_strip_mode = NULL;
+	brightUP(m_audio_system.animation_time);
+	brightDOWN(m_audio_system.animation_time);
+	
+	m_audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }
 
 void inverted_fade_task(void *input)
 {
 	
-	audio_system.current_brightness = 0;
-	audio_system.select_strip_color(*(uint8_t*)input);
+	m_audio_system.current_brightness = 0;
+	m_audio_system.select_strip_color(*(uint8_t*)input);
 	
-	brightUP(audio_system.strip_loop_time);
+	brightUP(m_audio_system.animation_time);
 	
-
-	audio_system.handle_active_strip_mode = NULL;
+	m_audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 	
 	

@@ -8,49 +8,44 @@
 #include "libs/outputs_inputs/outputs_inputs.h"
 
 
-
-
-
 void zaslon(void *paramOdTaska)
 {
+	/*  Timers  */
+	class_TIMER LCD_timer;
 	
 	while(1)
 	{
-		if (Hardware.status_reg.external_power)
-		{	
-			if (Hardware.status_reg.charging_enabled)		/*	Charging is enabled -> flash lcd  */
+		if (m_Hardware.status_reg.charging_enabled)
+		{
+			if ( LCD_timer.vrednost() >= 1000)
 			{
 				toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
-				Hardware.status_reg.display_edge = true;
-				delayFREERTOS(1000);												
+				LCD_timer.ponastavi();
 			}
-			else if (Hardware.status_reg.display_edge)
-			{				
-				Hardware.status_reg.display_edge = false;
-				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
-				delayFREERTOS(6000);
+		}
+
+		else if (m_Hardware.status_reg.capacity_lcd_en && m_Hardware.status_reg.powered_up)
+		{
+
+			if (LCD_timer.vrednost() < 5000)
+			{
 				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+			}
+			else if(LCD_timer.vrednost() <= 8000)
+			{
+				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
+			}
+			else
+			{
+				LCD_timer.ponastavi();
 			}
 		}
 		
 		else
 		{
-			if ( Hardware.status_reg.capacity_lcd_en )
-			{
-				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
-				delayFREERTOS(5000);
-				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
-				delayFREERTOS(3000);
-			}
-		
-			else
-			{
-				writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
-			}
+			writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
 		}
-	
-		/***********************************************************************************************************************/
-		
+
 		delayFREERTOS(100);
 		// END WHILE	
 	}

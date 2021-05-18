@@ -2,18 +2,18 @@
 #ifndef VHOD_H
 #define	VHOD_H
 
-typedef unsigned char uint8_t;
+#include <stdint.h>
+#include "avr/io.h"
 
 /************************************************************/
 					/*		 SETTINGS		*/
 					
 #define FILTER_TIME_MS									50
-#define USE_FILTERING									0
+#define USE_FILTERING									1
 /************************************************************/
 
 
 #if (USE_FILTERING == 1)
-	#include "povezan_seznam.h"
 	#include "castimer.h"
 #endif
 
@@ -38,9 +38,12 @@ public:
     bool vrednost();
     bool risingEdge();
     bool fallingEdge();
+
 	class_VHOD(uint8_t pin, char port, char default_state);
 };
 
+#define readBIT(reg, bit)				(		(	(reg >> bit) & 0x1	)												)
+#define writeBIT(reg, bit, val)			(		(reg = val ? ( reg | (0x1 << bit) ) : ( reg  &  ~(0x1 << bit)))			)
 
 #endif
 

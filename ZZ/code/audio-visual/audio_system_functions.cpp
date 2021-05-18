@@ -1,6 +1,6 @@
 #include "global.h"
-#include "includes/audio.h"
 #include "libs/EEPROM/EEPROM.h"
+#include "includes/audio.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/FreeRTOS_def_decl.h"
 #include <string.h>
@@ -14,9 +14,9 @@
 
 void class_AUDIO_SYS::updateSTRIP()
 {
-	writePWM(strip_red_pin, strip_port,		audio_system.current_color[RED] * audio_system.current_brightness/255.00);
-	writePWM(strip_green_pin, strip_port,	audio_system.current_color[GREEN] * audio_system.current_brightness/255.00);
-	writePWM(strip_blue_pin, strip_port,	audio_system.current_color[BLUE] * audio_system.current_brightness/255.00);
+	writePWM(strip_red_pin, strip_port,		m_audio_system.current_color[RED] * m_audio_system.current_brightness/255.00);
+	writePWM(strip_green_pin, strip_port,	m_audio_system.current_color[GREEN] * m_audio_system.current_brightness/255.00);
+	writePWM(strip_blue_pin, strip_port,	m_audio_system.current_color[BLUE] * m_audio_system.current_brightness/255.00);
 }
 
 void class_AUDIO_SYS::flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
@@ -24,55 +24,56 @@ void class_AUDIO_SYS::flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / me
 	select_strip_color(BELA);
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		audio_system.current_brightness = 0;
+		m_audio_system.current_brightness = 0;
 		updateSTRIP();
 		delayFREERTOS(125);
-		audio_system.current_brightness = 255;
+		m_audio_system.current_brightness = 255;
 		updateSTRIP();
 		delayFREERTOS(125);
 	}
 }
 
-void class_AUDIO_SYS::colorSHIFT(uint8_t BARVA, uint8_t cas_krog)
+void class_AUDIO_SYS::colorSHIFT(uint8_t BARVA, unsigned short animation_time)
 {
 	char smer[3];
-	while (audio_system.current_color[RED]	 != mozne_barve.barvni_ptr[BARVA][0] ||
-	audio_system.current_color[GREEN] != mozne_barve.barvni_ptr[BARVA][1] ||
-	audio_system.current_color[BLUE]	 != mozne_barve.barvni_ptr[BARVA][2])	// While current colors different from wanted
+	while (m_audio_system.current_color[RED]	 != m_mozne_barve.barvni_ptr[BARVA][0] ||
+	m_audio_system.current_color[GREEN] != m_mozne_barve.barvni_ptr[BARVA][1] ||
+	m_audio_system.current_color[BLUE]	 != m_mozne_barve.barvni_ptr[BARVA][2])	// While current colors different from wanted
 	{
-		mozne_barve.barvni_ptr[BARVA][0] >= audio_system.current_color[RED]	? smer[0] = 1 : smer[0] = -1;
-		mozne_barve.barvni_ptr[BARVA][1] >= audio_system.current_color[GREEN]? smer[1] = 1 : smer[1] = -1;
-		mozne_barve.barvni_ptr[BARVA][2] >= audio_system.current_color[BLUE]	? smer[2] = 1 : smer[2] = -1;
+		m_mozne_barve.barvni_ptr[BARVA][0] >= m_audio_system.current_color[RED]	  ? smer[RED]	= 1 : smer[RED]	  = -1;
+		m_mozne_barve.barvni_ptr[BARVA][1] >= m_audio_system.current_color[GREEN] ? smer[GREEN] = 1 : smer[GREEN] = -1;
+		m_mozne_barve.barvni_ptr[BARVA][2] >= m_audio_system.current_color[BLUE]  ? smer[BLUE]  = 1 : smer[BLUE]  = -1;
 
-		audio_system.current_color[RED]		+=	(6 * smer[0]);
-		audio_system.current_color[GREEN]	+=	(6 * smer[1]);
-		audio_system.current_color[BLUE]	+=	(6 * smer[2]);
+		m_audio_system.current_color[RED]		+=	(6 * smer[0]);
+		m_audio_system.current_color[GREEN]	+=	(6 * smer[1]);
+		m_audio_system.current_color[BLUE]	+=	(6 * smer[2]);
 
 		//Preveri prenihaj:
 
-		audio_system.current_color[RED] = (smer[0] == 1 && audio_system.current_color[RED] > mozne_barve.barvni_ptr[BARVA][0]) ||
-		(smer[0] == -1 && audio_system.current_color[RED] < mozne_barve.barvni_ptr[BARVA][0]) ? mozne_barve.barvni_ptr[BARVA][0]: audio_system.current_color[RED] ;	//Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
+		m_audio_system.current_color[RED] = (smer[0] == 1 && m_audio_system.current_color[RED] > m_mozne_barve.barvni_ptr[BARVA][0]) ||
+		(smer[0] == -1 && m_audio_system.current_color[RED] < m_mozne_barve.barvni_ptr[BARVA][0]) ? m_mozne_barve.barvni_ptr[BARVA][0]: m_audio_system.current_color[RED] ;	//Ce je bila trenutna barva pod zeljeno ali na zeljeni in je zdaj trenudna nad zeljeno, se nastavi na zeljeno (prenihaj)
 		
-		audio_system.current_color[GREEN] = (smer[1] == 1 && audio_system.current_color[GREEN] > mozne_barve.barvni_ptr[BARVA][1]) ||
-		(smer[1] == -1 && audio_system.current_color[GREEN] < mozne_barve.barvni_ptr[BARVA][1]) ? mozne_barve.barvni_ptr[BARVA][1]: audio_system.current_color[GREEN] ;
+		m_audio_system.current_color[GREEN] = (smer[1] == 1 && m_audio_system.current_color[GREEN] > m_mozne_barve.barvni_ptr[BARVA][1]) ||
+		(smer[1] == -1 && m_audio_system.current_color[GREEN] < m_mozne_barve.barvni_ptr[BARVA][1]) ? m_mozne_barve.barvni_ptr[BARVA][1]: m_audio_system.current_color[GREEN] ;
 		
-		audio_system.current_color[BLUE] = (smer[2] == 1 && audio_system.current_color[BLUE] > mozne_barve.barvni_ptr[BARVA][2]) ||
-		(smer[2] == -1 && audio_system.current_color[BLUE] < mozne_barve.barvni_ptr[BARVA][2]) ? mozne_barve.barvni_ptr[BARVA][2]: audio_system.current_color[BLUE] ;
+		m_audio_system.current_color[BLUE] = (smer[2] == 1 && m_audio_system.current_color[BLUE] > m_mozne_barve.barvni_ptr[BARVA][2]) ||
+		(smer[2] == -1 && m_audio_system.current_color[BLUE] < m_mozne_barve.barvni_ptr[BARVA][2]) ? m_mozne_barve.barvni_ptr[BARVA][2]: m_audio_system.current_color[BLUE] ;
 
 		updateSTRIP();
-		delayFREERTOS(cas_krog);
+		
+		delayFREERTOS(  (animation_time*6)/255  );
 	}
 }
 
-void class_AUDIO_SYS::brightnessFADE(char smer, uint8_t cas_krog)
+void class_AUDIO_SYS::brightnessFADE(char smer, unsigned short animation_time)
 {
-	while (smer > 0 ? audio_system.current_brightness < 255 : audio_system.current_brightness > 0)
+	while (smer > 0 ? m_audio_system.current_brightness < 255 : m_audio_system.current_brightness > 0)
 	{
-		audio_system.current_brightness += 6 * smer;
-		audio_system.current_brightness = audio_system.current_brightness < 0 ? 0 : audio_system.current_brightness;
-		audio_system.current_brightness = audio_system.current_brightness > 255 ? 255 : audio_system.current_brightness;
+		m_audio_system.current_brightness += 6 * smer;
+		m_audio_system.current_brightness = m_audio_system.current_brightness < 0 ? 0 : m_audio_system.current_brightness;
+		m_audio_system.current_brightness = m_audio_system.current_brightness > 255 ? 255 : m_audio_system.current_brightness;
 		updateSTRIP();
-		delayFREERTOS(cas_krog);
+		delayFREERTOS(  (animation_time*6)/255  );
 	}
 }
 
@@ -83,14 +84,15 @@ void class_AUDIO_SYS::stripOFF()
 	deleteTASK(&handle_average_volume);
 	deleteTASK(&handle_active_strip_mode);
 	delayFREERTOS(10);
-	brightDOWN(15);
+	m_audio_system.animation_time = SLOW_ANIMATION_TIME_MS;
+	brightDOWN(SLOW_ANIMATION_TIME_MS);
 }
 
 void class_AUDIO_SYS::stripON()
 {
 	xTaskCreate(signal_measure, "avg_vol", 128, NULL, 3, &handle_average_volume);
-	volatile uint8_t temp = EEPROM.beri(eeprom_addr_strip_mode);
+	volatile uint8_t temp = EEPROM.beri(EEPROM_ADDRESS_STRIP_MODE);
 	strip_mode = temp < end_strip_modes ? temp : NORMAL_FADE;	// Checks if reading returned value in range
-	audio_system.strip_loop_time = 10;
-	delayFREERTOS(5);
+	m_audio_system.animation_time = NORMAL_ANIMATION_TIME_MS;
+	delayFREERTOS(10);
 }

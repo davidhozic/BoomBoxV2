@@ -180,14 +180,14 @@ size_t xPortGetFreeHeapSize( void ) PRIVILEGED_FUNCTION;
 size_t xPortGetMinimumEverFreeHeapSize( void ) PRIVILEGED_FUNCTION;
 
 /*
- * Setup the hardware ready for the scheduler to take control.  This generally
+ * Setup the m_Hardware ready for the scheduler to take control.  This generally
  * sets up a tick interrupt and sets timers for the correct tick frequency.
  */
 BaseType_t xPortStartScheduler( void ) PRIVILEGED_FUNCTION;
 
 /*
- * Undo any hardware/ISR setup that was performed by xPortStartScheduler() so
- * the hardware is left in its original condition after the scheduler stops
+ * Undo any m_Hardware/ISR setup that was performed by xPortStartScheduler() so
+ * the m_Hardware is left in its original condition after the scheduler stops
  * executing.
  */
 void vPortEndScheduler( void ) PRIVILEGED_FUNCTION;

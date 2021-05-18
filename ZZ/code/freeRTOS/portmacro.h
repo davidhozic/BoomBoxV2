@@ -36,7 +36,7 @@ extern "C" {
  * Port specific definitions.
  *
  * The settings in this file configure FreeRTOS correctly for the
- * given hardware and compiler.
+ * given m_Hardware and compiler.
  *
  * These settings should not be altered.
  *-----------------------------------------------------------

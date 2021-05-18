@@ -2,6 +2,7 @@
 
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include "common/inc/global.h"
+#include "EEPROM.h"
 #include "includes/audio.h"
 #include "castimer/castimer.h"
 #include <math.h>
@@ -42,7 +43,7 @@ void signal_measure(void* param)
 		/************************************************************************/
 		microphone.current_value = readANALOG(mic_pin);
 		
-		audio_system.mikrofon_detect = microphone.current_value > (double)audio_system.average_volume + (double)audio_system.average_volume * mic_trigger_level_percent; 
+		m_audio_system.mikrofon_detect = microphone.current_value > (double)m_audio_system.average_volume + (double)m_audio_system.average_volume * mic_trigger_level_percent; 
 		if (microphone.current_value > microphone.max_value)
 			microphone.max_value = microphone.current_value;
 
@@ -56,7 +57,7 @@ void signal_measure(void* param)
 		
 		if (microphone.readings_num >= max_readings_num)
 		{
-			audio_system.average_volume  = microphone.readings_sum / microphone.readings_num;
+			m_audio_system.average_volume  = microphone.readings_sum / microphone.readings_num;
 			microphone.readings_sum  = 0;
 			microphone.readings_num  = 0;
 			microphone.max_value	 = 0;

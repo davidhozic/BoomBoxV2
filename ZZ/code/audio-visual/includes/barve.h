@@ -25,6 +25,6 @@
 		unsigned char ROZA[3];
 		unsigned char *barvni_ptr[8];
 	};
-extern struct_MOZNE_BARVE mozne_barve;
+extern struct_MOZNE_BARVE m_mozne_barve;
 	
 

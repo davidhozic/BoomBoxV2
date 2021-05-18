@@ -1176,7 +1176,7 @@ TaskHandle_t xTimerGetTimerDaemonTaskHandle( void ) PRIVILEGED_FUNCTION;
  *  {
  *      BaseType_t xInterfaceToService, xHigherPriorityTaskWoken;
  *
- *      // Query the hardware to determine which interface needs processing.
+ *      // Query the m_Hardware to determine which interface needs processing.
  *      xInterfaceToService = prvCheckInterfaces();
  *
  *      // The actual processing is to be deferred to a task.  Request the

@@ -2,4 +2,4 @@
 
 
 
-extern class_VHOD napajalnik;
+extern class_VHOD m_napajalnik;

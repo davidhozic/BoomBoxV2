@@ -1,5 +1,6 @@
 #include "FreeRTOS.h"
 #include "common/inc/global.h"
+#include "EEPROM.h"	
 #include "../audio-visual/includes/audio.h"
 #include "libs/outputs_inputs/outputs_inputs.h"
 #include <util/delay.h>
@@ -60,19 +61,17 @@ struct struct_settings_UI
 	}
 }settings_ui;
 
-	/************************************************************************/
-	/*							SETTINGS                                    */
-	/************************************************************************/
-
-	#define auto_exit_timeout			(20000)
+/*******************************************************************************************/
+/*							SETTINGS						                               */
+/*******************************************************************************************/
+#define auto_exit_timeout			(20000)
 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
 inline void toggleLCD()			
 {																														
-	Hardware.status_reg.capacity_lcd_en = !Hardware.status_reg.capacity_lcd_en;
-	Hardware.status_reg.display_edge = false;
+	m_Hardware.status_reg.capacity_lcd_en = !m_Hardware.status_reg.capacity_lcd_en;
 }
 
 
@@ -81,14 +80,14 @@ inline void showSEEK(struct_settings_UI *control_block)  // Prikaze element v se
 	switch(control_block->state)
 	{
 		case STATE_SCROLL:
-			audio_system.current_brightness = 255;
-			audio_system.colorSHIFT(control_block->menu_seek, 5);
+			m_audio_system.current_brightness = 255;
+			m_audio_system.colorSHIFT(control_block->menu_seek, 5);
 		break;
 		
 		case STATE_STRIP_SELECTION:
-			if (audio_system.handle_active_strip_mode == NULL)
+			if (m_audio_system.handle_active_strip_mode == NULL)
 			{
-				xTaskCreate(audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, NULL, 4,&audio_system.handle_active_strip_mode);
+				xTaskCreate(m_audio_system.array_strip_modes[control_block->menu_seek], "seek", 128, NULL, 4,&m_audio_system.handle_active_strip_mode);
 			}
 		break;
 	}
@@ -96,11 +95,11 @@ inline void showSEEK(struct_settings_UI *control_block)  // Prikaze element v se
 inline void exit_scroll()
 {
 	settings_ui.init();
-	audio_system.flashSTRIP();
-	audio_system.current_brightness = 255;
-	brightDOWN(15);
+	m_audio_system.flashSTRIP();
+	m_audio_system.current_brightness = 255;
+	brightDOWN(SLOW_ANIMATION_TIME_MS);
 	delayFREERTOS(500);
-	audio_system.stripON();
+	m_audio_system.stripON();
 }
 /*******************************************************************************************/
 
@@ -121,15 +120,15 @@ void settings_UI(void *paramOdTaska)
 			switch (settings_ui.state)
 			{
 				case STATE_UNSET:
-					if (Hardware.status_reg.powered_up && settings_ui.hold_timer.vrednost() > 1000)
+					if (m_Hardware.status_reg.powered_up && settings_ui.hold_timer.vrednost() > 1000)
 					{
-						audio_system.stripOFF();
+						m_audio_system.stripOFF();
 						settings_ui.state = STATE_SCROLL;
 						settings_ui.menu_seek = MENU_TOGGLE_LCD;
-						audio_system.select_strip_color(BELA);
+						m_audio_system.select_strip_color(BELA);
 						settings_ui.state_exit_timer.ponastavi();
 						settings_ui.hold_timer.ponastavi();
-						audio_system.flashSTRIP();
+						m_audio_system.flashSTRIP();
 						showSEEK(&settings_ui);
 						delayFREERTOS(200);
 						settings_ui.long_press = true;
@@ -168,16 +167,16 @@ void settings_UI(void *paramOdTaska)
 								case MENU_STRIP_MODE_CHANGE:
 									settings_ui.state = STATE_STRIP_SELECTION;
 									settings_ui.menu_seek = NORMAL_FADE;
-									audio_system.strip_loop_time = 25;
-									brightDOWN(20);
-									audio_system.select_strip_color(BELA);
+									m_audio_system.animation_time = SLOW_ANIMATION_TIME_MS; // Make strip light up slower in strip selection menu
+									brightDOWN(SLOW_ANIMATION_TIME_MS);
+									m_audio_system.select_strip_color(BELA);
 									delayFREERTOS(100);
 									continue;
 								break;
 							
 								case MENU_STRIP_DISABLE:
-									audio_system.strip_mode = STRIP_OFF;
-									EEPROM.pisi(audio_system.strip_mode, eeprom_addr_strip_mode);
+									m_audio_system.strip_mode = STRIP_OFF;
+									m_audio_system.save_strip_mode();
 								break;
 							}
 							exit_scroll();
@@ -213,8 +212,8 @@ void settings_UI(void *paramOdTaska)
 							settings_ui.long_press = true;
 							settings_ui.hold_timer.ponastavi();
 							settings_ui.hold_time = 0;
-							audio_system.strip_mode = settings_ui.menu_seek;
-							EEPROM.pisi(audio_system.strip_mode, eeprom_addr_strip_mode);
+							m_audio_system.strip_mode = settings_ui.menu_seek;
+							m_audio_system.save_strip_mode();
 							exit_scroll();			
 						}
 					}

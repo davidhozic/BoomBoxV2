@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #endif
 
-
+#include <stdint.h>
 
 
 /************************************************************************/
 /*							  SETTINGS                                  */
 /************************************************************************/
-#define  USE_FREERTOS_MALLOC 1
+#define  USE_FREERTOS_MALLOC   1
 /************************************************************************/
 
 
@@ -25,6 +25,7 @@ template <typename tip>
 class Vozlisce_t
 {
 private:
+
     class vozlisce_data_obj_t
     {
     public:
@@ -38,7 +39,7 @@ private:
 
     vozlisce_data_obj_t *glava = nullptr;
     unsigned short count = 0;
-			
+
     inline void pojdi_zacetek()
     {
         while (glava != nullptr && glava->prejsnji != nullptr)
@@ -56,7 +57,6 @@ private:
 	}
 
 public:
-
     inline unsigned short length()
     {
         return count;
@@ -112,20 +112,20 @@ public:
         nov->naslednji = nullptr;
         nov->podatek = vrednost;
 		glava = nov;
-		count++;
+        count++;
     }
 
     tip &operator[](unsigned short index)
     {
 		pojdi_zacetek();
+        
+        for (uint16_t i = 0 ; i < index; i++)
+           glava = glava->naslednji;
 		
-		for (uint16_t i = 0; i < index; i++)
-		{
-			glava = glava->naslednji;
-		}
 
-        return glava->podatek;
+        return (glava->podatek);
     }
 };
+
 
 #endif

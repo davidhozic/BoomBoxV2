@@ -44,7 +44,6 @@
 
 
 #if (port_SLICING_USE_TIMERS == 1)
-	#warning "Using one of 6 other timers (not WDT) used for scheduler"
 	
 	#ifndef portUSE_TIMER0
 	#define portUSE_TIMER0 0
@@ -533,7 +532,7 @@ void wdt_interrupt_reset_enable (const uint8_t value)
 /*-----------------------------------------------------------*/
 
 /*
- * Perform hardware setup to enable ticks from relevant Timer.
+ * Perform m_Hardware setup to enable ticks from relevant Timer.
  */
 static void prvSetupTimerInterrupt( void );
 /*-----------------------------------------------------------*/
@@ -620,7 +619,7 @@ uint16_t usAddress;
 
 BaseType_t xPortStartScheduler( void )
 {
-    /* Setup the relevant timer hardware to generate the tick. */
+    /* Setup the relevant timer m_Hardware to generate the tick. */
     prvSetupTimerInterrupt();
 
     /* Restore the context of the first task that is going to run. */
