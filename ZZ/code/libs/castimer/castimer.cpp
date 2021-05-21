@@ -1,9 +1,8 @@
 
 
 
-#include "./castimer.h"
-
-
+#include "./castimer.hh"
+#include <math.h>
 #if (SOURCE_INTERUPT == 1)
 	#include "util/atomic.h"
 #endif
@@ -12,8 +11,7 @@
 /*							ERRORS AND WARNINGS                         */
 /************************************************************************/
 #if (	SOURCE_INTERUPT == 1	)
-#warning "Timer must be set manually to trigger interrupt every TIMER_INCREMENT_VALUE_MS"
-#warning "Timer library will use interrupt as a source."
+#pragma message "Timer library will use one of the hardware timers' interrupt as a source. Hardware timer must be configured manually to trigger interrupt every TIMER_INCREMENT_VALUE_MS"
 #ifndef TIMER_ISR_VECTOR
 #error TIMER_ISR_VECTOR "is not defined!"
 #endif
@@ -22,7 +20,7 @@
 #ifndef SYSTEM_TIME_FUNCTION
 #error "SYSTEM_TIME_FUNCTION is not defined!"
 #endif
-#warning "Timer library will use system time as a source."
+#pragma message "Timer library will use system time as a source."
 #endif
 /************************************************************************/
 
@@ -30,6 +28,8 @@
 #if (SOURCE_INTERUPT == 1)
 	Vozlisce_t <class_TIMER*> class_TIMER::timer_list;
 #endif
+
+
 
 unsigned long class_TIMER::vrednost()
 {
@@ -71,7 +71,7 @@ void class_TIMER::ponastavi()
 
 	void class_TIMER::increment()
 	{
-		if (timer_enabled && timer_value < 65535) //Prevent overflow
+		if (timer_enabled)
 		{
 			#ifndef DEBUG
 			timer_value += TIMER_INCREMENT_VALUE_MS;

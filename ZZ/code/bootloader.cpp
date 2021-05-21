@@ -1,11 +1,10 @@
-#include "settings.h"
-#include "global.h"
-#include "libs/EEPROM/EEPROM.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "audio-visual/includes/audio.h"
-#include "common/inc/watchdog_functions.h"
+#include "settings.hh"
+#include "global.hh"
+#include "libs/EEPROM/EEPROM.hh"
+#include "libs/outputs_inputs/outputs_inputs.hh"
+#include "audio-visual/includes/audio.hh"
 #include <util/delay.h>
-#include "libs/VHOD/Vhod.h"
+#include "libs/VHOD/Vhod.hh"
 /************************************************************************/
 /*						      TASK PROTOS                               */
 /************************************************************************/

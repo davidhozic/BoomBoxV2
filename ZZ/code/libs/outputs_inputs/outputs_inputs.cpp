@@ -1,8 +1,8 @@
 
 #include <avr/io.h>
-#include "outputs_inputs.h"
+#include "outputs_inputs.hh"
 
-#include "bit_manipulation.h"
+#include "bit_manipulation.hh"
 
 #include "util/atomic.h"
 

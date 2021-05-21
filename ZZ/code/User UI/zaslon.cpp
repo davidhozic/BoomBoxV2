@@ -1,11 +1,11 @@
 #include "FreeRTOS.h"
 #include "task.h"
-#include "VHOD/Vhod.h"
-#include "castimer/castimer.h"
+#include "VHOD/Vhod.hh"
+#include "castimer/castimer.hh"
 #include <avr/io.h>
-#include "common/inc/global.h"
-#include "common/inc/FreeRTOS_def_decl.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
+#include "common/inc/global.hh"
+
+#include "libs/outputs_inputs/outputs_inputs.hh"
 
 
 void zaslon(void *paramOdTaska)

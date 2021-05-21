@@ -1,9 +1,8 @@
-#include "global.h"
-#include "libs/EEPROM/EEPROM.h"
-#include "includes/audio.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "common/inc/FreeRTOS_def_decl.h"
-#include <string.h>
+#include "global.hh"
+#include "libs/EEPROM/EEPROM.hh"
+#include "includes/audio.hh"
+#include "libs/outputs_inputs/outputs_inputs.hh"
+
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *

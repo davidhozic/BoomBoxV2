@@ -764,7 +764,7 @@ static void prvSetupTimerInterrupt( void )
 			TCCR0B = portPRESCALER;
 			TIMSK0 = 1 << OCIE0A;
 			#define portSCHEDULER_ISR TIMER0_COMPA_vect
-			#warning Using TIMER0 for scheduler!
+			#pragma message "Using TIMER0 for scheduler!"
 			
 	
 	#elif portUSE_TIMER1
@@ -777,7 +777,7 @@ static void prvSetupTimerInterrupt( void )
 			TCCR1B = portPRESCALER | 1 << WGM12;
 			TIMSK1 = 1 << OCIE1A;
 			#define portSCHEDULER_ISR TIMER1_COMPA_vect	
-			#warning Using TIMER1 for scheduler!
+			#pragma message "Using TIMER1 for scheduler!"
 			
 			
 	#elif portUSE_TIMER2
@@ -790,7 +790,7 @@ static void prvSetupTimerInterrupt( void )
 			TCCR2B = portPRESCALER;
 			TIMSK2 = 1 << OCIE2A;
 			#define portSCHEDULER_ISR TIMER2_COMPA_vect				
-			#warning Using TIMER2 for scheduler!
+			#pragma message "Using TIMER2 for scheduler!"
 			
 			
 	#elif portUSE_TIMER3
@@ -803,7 +803,7 @@ static void prvSetupTimerInterrupt( void )
 				TCCR3B = portPRESCALER | 1 << WGM32;
 				TIMSK3 = 1 << OCIE3A;
 				#define portSCHEDULER_ISR TIMER3_COMPA_vect	
-				#warning Using TIMER3 for scheduler!
+				#pragma message "Using TIMER3 for scheduler!"
 				
 				
 	#elif portUSE_TIMER4
@@ -816,7 +816,7 @@ static void prvSetupTimerInterrupt( void )
 				TCCR4B = portPRESCALER| 1 << WGM42;
 				TIMSK4 = 1 << OCIE4A;
 				#define portSCHEDULER_ISR TIMER4_COMPA_vect		
-				#warning Using TIMER4 for scheduler!
+				#pragma message "Using TIMER4 for scheduler!"
 				
 				
 	#elif portUSE_TIMER5
@@ -829,7 +829,7 @@ static void prvSetupTimerInterrupt( void )
 				TCCR5B = portPRESCALER | 1 << WGM52;
 				TIMSK5 = 1 << OCIE5A;
 				#define portSCHEDULER_ISR TIMER5_COMPA_vect				
-				#warning Using TIMER5 for scheduler!
+				#pragma message "Using TIMER5 for scheduler!"
 				
 				
 	#endif			

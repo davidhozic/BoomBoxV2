@@ -28,7 +28,7 @@
 
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
-#include "settings.h"
+#include "settings.hh"
 
 #define configUSE_PREEMPTION 0		
 

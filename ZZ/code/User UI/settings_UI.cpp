@@ -1,13 +1,13 @@
 #include "FreeRTOS.h"
-#include "common/inc/global.h"
-#include "EEPROM.h"	
-#include "../audio-visual/includes/audio.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
+#include "common/inc/global.hh"
+#include "EEPROM.hh"	
+#include "../audio-visual/includes/audio.hh"
+#include "libs/outputs_inputs/outputs_inputs.hh"
 #include <util/delay.h>
 #include <string.h>
-#include "VHOD/Vhod.h"
-#include "castimer/castimer.h"
-#include "libs/EEPROM/EEPROM.h"
+#include "VHOD/Vhod.hh"
+#include "castimer/castimer.hh"
+#include "libs/EEPROM/EEPROM.hh"
 /******************************************************************************************/
 /*                                  ELEMENTI V STATE_SCROLL MENIJU                        */
 /******************************************************************************************/

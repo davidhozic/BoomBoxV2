@@ -1,9 +1,8 @@
-#include "Vhod.h"
+#include "Vhod.hh"
 
 
 bool class_VHOD::vrednost()
 {
-
 	switch (port)
 	{
 	#ifdef PINA
@@ -123,13 +122,12 @@ bool class_VHOD::vrednost()
 		if (filtered_curr_state)
 		{
 			rising_edge = 1;
-			prev_state = filtered_curr_state;
 		}
 		else
 		{
 			falling_edge = 1;
-			prev_state = filtered_curr_state;
 		}	
+		prev_state = filtered_curr_state;
 	}
 	
 	/* Clear edges if input state doesn't match */

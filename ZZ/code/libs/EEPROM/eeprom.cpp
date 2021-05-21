@@ -2,8 +2,8 @@
 #include "avr/io.h"
 #include "FreeRTOS.h"
 #include "avr/interrupt.h"
-#include "libs/EEPROM/EEPROM.h"
-#include "common/inc/FreeRTOS_def_decl.h"
+#include "libs/EEPROM/EEPROM.hh"
+#include "global.hh"
 
 void EEPROM_t::pisi(uint8_t podatek, uint16_t naslov){
 	if (EEPROM_t::beri(naslov) == podatek)

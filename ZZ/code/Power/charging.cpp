@@ -1,11 +1,10 @@
-#include "VHOD/Vhod.h"
+#include "VHOD/Vhod.hh"
 #include "FreeRTOS.h"
-#include "castimer/castimer.h"
-#include "common/inc/global.h"
-#include "common/inc/FreeRTOS_def_decl.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "libs/EEPROM/EEPROM.h"
-#include "common/inc/global_inputs.h"
+#include "castimer/castimer.hh"
+#include "common/inc/global.hh"
+#include "libs/outputs_inputs/outputs_inputs.hh"
+#include "libs/EEPROM/EEPROM.hh"
+
 
 void polnjenje(void *paramOdTaska)
 {

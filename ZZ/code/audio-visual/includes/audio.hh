@@ -2,11 +2,11 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 #ifndef GLOBAL_H
-#include "common/inc/global.h"
+#include "common/inc/global.hh"
 #endif
-#include "audio-visual/includes/barve.h"
-#include "settings.h"
-#include "libs/castimer/castimer.h"
+#include "audio-visual/includes/barve.hh"
+#include "settings.hh"
+#include "libs/castimer/castimer.hh"
 #ifndef EEPROM_H
 	#error	"EEPROM must be included first"
 #endif
@@ -96,7 +96,7 @@ public:
 	bool mikrofon_detect = 0;				// Is set to 1 if spike is detected and then strip is turned on
 
 	/****		Timers		 ****/
-	class_TIMER lucke_filter_timer;				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
+	class_TIMER  lucke_filter_timer;				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	
 	/****	Measurements	****/
 	uint16_t average_volume = 2048;			// Variable that stores the average volume

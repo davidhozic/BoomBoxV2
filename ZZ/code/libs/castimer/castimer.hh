@@ -10,33 +10,31 @@
 #define SOURCE_SYSTEM_TIME							( 0 )			// Use System time as source
 #if (SOURCE_SYSTEM_TIME == 1)
 	#include "path_to_system_time_function_prototype"	
-	#define SYSTEM_TIME_FUNCTION				   	(millis())
+	#define SYSTEM_TIME_FUNCTION				   	(  some_function_call()	 )
 #endif
 /************************************************************************************************************/
 
 
 #if (	SOURCE_INTERUPT == 1	)	
 	#ifndef SEZNAM_INC
-	#include "povezan_seznam.h"
+	#include "povezan_seznam.hh"
 	#endif	
 	#include <avr/interrupt.h>
 #endif
-
-
 
 class class_TIMER
 {
 private:
 	bool timer_enabled = false;
-	unsigned long timer_value = 0;
+	uint32_t timer_value = 0;
 	
 public:
-    unsigned long vrednost();
+    uint32_t vrednost();
     void ponastavi();
 	void increment();
 	#if (SOURCE_INTERUPT == 1)
 		class_TIMER();
-		static Vozlisce_t <class_TIMER*> timer_list;
+		static Vozlisce_t <class_TIMER *> timer_list;
 	#endif
 };
 

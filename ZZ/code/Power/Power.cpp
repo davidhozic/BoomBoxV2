@@ -1,13 +1,12 @@
 
 
-#include "common/inc/global.h"
-#include "castimer/castimer.h"
-#include "VHOD/Vhod.h"
-#include "common/inc/global_inputs.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "FreeRTOS_def_decl.h"
-#include "EEPROM.h"
-#include "audio-visual/includes/audio.h"
+#include "common/inc/global.hh"
+#include "castimer/castimer.hh"
+#include "VHOD/Vhod.hh"
+#include "libs/outputs_inputs/outputs_inputs.hh"
+
+#include "EEPROM.hh"
+#include "audio-visual/includes/audio.hh"
 #include <avr/sleep.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>

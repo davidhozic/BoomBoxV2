@@ -1,10 +1,10 @@
 
 
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "common/inc/global.h"
-#include "EEPROM.h"
-#include "includes/audio.h"
-#include "castimer/castimer.h"
+#include "libs/outputs_inputs/outputs_inputs.hh"
+#include "common/inc/global.hh"
+#include "EEPROM.hh"
+#include "includes/audio.hh"
+#include "castimer/castimer.hh"
 #include <math.h>
 /************************************************************************/
 	#define	max_readings_num	( 30 )

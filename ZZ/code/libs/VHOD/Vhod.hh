@@ -14,7 +14,7 @@
 
 
 #if (USE_FILTERING == 1)
-	#include "castimer.h"
+	#include "castimer.hh"
 #endif
 
 

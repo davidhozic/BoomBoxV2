@@ -1,10 +1,10 @@
 #include <stdlib.h>
-#include "libs/EEPROM/EEPROM.h"
-#include "includes/audio.h"
-#include "castimer/castimer.h"
-#include "VHOD/Vhod.h"
-#include "libs/outputs_inputs/outputs_inputs.h"
-#include "common/inc/FreeRTOS_def_decl.h"
+#include "libs/EEPROM/EEPROM.hh"
+#include "includes/audio.hh"
+#include "castimer/castimer.hh"
+#include "VHOD/Vhod.hh"
+#include "libs/outputs_inputs/outputs_inputs.hh"
+
 
 
 /************************************************************************/
