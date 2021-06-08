@@ -1,10 +1,8 @@
 
 #include <avr/io.h>
 #include "outputs_inputs.hh"
-
-#include "bit_manipulation.hh"
-
 #include "util/atomic.h"
+#include "global.hh"
 
 void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 {
@@ -16,7 +14,6 @@ void writeOUTPUT(unsigned char pin, char port, bool vrednost)
 	else
 		writeBIT( *((unsigned char*)&PORTJ + 3*(port - 'J')), pin, vrednost);	
 }
-
 
 void toggleOUTPUT(unsigned char pin, char port)
 {

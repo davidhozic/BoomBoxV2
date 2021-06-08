@@ -28,7 +28,6 @@
 
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
-#include "settings.hh"
 
 #define configUSE_PREEMPTION 0		
 
@@ -49,8 +48,8 @@
 #define configUSE_16_BIT_TICKS 1			// Size of the Tick_t type, if 0, will be 32 bit, if 1 then the performance will be improved on 16 bit/8 bit CPUs (but timers will bi limited to max 2^16 -1 ticks)
 #define configIDLE_SHOULD_YIELD 1			// If this option is 1, the idle task and next task in line will share one time slice, if 0, all tasks will have same time slices
 #define configUSE_TASK_NOTIFICATIONS 1		
-#define configUSE_MUTEXES 1					// Mutual exclusion for a semaphore
-#define configUSE_RECURSIVE_MUTEXES 1		// Tasks can take more than one "key" from the semaphore in the same line of your code
+#define configUSE_MUTEXES 0					// Mutual exclusion for a semaphore
+#define configUSE_RECURSIVE_MUTEXES 0		// Tasks can take more than one "key" from the semaphore in the same line of your code
 #define configUSE_COUNTING_SEMAPHORES 0		// Semaphores won't have just one "key" but multiple
 #define configQUEUE_REGISTRY_SIZE 2			
 #define configUSE_QUEUE_SETS 1			
@@ -87,17 +86,17 @@
 //#define configASSERT(  x  ) if( ( x ) == 0 ) { asm volatile ("cli"); while(1){ asm volatile ("BREAK"); } }
 
 /* Optional functions - most linkers will remove unused functions anyway. */
-#define INCLUDE_vTaskPrioritySet 1
+#define INCLUDE_vTaskPrioritySet 0
 #define INCLUDE_uxTaskPriorityGet 0
 #define INCLUDE_vTaskDelete 1
 #define INCLUDE_vTaskSuspend 1
 #define INCLUDE_xResumeFromISR 0
-#define INCLUDE_vTaskDelayUntil 1
+#define INCLUDE_vTaskDelayUntil 0
 #define INCLUDE_vTaskDelay 1
 #define INCLUDE_xTaskGetSchedulerState 0
 #define INCLUDE_xTaskGetCurrentTaskHandle 0
-#define INCLUDE_uxTaskGetStackHighWaterMark 1
-#define INCLUDE_xTaskGetIdleTaskHandle 1
+#define INCLUDE_uxTaskGetStackHighWaterMark 0
+#define INCLUDE_xTaskGetIdleTaskHandle 0
 #define INCLUDE_eTaskGetState 1
 #define INCLUDE_xEventGroupSetBitFromISR 0
 #define INCLUDE_xTimerPendFunctionCall 0
@@ -108,6 +107,6 @@
 
 #define pdMS_TO_TICKS(xTimeInMs) ((TickType_t)(((uint32_t)(xTimeInMs) * (uint32_t)configTICK_RATE_HZ) / (uint32_t)1000))
 
-#define recmuRECURSIVE_MUTEX_TEST_TASK_STACK_SIZE ( configMINIMAL_STACK_SIZE * 2 )
+#define recmuRECURSIVE_MUTEX_TEST_TASK_STACK_SIZE ( configMINIMAL_STACK_SIZE )
 
 #endif /* FREERTOS_CONFIG_H */

@@ -1,4 +1,4 @@
-#include "VHOD/Vhod.hh"
+#include "input/input.hh"
 #include "FreeRTOS.h"
 #include "castimer/castimer.hh"
 #include "common/inc/global.hh"
@@ -23,17 +23,17 @@ void polnjenje(void *paramOdTaska)
 		}
 
 
-		if (m_Hardware.status_reg.charging_enabled && (m_Hardware.status_reg.charging_finished || m_napajalnik.vrednost() == 0))
+		if (m_Hardware.status_reg.charging_enabled && (m_Hardware.status_reg.charging_finished || m_napajalnik.value() == 0))
 		{
 			writeOUTPUT(bat_charge_pin, bat_charge_port,0);
 			m_Hardware.status_reg.charging_enabled = 0;
 		}
 
-		else if (m_Hardware.status_reg.charging_enabled == 0 && m_napajalnik.vrednost() && !m_Hardware.status_reg.charging_finished)
+		else if (m_Hardware.status_reg.charging_enabled == 0 && m_napajalnik.value() && !m_Hardware.status_reg.charging_finished)
 		{
 			writeOUTPUT(bat_charge_pin, bat_charge_port,1);
 			m_Hardware.status_reg.charging_enabled = 1;
 		}
-		delayFREERTOS(1);
+		delayFREERTOS(100);
 	}
 }

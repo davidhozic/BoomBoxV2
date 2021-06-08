@@ -8,7 +8,8 @@
 /*					 	   AUDIO SYSTEM SETTINGS                       */
 /************************************************************************/
 	#define  NORMAL_ANIMATION_TIME_MS		500		// Animation time for mic detection light up
-	#define	 SLOW_ANIMATION_TIME_MS			1500	// Animation time for exit animations and settings ui showcase
+	#define  FAST_ANIMATION_TIME_MS			125		// Animation time used in flash strip
+	#define	 SLOW_ANIMATION_TIME_MS			2000	// Animation time for exit animations and settings ui showcase
 /************************************************************************/
 /*								EEPROM IDs                              */
 /************************************************************************/
@@ -22,9 +23,9 @@
 /************************************************************************/
 	#define adc_milivolt_ref							5000	  
 	#define adc_volt_ref								5.00	  
-	#define min_battery_voltage							3000L	  
-	#define max_battery_voltage							4150L	  
-	#define polnilna_histereza							10		  // When charging finishes, the speaker needs to discharge for atleast this percent
+	#define min_battery_voltage							3000	  
+	#define max_battery_voltage							4150	  
+	#define polnilna_histereza							5		// When charging finishes, the speaker needs to discharge for atleast this percent
 /************************************************************************/
 
 /************************************************************************/                             

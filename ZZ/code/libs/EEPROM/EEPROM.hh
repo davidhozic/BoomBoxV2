@@ -1,8 +1,7 @@
 
-
 #ifndef EEPROM_H
+
 #define EEPROM_H
-#include <stdint.h>
 
 class EEPROM_t
 {

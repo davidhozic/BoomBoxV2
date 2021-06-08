@@ -1,0 +1,12 @@
+LITL - Linked list, input, timer, library
+
+This library includes:
+- Timer (Can work in interrupt mode or system time mode, configure in settings.hh)
+  FUNCTIONS: value() -> starts the timer and returns it's value; reset() -> resets the timer and turns it off; set_hook(function ptr, period, parameter ptr) -> attaches a function to the timer that gets called every period
+
+- Input - Controls inputs of the atmega mcu, includes optional timed filtering (requires the castimer). Functions: value() - returns value of input; risen_edge() - returns 1 if input has risen (edge gets cleared only after the call, or if input is unpressed); fallen_edge()- returns 1 if input has fallen. NOTE! Input class constructor accepts pin, port and unpressed state of the input. If the third (unpressed state) parameter is set to 1, the input object will return inverted value of what the PIN register is actually reading.
+
+- Linked list - Linked list library that doesn't use a constructor so it can be used by timer class (and it is). Functions: add_end() - adds element to the back of the list; add_front() - adds element to the front of the list; clear() - removes all the elements from the list;
+length() - returns the amount of elements in the list.
+  It also uses a template so it can be made for any type which can also be another class_LIST <type> (creates 2d list) -> Example: class_LIST <class_LIST<int>> list_1 -> creates a 2d list. To add a sub_list to the 2d list do:  list_1.add_end( class_LIST<int> () ) 
+NOTE! To access the elements in linked list, use  "object_name [index]". Do not reverse index and object_name as this is not a pointer but an operator overload funtion.

@@ -5,7 +5,6 @@
 #include "common/inc/global.hh"
 #endif
 #include "audio-visual/includes/barve.hh"
-#include "settings.hh"
 #include "libs/castimer/castimer.hh"
 #ifndef EEPROM_H
 	#error	"EEPROM must be included first"
@@ -19,7 +18,6 @@
 #define brightUP(animation_time)				    			m_audio_system.brightnessFADE(1,  animation_time)
 #define brightDOWN(animation_time)								m_audio_system.brightnessFADE(-1, animation_time)
 
-#define  mic_trigger_level_percent							( (((double) 30/600 * m_audio_system.average_volume + 6)/100.00)    )
 
 /*********************************************/
 /*			 ENUM,STRUCT DEFINICIJE          */
@@ -87,16 +85,16 @@ public:
 
 	/****************************************************************************/
 	/****  Strip parameters   ****/
-	uint8_t	 strip_mode = NORMAL_FADE;			// Current strip mode
+	enum_STRIP_MODES strip_mode = NORMAL_FADE;						// Current strip mode
 	uint16_t animation_time = NORMAL_ANIMATION_TIME_MS;
 	/**** Strip current state ****/
-	int16_t current_color[3] = {0, 0, 0};	// Current RGB color of the strip
-	int16_t current_brightness = 0;	// Current brightness level of the strip
-	uint8_t barva_selekt = 0;				// Index of color that strip will turn on
-	bool mikrofon_detect = 0;				// Is set to 1 if spike is detected and then strip is turned on
+	int16_t current_color[3] = {255, 255, 255};				// Current RGB color of the strip
+	int16_t current_brightness = 0;							// Current brightness level of the strip
+	uint8_t barva_selekt = 0;								// Index of color that strip will turn on
+	bool mikrofon_detect = 0;								// Is set to 1 if spike is detected and then strip is turned on
 
 	/****		Timers		 ****/
-	class_TIMER  lucke_filter_timer;				// Timer that prevents strip from triggering too fast after last trigger (filter timer)
+	class_TIMER  lucke_filter_timer;						// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	
 	/****	Measurements	****/
 	uint16_t average_volume = 2048;			// Variable that stores the average volume

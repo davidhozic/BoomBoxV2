@@ -1,35 +1,23 @@
 #ifndef SEZNAM_INC
 #define SEZNAM_INC
-
-#ifndef _STDLIB_H_
 #include <stdlib.h>
-#endif
-
 #include <stdint.h>
+#include "list_settings.hh"
 
-
-/************************************************************************/
-/*							  SETTINGS                                  */
-/************************************************************************/
-#define  USE_FREERTOS_MALLOC   1
-/************************************************************************/
-
-
-
-#if (USE_FREERTOS_MALLOC == 1)
+#if (USE_FREERTOS == 1)
 	#include "FreeRTOS.h"
 #endif
 
 
 template <typename tip>
-class Vozlisce_t
+class class_LIST
 {
 private:
 
     class vozlisce_data_obj_t
     {
     public:
-        friend class Vozlisce_t<tip>;
+        friend class class_LIST<tip>;
 
     private:
         vozlisce_data_obj_t *naslednji;
@@ -37,23 +25,26 @@ private:
         tip podatek;
     };
 
-    vozlisce_data_obj_t *glava = nullptr;
+    vozlisce_data_obj_t *glava = NULL;
     unsigned short count = 0;
+    unsigned short glava_index = 0;
 
     inline void pojdi_zacetek()
     {
-        while (glava != nullptr && glava->prejsnji != nullptr)
+        while (glava != NULL && glava->prejsnji != NULL)
         {
             glava = glava->prejsnji;
         }
+        glava_index = 0;
     }
 
     inline void pojdi_konec()
     {
-        while (glava != nullptr && glava->naslednji != nullptr)
+        while (glava != NULL && glava->naslednji != NULL)
         {
             glava = glava->naslednji;
         }
+        glava_index = count-1;
 	}
 
 public:
@@ -62,70 +53,93 @@ public:
         return count;
     }
 
-    void cisti_seznam()
+    /* Clears elements of the list */
+    ~class_LIST()
     {
-        pojdi_zacetek();
-        while (glava != nullptr)
-        {
-            vozlisce_data_obj_t *temp = glava->naslednji;
-            free(glava);
-            glava = temp;
-        }
-        count = 0;
+        clear();
     }
 
-    void dodaj_zacetek(tip vrednost)
+    void clear()
     {
-	#if (USE_FREERTOS_MALLOC == 1)
+        pojdi_zacetek();
+        while (glava != NULL)
+        {
+            vozlisce_data_obj_t *temp = glava->naslednji;
+
+            /* Deconstruct sub elements in case of multi dimentional lists */
+            glava->podatek.~tip();
+            
+        #if USE_FREERTOS
+            vPortFree(glava)
+        #else
+            free(glava);
+        #endif
+            glava = temp;
+            glava_index++;
+        }
+        count = 0;
+        glava_index = 0;
+    }
+    
+
+	void add_front(tip vrednost)
+    {
+	#if (USE_FREERTOS == 1)
         vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
     #else
 		vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) malloc(sizeof(vozlisce_data_obj_t));
 	#endif
 		pojdi_zacetek();
 
-        if (glava != nullptr)
+        if (glava != NULL)
         {
             glava->prejsnji = nov;
         }
-        nov->prejsnji = nullptr;
+        nov->prejsnji = NULL;
         nov->naslednji = glava;
         nov->podatek = vrednost;
         glava = nov;
         count++;
+        glava_index = 0;
     }
 
-    void dodaj_konec(tip vrednost)
+    void add_end(tip vrednost)
     {
 
-	#if (USE_FREERTOS_MALLOC == 1)
+	#if (USE_FREERTOS == 1)
 		vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
 	#else
 		vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) malloc(sizeof(vozlisce_data_obj_t));
 	#endif
 
         pojdi_konec();
-        if (glava != nullptr)
+        if (glava != NULL)
         {
             glava->naslednji = nov;
         }
         nov->prejsnji = glava;
-        nov->naslednji = nullptr;
+        nov->naslednji = NULL;
         nov->podatek = vrednost;
 		glava = nov;
         count++;
+        glava_index = count - 1;
     }
 
     tip &operator[](unsigned short index)
     {
-		pojdi_zacetek();
-        
-        for (uint16_t i = 0 ; i < index; i++)
-           glava = glava->naslednji;
+		while (glava_index < index)
+        {
+            glava = glava->naslednji;
+            glava_index++;
+        }
 		
+        while (glava_index > index)
+        {
+            glava = glava->prejsnji;
+            glava_index--;
+        }
 
         return (glava->podatek);
     }
 };
-
-
 #endif

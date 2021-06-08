@@ -1,16 +1,14 @@
 
 #include "FreeRTOS.h"
 #include "global.hh"
+#include "libs/input/input.hh"
 
-#include "libs/VHOD/Vhod.hh"
 
 /************************************************************************/
 /*								GLOBAL OBJECTS	                        */
 /************************************************************************/
 
-class_VHOD m_napajalnik(_21VPSU_pin, _21VPSU_port, 0);
-
-
+class_INPUT m_napajalnik(_21VPSU_pin, _21VPSU_port, 0);
 
 /************************************************************************/
 /*					          GLOBAL  STRUCTURES                        */
@@ -40,5 +38,4 @@ void deleteTASK(TaskHandle_t* task)
 		delayFREERTOS(2); // Ensures task gets deleted
 	}
 }
-
 

@@ -2,7 +2,7 @@
 #include "libs/EEPROM/EEPROM.hh"
 #include "includes/audio.hh"
 #include "castimer/castimer.hh"
-#include "VHOD/Vhod.hh"
+#include "input.hh"
 #include "libs/outputs_inputs/outputs_inputs.hh"
 
 
@@ -51,17 +51,16 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 		
 		if (m_Hardware.status_reg.powered_up && m_audio_system.strip_mode != STRIP_OFF)
 		{	
-			if (m_audio_system.lucke_filter_timer.vrednost() >= 200 && m_audio_system.mikrofon_detect)	 // STRIP task creation
+			if (m_audio_system.lucke_filter_timer.value() >= 200 && m_audio_system.mikrofon_detect) /* mikrofon_detect gets triggered in the measurement task*/
 			{
-				m_audio_system.lucke_filter_timer.ponastavi();
+				m_audio_system.mikrofon_detect = 0;
+				m_audio_system.lucke_filter_timer.reset();
 				m_audio_system.barva_selekt = (m_audio_system.barva_selekt + 1) %  enum_BARVE::barve_end;	
 				deleteTASK(&m_audio_system.handle_active_strip_mode);
 				xTaskCreate(m_audio_system.array_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
 			}
 		}
-
-
-		delayFREERTOS(1);
+		delayFREERTOS(80);
 		//End task loop
 	}
 }
@@ -96,7 +95,6 @@ void breathe_fade_task(void *input)
 
 void inverted_fade_task(void *input)
 {
-	
 	m_audio_system.current_brightness = 0;
 	m_audio_system.select_strip_color(*(uint8_t*)input);
 	
@@ -104,6 +102,4 @@ void inverted_fade_task(void *input)
 	
 	m_audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
-	
-	
 }
