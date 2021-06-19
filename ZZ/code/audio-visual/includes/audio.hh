@@ -68,8 +68,9 @@ public:
 		current_color[i] = m_mozne_barve.barvni_ptr[barva_index][i];
 	}
 
-	inline void save_strip_mode()
+	inline void set_strip_mode(uint8_t mode)
 	{
+		strip_mode = mode;
 		EEPROM.pisi(strip_mode,EEPROM_ADDRESS_STRIP_MODE);
 	}
 

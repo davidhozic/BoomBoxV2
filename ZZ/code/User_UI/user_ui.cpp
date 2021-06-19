@@ -6,7 +6,7 @@
 #include "input/input.hh"
 #include "castimer/castimer.hh"
 #include "user_ui.hh"
-
+#include "events.hh"
 
 /******************************************************************************************/
 /*                                      STATES                                            */
@@ -14,9 +14,9 @@
 
 enum SETTINGS_UI_STATES
 {
-	STATE_UNSET = 0,
-	STATE_SCROLL,
-	STATE_STRIP_SELECTION,
+	SU_STATE_UNSET = 0,
+	SU_STATE_SCROLL,
+	SU_STATE_STRIP_SELECTION,
 };
 
 /******************************************************************************************/
@@ -25,7 +25,7 @@ enum SETTINGS_UI_STATES
 enum SETTINGS_UI_MENU_SCROLL
 {
 	MENU_TOGGLE_LCD = 0,
-	MENU_STRIP_MODE_CHANGE,
+	MENU_STRIP_ANIMATION,
 };
 
 enum SETTINGS_UI_MENU_STRIP_SELECTION
@@ -41,42 +41,49 @@ enum SETTINGS_UI_MENU_STRIP_SELECTION
 /******************************************************************************************/
 
 
-SETTINGS_UI_MENU_LIST settings_ui_menu_scroll[] =
+SETTINGS_UI_MENU_LIST su_menu_scroll[] =
 {
-		{ MENU_TOGGLE_LCD, 			STATE_SCROLL },
-		{ MENU_STRIP_MODE_CHANGE, 	STATE_SCROLL }
+		{ MENU_TOGGLE_LCD, 			SU_STATE_SCROLL },
+		{ MENU_STRIP_ANIMATION, 	SU_STATE_SCROLL }
 };
 
-SETTINGS_UI_MENU_LIST settings_ui_menu_strip_select[] =
+SETTINGS_UI_MENU_LIST su_menu_strip_animation[] =
 {
-		{ MENU_NORMAL_FADE, 		STATE_STRIP_SELECTION },
-		{ MENU_INVERTED_FADE,		STATE_STRIP_SELECTION },
-		{ MENU_BREATHE_FADE,		STATE_STRIP_SELECTION },
-		{ MENU_STRIP_OFF,			STATE_STRIP_SELECTION }
+		{ MENU_NORMAL_FADE, 		SU_STATE_STRIP_SELECTION },
+		{ MENU_INVERTED_FADE,		SU_STATE_STRIP_SELECTION },
+		{ MENU_BREATHE_FADE,		SU_STATE_STRIP_SELECTION },
+		{ MENU_STRIP_OFF,			SU_STATE_STRIP_SELECTION }
 };
 
 /******************************************************************************************/
 /*                                 RAZLICNI MENIJI oz. STANJA                             */
 /******************************************************************************************/
 
+
 struct SETTINGS_UI
 {
-	SETTINGS_UI_STATES state = STATE_UNSET;
-	uint8_t	menu_seek = 0;
-	INPUT_t SW2 = INPUT_t(red_button_pin, red_button_port, 0);
+	SETTINGS_UI_STATES state = SU_STATE_UNSET;
+
+	SETTINGS_UI_KEY_EVENT key_event = SU_KEY_CLEAR;
+
 	unsigned short hold_time;
-	bool long_press;
+
+	uint8_t	menu_seek = 0;
+
+	INPUT_t SW2 = INPUT_t(red_button_pin, red_button_port, 0);
+
 	TIMER_t SW2_off_timer;
 	TIMER_t state_exit_timer;
 	TIMER_t hold_timer;
 
+
+
 	void init()
 	{
-		state = STATE_UNSET;
+		state = SU_STATE_UNSET;
 		menu_seek =  MENU_TOGGLE_LCD;
 		SW2 = INPUT_t(red_button_pin, red_button_port, 0);
 		hold_time = 0;
-		long_press = false; // Po tem ko se neka stvar zaradi dolgega pritiska izvede, cakaj na izpust
 		hold_timer.reset();
 		state_exit_timer.reset();
 	}
@@ -85,28 +92,24 @@ struct SETTINGS_UI
 	{
 		init();
 	}
-}m_settings_ui;
+}m_su;
 
 
 /******************************************************************************************/
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
-inline void toggleLCD()			
-{																														
-	m_Hardware.status_reg.capacity_lcd_en = !m_Hardware.status_reg.capacity_lcd_en;
-}
 
 
-void showSEEK(SETTINGS_UI *control_block)  // Prikaze element v seeku ce je STATE_SCROLL aktiven
+void showSEEK(SETTINGS_UI *control_block)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
 {		
 	switch(control_block->state)
 	{
-	case STATE_SCROLL:
+	case SU_STATE_SCROLL:
 		m_audio_system.current_brightness = 255;
 		m_audio_system.colorSHIFT(control_block->menu_seek, SLOW_ANIMATION_TIME_MS);
 		break;
 
-	case STATE_STRIP_SELECTION:
+	case SU_STATE_STRIP_SELECTION:
 		if (control_block->menu_seek == MENU_STRIP_OFF)
 		{
 			m_audio_system.colorSHIFT(RED, SLOW_ANIMATION_TIME_MS);
@@ -124,8 +127,7 @@ void showSEEK(SETTINGS_UI *control_block)  // Prikaze element v seeku ce je STAT
 
 void exit_scroll()
 {
-	m_settings_ui.init();
-	m_audio_system.flashSTRIP();
+	m_su.init();
 	m_audio_system.current_brightness = 255;
 	brightDOWN(SLOW_ANIMATION_TIME_MS);
 	delayFREERTOS(500);
@@ -161,127 +163,121 @@ void user_ui_task(void *p)
 
 void settings_UI()
 {
-	/* RESET long press */
-	if (m_settings_ui.SW2.fallen_edge())
+
+	/**** 	KEY EVENTS	****/
+
+	/* Ignore all next presses until falling edge is reached */
+	if (m_su.key_event != SU_KEY_CLEAR)
+		m_su.key_event = SU_KEY_IGNORE_KEY;
+
+
+	if (m_su.key_event != SU_KEY_IGNORE_KEY)
 	{
-		m_settings_ui.long_press = false;
+
+		if (m_su.SW2.value())
+		{
+			m_su.hold_time = m_su.hold_timer.value();
+
+			if (m_su.hold_time >= SU_LONG_PRESS_PERIOD)
+			{
+				m_su.key_event = SU_KEY_LONG_PRESS;
+			}
+		}
+
+		else if (m_su.hold_time > 0 && m_su.hold_time < SU_SHORT_PRESS_PERIOD)
+		{
+			m_su.key_event = SU_KEY_SHORT_PRESS;
+		}
+
+	}
+	else if (!m_su.SW2.value() == 0)
+	{
+		m_su.key_event = SU_KEY_CLEAR;
+		m_su.hold_timer.reset();
+		m_su.hold_time = 0;
 	}
 
-	//State machine
-	if (!m_settings_ui.long_press && m_Hardware.status_reg.powered_up)
+	/**************************************************************************/
+
+	/*		State machine	    */
+
+	if (m_Hardware.status_reg.powered_up)
 	{
-		switch (m_settings_ui.state)
+		switch (m_su.state)
 		{
-		case STATE_UNSET:
-			if (m_Hardware.status_reg.powered_up && m_settings_ui.hold_timer.value() > 1000)
+		case SU_STATE_UNSET:
+			/* Waits until long press event is triggered before entering into scroll mode */
+			if (m_su.key_event == SU_KEY_LONG_PRESS)
 			{
 				m_audio_system.stripOFF();
-				m_settings_ui.state = STATE_SCROLL;
-				m_settings_ui.menu_seek = MENU_TOGGLE_LCD;
-				m_settings_ui.state_exit_timer.reset();
-				m_settings_ui.hold_timer.reset();
+				m_su.state = SU_STATE_SCROLL;
+				m_su.menu_seek = MENU_TOGGLE_LCD;
 				m_audio_system.flashSTRIP();
-				showSEEK(&m_settings_ui);
-				m_settings_ui.long_press = true;
 			}
-
-			else if (!m_settings_ui.SW2.value())
-			{
-				m_settings_ui.hold_timer.reset();
-			}
-			break;
-
+		break;
 			/*****	END CASE *****/
 
-		case STATE_SCROLL:
+		case SU_STATE_SCROLL:
 
-			if (m_settings_ui.state_exit_timer.value() > auto_exit_timeout)	// Auto exit_scroll
+			showSEEK(&m_su);
+			if (m_su.key_event == SU_KEY_LONG_PRESS)
 			{
-				exit_scroll();
-			}
 
-			else if (m_settings_ui.SW2.value())
-			{
-				m_settings_ui.hold_time = m_settings_ui.hold_timer.value();	// stopa cas pritiska
-				m_settings_ui.state_exit_timer.reset();
-				if (m_settings_ui.hold_time > 1000)
+				switch(m_su.menu_seek)
 				{
-					m_settings_ui.long_press = true;
-					m_settings_ui.hold_timer.reset();
-					m_settings_ui.hold_time = 0;
-					switch (m_settings_ui.menu_seek)	// Glede na trenutni menu seek nekaj izvede
-					{
-					case MENU_TOGGLE_LCD:
-						toggleLCD();	//Task Zaslon se blocka v zaslon tasku
-						exit_scroll();
-						break;
-
-					case MENU_STRIP_MODE_CHANGE:
-						m_settings_ui.state = STATE_STRIP_SELECTION;
-						m_settings_ui.menu_seek = NORMAL_FADE;
-						brightDOWN(SLOW_ANIMATION_TIME_MS);
-						m_audio_system.select_strip_color(BELA);
-						delayFREERTOS(100);
-						break;
-					}
-				}
-			}
-			else if (m_settings_ui.hold_time > 0)
-			{
-
-				if (m_settings_ui.hold_time < 500) //Kratek pritisk
-				{
-					MENU_NEXT(m_settings_ui.menu_seek, settings_ui_menu_scroll);
-					showSEEK(&m_settings_ui);
-				}
-				m_settings_ui.hold_timer.reset();
-				m_settings_ui.hold_time = 0;
-			}
-			break;
-			/*****	END CASE *****/
-
-		case STATE_STRIP_SELECTION:
-			if (m_settings_ui.state_exit_timer.value() > auto_exit_timeout)
-			{
-				exit_scroll();
-			}
-
-			else if (m_settings_ui.SW2.value())
-			{
-				m_settings_ui.state_exit_timer.reset();
-				m_settings_ui.hold_time = m_settings_ui.hold_timer.value();
-
-				if (m_settings_ui.hold_time >= 1000)
-				{
-					m_settings_ui.long_press = true;
-					m_settings_ui.hold_timer.reset();
-					m_settings_ui.hold_time = 0;
-					m_audio_system.strip_mode = static_cast <enum_STRIP_MODES> (m_settings_ui.menu_seek);
-					m_audio_system.save_strip_mode();
+				case MENU_TOGGLE_LCD:
+					m_Hardware.status_reg.capacity_lcd_en = !m_Hardware.status_reg.capacity_lcd_en;
 					exit_scroll();
+				break;
+
+				case MENU_STRIP_ANIMATION:
+					m_su.state = SU_STATE_STRIP_SELECTION;
+				break;
 				}
+
+				m_su.menu_seek = 0;
+				break;
 			}
 
-			else if (m_settings_ui.hold_time > 0)
+			else if (m_su.key_event == SU_KEY_SHORT_PRESS)
+				MENU_NEXT(m_su.menu_seek, su_menu_scroll);
+
+		break;
+
+			/*****	END CASE *****/
+
+		case SU_STATE_STRIP_SELECTION:
+
+			showSEEK(&m_su);
+			if (m_su.key_event == SU_KEY_LONG_PRESS)
 			{
-				if (m_settings_ui.hold_time < 500)
-				{
-					MENU_NEXT(m_settings_ui.menu_seek, settings_ui_menu_strip_select);
-				}
-				m_settings_ui.hold_time = 0;
-				m_settings_ui.hold_timer.reset();
+				m_audio_system.set_strip_mode(m_su.menu_seek);
+				exit_scroll();
 			}
 
-			showSEEK(&m_settings_ui);
+			else if (m_su.key_event == SU_KEY_SHORT_PRESS)
+			{
+				MENU_NEXT(m_su.menu_seek, su_menu_strip_animation);
+			}
 
-			break;
+		break;
 			/*****	END CASE *****/
 
 		default:
-			break;
+		break;
 		}
+
+		/**************************************************************************/
+	}
+
+	else if (m_su.state != SU_STATE_UNSET)
+	{
+		m_su.init();
 	}
 }
+
+
+
 
 
 
