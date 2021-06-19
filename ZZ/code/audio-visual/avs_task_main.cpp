@@ -42,7 +42,7 @@ struct_MOZNE_BARVE m_mozne_barve =
 *                                                                                                                         *
 **************************************************************************************************************************/
 
-void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
+void audio_visual_task(void *p) //Funkcija avdio-vizualnega sistema
 {
 	while (true)
 	{
@@ -58,7 +58,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				xTaskCreate(m_audio_system.list_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
 			}
 		}
-		delayFREERTOS(80);
+		delayFREERTOS(100);
 		//End task loop
 	}
 }

@@ -6,7 +6,7 @@
 #include "libs/EEPROM/EEPROM.hh"
 
 
-void polnjenje(void *paramOdTaska)
+void charging_task(void *p)
 {
 	while (true)
 	{
@@ -34,6 +34,6 @@ void polnjenje(void *paramOdTaska)
 			writeOUTPUT(bat_charge_pin, bat_charge_port,1);
 			m_Hardware.status_reg.charging_enabled = 1;
 		}
-		delayFREERTOS(100);
+		delayFREERTOS(250);
 	}
 }

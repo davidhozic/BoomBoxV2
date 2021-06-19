@@ -43,8 +43,7 @@ ZZ/code/Events/events.cpp\
 ZZ/code/audio-visual/meritve.cpp\
 ZZ/code/audio-visual/avs_task_main.cpp\
 ZZ/code/audio-visual/audio_system_functions.cpp\
-ZZ/code/User_UI/settings_UI.cpp\
-ZZ/code/User_UI/zaslon.cpp\
+ZZ/code/User_UI/user_ui.cpp\
 ZZ/code/libs/input/input.cpp\
 ZZ/code/libs/EEPROM/eeprom.cpp\
 ZZ/code/libs/castimer/castimer.cpp\
@@ -80,8 +79,7 @@ $(OUTPUT_DIR)/ZZ/code/Events/events.o\
 $(OUTPUT_DIR)/ZZ/code/audio-visual/meritve.o\
 $(OUTPUT_DIR)/ZZ/code/audio-visual/avs_task_main.o\
 $(OUTPUT_DIR)/ZZ/code/audio-visual/audio_system_functions.o\
-$(OUTPUT_DIR)/ZZ/code/User_UI/settings_UI.o\
-$(OUTPUT_DIR)/ZZ/code/User_UI/zaslon.o\
+$(OUTPUT_DIR)/ZZ/code/User_UI/user_ui.o\
 $(OUTPUT_DIR)/ZZ/code/libs/input/input.o\
 $(OUTPUT_DIR)/ZZ/code/libs/EEPROM/eeprom.o\
 $(OUTPUT_DIR)/ZZ/code/libs/castimer/castimer.o\
@@ -145,13 +143,9 @@ $(OUTPUT_DIR)/ZZ/code/audio-visual/audio_system_functions.o : ZZ/code/common/inc
 	echo "Compiling C++ source file:audio_system_functions.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c ZZ/code/audio-visual/audio_system_functions.cpp
 
-$(OUTPUT_DIR)/ZZ/code/User_UI/settings_UI.o : ZZ/code/libs/EEPROM/EEPROM.hh ZZ/code/freeRTOS/include/FreeRTOS.h ZZ/code/common/inc/global.hh ZZ/code/audio-visual/includes/audio.hh ZZ/code/libs/outputs_inputs/outputs_inputs.hh ZZ/code/libs/input/input.hh ZZ/code/libs/castimer/castimer.hh ZZ/code/User_UI/inc/settings_ui.hh 
-	echo "Compiling C++ source file:settings_UI.cpp"
-	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c ZZ/code/User_UI/settings_UI.cpp
-
-$(OUTPUT_DIR)/ZZ/code/User_UI/zaslon.o : ZZ/code/freeRTOS/include/FreeRTOS.h ZZ/code/freeRTOS/include/task.h ZZ/code/libs/input/input.hh ZZ/code/libs/castimer/castimer.hh ZZ/code/common/inc/global.hh ZZ/code/libs/outputs_inputs/outputs_inputs.hh 
-	echo "Compiling C++ source file:zaslon.cpp"
-	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c ZZ/code/User_UI/zaslon.cpp
+$(OUTPUT_DIR)/ZZ/code/User_UI/user_ui.o : ZZ/code/libs/EEPROM/EEPROM.hh ZZ/code/freeRTOS/include/FreeRTOS.h ZZ/code/common/inc/global.hh ZZ/code/audio-visual/includes/audio.hh ZZ/code/libs/outputs_inputs/outputs_inputs.hh ZZ/code/libs/input/input.hh ZZ/code/libs/castimer/castimer.hh ZZ/code/User_UI/inc/user_ui.hh 
+	echo "Compiling C++ source file:user_ui.cpp"
+	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c ZZ/code/User_UI/user_ui.cpp
 
 $(OUTPUT_DIR)/ZZ/code/libs/input/input.o : ZZ/code/libs/input/input.hh 
 	echo "Compiling C++ source file:input.cpp"
@@ -161,7 +155,7 @@ $(OUTPUT_DIR)/ZZ/code/libs/EEPROM/eeprom.o : ZZ/code/freeRTOS/include/FreeRTOS.h
 	echo "Compiling C++ source file:eeprom.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c ZZ/code/libs/EEPROM/eeprom.cpp
 
-$(OUTPUT_DIR)/ZZ/code/libs/castimer/castimer.o : ZZ/code/libs/castimer/castimer.hh ZZ/code/freeRTOS/include/atomic.h 
+$(OUTPUT_DIR)/ZZ/code/libs/castimer/castimer.o : ZZ/code/libs/castimer/castimer.hh 
 	echo "Compiling C++ source file:castimer.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c ZZ/code/libs/castimer/castimer.cpp
 

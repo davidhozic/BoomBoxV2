@@ -7,7 +7,7 @@
 #include "events.hh"
 
 
-void power(void *paramOdTaska)
+void power_task(void *p)
 {
 	/*		TIMER_t objects		*/
 	TIMER_t power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds 

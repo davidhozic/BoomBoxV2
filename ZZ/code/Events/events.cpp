@@ -8,12 +8,13 @@
 /************************************************************************/
 /*								 PROTOS						            */
 /************************************************************************/
-void power(void *paramOdTaska);
-void zaslon(void *paramOdTaska);
-void audio_visual(void *p);
-void polnjenje(void *paramOdTaska);
-void settings_UI(void *paramOdTaska);
+void power_task(void *);
+void zaslon_task(void *);
+void audio_visual_task(void *);
+void charging_task(void *);
+void user_ui_task(void *);
 void power_switch_ev(uint8_t mode);
+
 
 void system_event(enum_system_event eventt){
 	
@@ -70,11 +71,10 @@ void system_event(enum_system_event eventt){
 			/************************************************************************/
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
-			xTaskCreate(power, "Power", 256, NULL, 1, NULL);
-			xTaskCreate(zaslon, "display", 256, NULL, 1, NULL);
-			xTaskCreate(polnjenje, "charing", 256, NULL, 1, NULL);
-			xTaskCreate(settings_UI, "settings_ui", 256, NULL, 3, NULL);
-			xTaskCreate(audio_visual, "m_audio_system", 256, NULL, 3, NULL);
+			xTaskCreate(power_task, "Power", 256, NULL, 1, NULL);
+			xTaskCreate(charging_task, "charging", 256, NULL, 1, NULL);
+			xTaskCreate(user_ui_task, "User UI", 256, NULL, 3, NULL);
+			xTaskCreate(audio_visual_task, "m_audio_system", 256, NULL, 3, NULL);
 			/************************************************************************/
 			/*								START TASKS                             */
 			/************************************************************************/
