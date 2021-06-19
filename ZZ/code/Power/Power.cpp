@@ -9,12 +9,12 @@
 
 void power(void *paramOdTaska)
 {
-	/*		TIMER objects		*/
-	class_TIMER power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds 
-	class_TIMER voltage_read_timer	;
+	/*		TIMER_t objects		*/
+	TIMER_t power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds 
+	TIMER_t voltage_read_timer	;
 
-	/*	   	INPUT objects		*/
-	class_INPUT stikalo(main_power_switch_pin, main_power_switch_port, 0);
+	/*	   	INPUT_t objects		*/
+	INPUT_t stikalo(main_power_switch_pin, main_power_switch_port, 0);
 
 	while (true)
 	{ 

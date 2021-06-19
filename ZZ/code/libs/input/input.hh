@@ -9,7 +9,7 @@
 	#include "castimer.hh"
 #endif
 
-class class_INPUT // pin, port, stanje ko ni pritisnjen
+class INPUT_t // pin, port, stanje ko ni pritisnjen
 {
 private:
 /* Bitfield variables */
@@ -24,14 +24,14 @@ private:
     uint8_t port;
 
 #if (USE_FILTERING == 1)
-	class_TIMER filter_timer = class_TIMER();
+	TIMER_t filter_timer = TIMER_t();
 #endif
 
 public:
     bool value();
     bool risen_edge();
     bool fallen_edge();
-	class_INPUT(uint8_t pin, char port, char default_state);
+	INPUT_t(uint8_t pin, char port, char default_state);
 };
 
 /* Easier readings in the value function */

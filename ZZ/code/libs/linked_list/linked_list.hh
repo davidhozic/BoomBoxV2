@@ -8,138 +8,87 @@
 	#include "FreeRTOS.h"
 #endif
 
+#if (INCLUDE_IOSTREAM == 1)
+    #include <iostream>
+#endif
+
+
+
 
 template <typename tip>
-class class_LIST
+class LIST_t
 {
 private:
 
-    class vozlisce_data_obj_t
+    struct vpdt
     {
-    public:
-        friend class class_LIST<tip>;
-
+        friend class LIST_t<tip>;
     private:
-        vozlisce_data_obj_t *naslednji;
-        vozlisce_data_obj_t *prejsnji;
+        vpdt *naslednji;
+        vpdt *prejsnji;
         tip podatek;
+        
     };
 
-    vozlisce_data_obj_t *glava = NULL;
-    unsigned short count = 0;
-    unsigned short glava_index = 0;
+    vpdt *glava = NULL;
+    unsigned long count = 0;
+    unsigned long glava_index = 0;
 
-    inline void pojdi_zacetek()
-    {
-        while (glava != NULL && glava->prejsnji != NULL)
-        {
-            glava = glava->prejsnji;
-        }
-        glava_index = 0;
-    }
-
-    inline void pojdi_konec()
-    {
-        while (glava != NULL && glava->naslednji != NULL)
-        {
-            glava = glava->naslednji;
-        }
-        glava_index = count-1;
-	}
-
-public:
-    inline unsigned short length()
-    {
-        return count;
-    }
-
-    /* Clears elements of the list */
-    ~class_LIST()
-    {
-        clear();
-    }
-
-    void clear()
-    {
-        pojdi_zacetek();
-        while (glava != NULL)
-        {
-            vozlisce_data_obj_t *temp = glava->naslednji;
-
-            /* Deconstruct sub elements in case of multi dimentional lists */
-            glava->podatek.~tip();
-            
-        #if USE_FREERTOS
-            vPortFree(glava)
-        #else
-            free(glava);
-        #endif
-            glava = temp;
-            glava_index++;
-        }
-        count = 0;
-        glava_index = 0;
-    }
+    void pojdi_zacetek();
+    void pojdi_konec();
+    void head_to_index(uint32_t index);
     
+public:
 
-	void add_front(tip vrednost)
-    {
-	#if (USE_FREERTOS == 1)
-        vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
-    #else
-		vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) malloc(sizeof(vozlisce_data_obj_t));
-	#endif
-		pojdi_zacetek();
+    unsigned short length();
+	void add_front(tip vrednost);
+    void add_end(tip vrednost);
+    tip pop_end();
 
-        if (glava != NULL)
-        {
-            glava->prejsnji = nov;
-        }
-        nov->prejsnji = NULL;
-        nov->naslednji = glava;
-        nov->podatek = vrednost;
-        glava = nov;
-        count++;
-        glava_index = 0;
-    }
-
-    void add_end(tip vrednost)
-    {
-
-	#if (USE_FREERTOS == 1)
-		vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) pvPortMalloc(sizeof(vozlisce_data_obj_t));
-	#else
-		vozlisce_data_obj_t *nov = (vozlisce_data_obj_t *) malloc(sizeof(vozlisce_data_obj_t));
-	#endif
-
-        pojdi_konec();
-        if (glava != NULL)
-        {
-            glava->naslednji = nov;
-        }
-        nov->prejsnji = glava;
-        nov->naslednji = NULL;
-        nov->podatek = vrednost;
-		glava = nov;
-        count++;
-        glava_index = count - 1;
-    }
-
-    tip &operator[](unsigned short index)
-    {
-		while (glava_index < index)
-        {
-            glava = glava->naslednji;
-            glava_index++;
-        }
-		
-        while (glava_index > index)
-        {
-            glava = glava->prejsnji;
-            glava_index--;
-        }
-
-        return (glava->podatek);
-    }
-};
+#if (INCLUDE_SORT == 1)
+    void sort(tip(*comparator_fnct)(tip , tip));
 #endif
+
+
+#if (INCLUDE_IOSTREAM == 1)
+    void print_console();
+#endif
+
+    void remove_by_index(uint32_t index);
+    void splice(uint32_t index, uint32_t num_to_remove);
+
+
+    /*************************************************/
+#if (USE_OPERATORS == 1)
+
+    tip &operator[](unsigned long index);
+   
+    LIST_t<tip> operator+(tip pod);
+    
+    void operator+=(tip pod);
+
+    void *operator new(size_t size)
+    {
+        return malloc(size);
+    }
+
+    void operator delete(void *ptr)
+    {
+        free(ptr);
+    }
+
+#endif
+
+};
+    
+#if (USE_OPERATORS == 1)
+template <typename tip, class cl>
+LIST_t<tip> operator+(tip pod, cl obj);
+#endif
+
+
+
+#include "llist_funct.hh"
+
+#endif
+

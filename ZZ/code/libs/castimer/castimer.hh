@@ -10,7 +10,7 @@
 	#include <avr/interrupt.h>
 #endif
 
-class class_TIMER
+class TIMER_t
 {
 private:
 	bool timer_enabled = false;
@@ -27,8 +27,8 @@ public:
 	void increment();
 	#if (SOURCE_INTERUPT == 1)
 	void set_hook(void (*function_ptr)(void*), uint32_t call_period, void* function_param_ptr);
-		class_TIMER();
-		static class_LIST <class_TIMER *> timer_list;
+		TIMER_t();
+		static LIST_t <TIMER_t *> timer_list;
 	#endif
 };
 

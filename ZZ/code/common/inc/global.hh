@@ -28,7 +28,7 @@ struct struct_m_Hardware
 /*							COMMON STRUCTS/CLASS	                    */
 /************************************************************************/
 extern struct_m_Hardware m_Hardware;
-extern class_INPUT m_napajalnik;
+extern INPUT_t m_napajalnik;
 
 /************************************************************************/
 /*							GLOBAL DEFINITIONS                          */

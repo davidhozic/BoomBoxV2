@@ -8,5 +8,5 @@ This library includes:
 
 - Linked list - Linked list library that doesn't use a constructor so it can be used by timer class (and it is). Functions: add_end() - adds element to the back of the list; add_front() - adds element to the front of the list; clear() - removes all the elements from the list;
 length() - returns the amount of elements in the list.
-  It also uses a template so it can be made for any type which can also be another class_LIST <type> (creates 2d list) -> Example: class_LIST <class_LIST<int>> list_1 -> creates a 2d list. To add a sub_list to the 2d list do:  list_1.add_end( class_LIST<int> () ) 
+  It also uses a template so it can be made for any type which can also be another LIST_T <type> (creates 2d list) -> Example: LIST_T <LIST_T<int>> list_1 -> creates a 2d list. To add a sub_list to the 2d list do:  list_1.add_end( LIST_T<int> () ) 
 NOTE! To access the elements in linked list, use  "object_name [index]". Do not reverse index and object_name as this is not a pointer but an operator overload funtion.

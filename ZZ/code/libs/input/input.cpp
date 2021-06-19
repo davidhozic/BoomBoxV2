@@ -1,7 +1,7 @@
 #include "input.hh"
 
 
-bool class_INPUT::value()
+bool INPUT_t::value()
 {
 	/* Switch is used for compatibility with ALL boards */
 	switch (port)
@@ -143,7 +143,7 @@ bool class_INPUT::value()
 }
 
 #if (INCLUDE_risen_edge == 1)
-bool class_INPUT::risen_edge()
+bool INPUT_t::risen_edge()
 {
 	value();
 	if (rising_edge_var)
@@ -156,7 +156,7 @@ bool class_INPUT::risen_edge()
 #endif
 
 #if (INCLUDE_fallen_edge == 1)
-bool class_INPUT::fallen_edge()
+bool INPUT_t::fallen_edge()
 {
 	value();
 	if (falling_edge_var)
@@ -168,7 +168,7 @@ bool class_INPUT::fallen_edge()
 }
 #endif
 
-class_INPUT::class_INPUT(unsigned char pin, char port, char default_state)
+INPUT_t::INPUT_t(unsigned char pin, char port, char default_state)
 {
 	this->port = port;
 	this->pin = pin;

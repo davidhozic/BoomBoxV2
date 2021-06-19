@@ -85,8 +85,14 @@ void class_AUDIO_SYS::stripOFF()
 void class_AUDIO_SYS::stripON()
 {
 	xTaskCreate(signal_measure, "avg_vol", 128, NULL, 3, &handle_average_volume);
-	volatile uint8_t temp = EEPROM.beri(EEPROM_ADDRESS_STRIP_MODE);
-	strip_mode = temp < end_strip_modes ? static_cast<enum_STRIP_MODES>(temp) : NORMAL_FADE;	// Checks if reading returned value in range
+	strip_mode = EEPROM.beri(EEPROM_ADDRESS_STRIP_MODE);
+	
+	/* EEPROM address is empty */
+	if (strip_mode == 0xFF)
+	{
+		strip_mode = 0;
+	}   
+
 	m_audio_system.animation_time = NORMAL_ANIMATION_TIME_MS;
 	delayFREERTOS(10);
 }

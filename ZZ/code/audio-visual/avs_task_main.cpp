@@ -5,8 +5,6 @@
 #include "input.hh"
 #include "libs/outputs_inputs/outputs_inputs.hh"
 
-
-
 /************************************************************************/
 /*                            TASK HANDLES                              */
 /************************************************************************/
@@ -57,7 +55,7 @@ void audio_visual(void *p) //Funkcija avdio-vizualnega sistema
 				m_audio_system.lucke_filter_timer.reset();
 				m_audio_system.barva_selekt = (m_audio_system.barva_selekt + 1) %  enum_BARVE::barve_end;	
 				deleteTASK(&m_audio_system.handle_active_strip_mode);
-				xTaskCreate(m_audio_system.array_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
+				xTaskCreate(m_audio_system.list_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
 			}
 		}
 		delayFREERTOS(80);

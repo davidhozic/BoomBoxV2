@@ -3,9 +3,7 @@
 
 #include "./castimer.hh"
 #include <math.h>
-#if (SOURCE_INTERUPT == 1)
-	#include "util/atomic.h"
-#endif
+
 
 /************************************************************************/
 /*							ERRORS AND WARNINGS                         */
@@ -26,18 +24,17 @@
 
 /* Initialization of timer list */
 #if (SOURCE_INTERUPT == 1)
-	class_LIST <class_TIMER*> class_TIMER::timer_list;
+	LIST_t <TIMER_t*> TIMER_t::timer_list;
 #endif
 
-uint32_t class_TIMER::value()
+uint32_t TIMER_t::value()
 {
 #if (SOURCE_INTERUPT == 1)
 	timer_enabled = true;				
 	uint32_t temp_timer_value;
-	ATOMIC_BLOCK(ATOMIC_FORCEON)
-	{
+
 		temp_timer_value = timer_value;		
-	}
+	
 		
 	return temp_timer_value; 
 
@@ -54,7 +51,7 @@ uint32_t class_TIMER::value()
 #endif
 }
 
-void class_TIMER::reset()
+void TIMER_t::reset()
 {
 #if (SOURCE_INTERUPT == 1)
 	this->timer_value = 0;
@@ -63,19 +60,18 @@ void class_TIMER::reset()
 }
 
 #if (SOURCE_INTERUPT == 1)
-class_TIMER::class_TIMER()
+TIMER_t::TIMER_t()
 {
-	ATOMIC_BLOCK(ATOMIC_FORCEON)
-	{
-		class_TIMER::timer_list.add_end(this);
-	}
+
+	TIMER_t::timer_list.add_end(this);
+	
 }
 #endif
 
 
 #if (SOURCE_INTERUPT == 1)
 
-	void class_TIMER::increment()
+	void TIMER_t::increment()
 	{
 		if (timer_enabled)
 		{
@@ -90,13 +86,13 @@ class_TIMER::class_TIMER()
 
 	ISR(TIMER_ISR_VECTOR)
 	{
-		for (uint16_t ind = 0, len = class_TIMER::timer_list.length() ; ind < len ; ind++)
+		for (uint16_t ind = 0, len = TIMER_t::timer_list.length() ; ind < len ; ind++)
 		{
-			class_TIMER::timer_list[ind]->increment();
+			TIMER_t::timer_list[ind]->increment();
 		}
 	}
 	
-	void class_TIMER::set_hook(void (*function_ptr)(void*), uint32_t call_period, void* function_param_ptr)
+	void TIMER_t::set_hook(void (*function_ptr)(void*), uint32_t call_period, void* function_param_ptr)
 	{
 		this->function_ptr = function_ptr;
 		this->function_call_period = call_period;

@@ -1,5 +1,8 @@
 /************************************************************************/
 /*							  SETTINGS                                  */
 /************************************************************************/
-#define  USE_FREERTOS   0	/* If you're using FreeRTOS */
+#define  USE_FREERTOS           0	        /* If you're using FreeRTOS */
+#define  INCLUDE_IOSTREAM       0
+#define  INCLUDE_SORT           1
+#define  USE_OPERATORS          1
 /************************************************************************/

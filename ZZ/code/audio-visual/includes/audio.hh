@@ -9,7 +9,7 @@
 #ifndef EEPROM_H
 	#error	"EEPROM must be included first"
 #endif
-
+#include "linked_list.hh"
 
 /************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
@@ -29,7 +29,6 @@ enum enum_STRIP_MODES
 	INVERTED_FADE,
 	BREATHE_FADE,
 	STRIP_OFF,
-	end_strip_modes,
 };
 
 enum enum_COLOR_SPACE_indexes
@@ -38,15 +37,6 @@ enum enum_COLOR_SPACE_indexes
 	GREEN,
 	BLUE
 };
-
-
-enum enum_STRIP_SPEED
-{
-	NORMAL,
-	SLOW,
-	FAST
-};
-
 
 /*********************************************/
 /*             Prototipi taskov              */
@@ -85,7 +75,7 @@ public:
 
 	/****************************************************************************/
 	/****  Strip parameters   ****/
-	enum_STRIP_MODES strip_mode = NORMAL_FADE;						// Current strip mode
+	uint8_t strip_mode = NORMAL_FADE;						// Current strip mode
 	uint16_t animation_time = NORMAL_ANIMATION_TIME_MS;
 	/**** Strip current state ****/
 	int16_t current_color[3] = {255, 255, 255};				// Current RGB color of the strip
@@ -94,7 +84,7 @@ public:
 	bool mikrofon_detect = 0;								// Is set to 1 if spike is detected and then strip is turned on
 
 	/****		Timers		 ****/
-	class_TIMER  lucke_filter_timer;						// Timer that prevents strip from triggering too fast after last trigger (filter timer)
+	TIMER_t  lucke_filter_timer;						// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	
 	/****	Measurements	****/
 	uint16_t average_volume = 2048;			// Variable that stores the average volume
@@ -103,7 +93,7 @@ public:
 	TaskHandle_t handle_average_volume = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
 	/***	Strip mode functions ***/
-	void (*array_strip_modes[enum_STRIP_MODES::end_strip_modes-1])(void*) = {normal_fade_task, inverted_fade_task, breathe_fade_task};
+	void (*list_strip_modes[3])(void*) =  {normal_fade_task, inverted_fade_task, breathe_fade_task};
 };
 extern class_AUDIO_SYS m_audio_system;
 

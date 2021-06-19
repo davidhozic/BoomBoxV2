@@ -11,7 +11,7 @@
 void zaslon(void *paramOdTaska)
 {
 	/*  Timers  */
-	class_TIMER LCD_timer;
+	TIMER_t LCD_timer;
 	
 	while(1)
 	{

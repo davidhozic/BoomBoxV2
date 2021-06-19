@@ -24,8 +24,8 @@ struct struct_microphone_t
 	uint16_t  current_value  = 0;
 	uint16_t  previous_value = 0;
 	
-	class_TIMER average_v_timer;		// Timer that delays logging of max measured volume voltage
-}microphone = {0};
+	TIMER_t average_v_timer;		// Timer that delays logging of max measured volume voltage
+}microphone;
 
 
 /* Measures average volume and frequency*/

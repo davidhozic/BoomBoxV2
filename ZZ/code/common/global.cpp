@@ -8,7 +8,7 @@
 /*								GLOBAL OBJECTS	                        */
 /************************************************************************/
 
-class_INPUT m_napajalnik(_21VPSU_pin, _21VPSU_port, 0);
+INPUT_t m_napajalnik(_21VPSU_pin, _21VPSU_port, 0);
 
 /************************************************************************/
 /*					          GLOBAL  STRUCTURES                        */

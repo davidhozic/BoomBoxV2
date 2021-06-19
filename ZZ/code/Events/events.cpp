@@ -47,7 +47,7 @@ void system_event(enum_system_event eventt){
 			DDRH = 1 << PH3 | 1 << PH4 | 1 << PH5;
 			DDRB = 1 << PB4 | 1 << PB5 | 1 << PB6 | 1 << PB7;
 			/************************************************************************/
-			/*						SETUP TIMER3 FOR TIMER LIBRARY                  */
+			/*						SETUP TIMER3 FOR TIMER_t LIBRARY                  */
 			/************************************************************************/
 			TCCR3A  = 0;
 			OCR3A = 249;												// Output compare match na 249 tickov (1ms)
