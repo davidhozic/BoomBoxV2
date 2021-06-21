@@ -3,7 +3,7 @@
 int main()
 {
 
-	system_event(INITIALIZATION);
+	system_event(EV_INITIALIZATION);
 
 	return 0;
 }

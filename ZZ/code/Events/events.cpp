@@ -15,21 +15,15 @@ void user_ui_task(void *);
 void power_switch_ev(uint8_t mode);
 
 
-LIST_t <enum_system_event> m_event_stack;
-
-
 void system_event(enum_system_event eventt){
-	
-	m_event_stack += eventt;	/* Add to the stack for other tasks to detect an event */
-
 	switch(eventt)
 	{
-		case POWER_SWITCH_EXTERNAL:
-		case POWER_SWITCH_INTERNAL:
+		case EV_POWER_SWITCH_EXTERNAL:
+		case EV_POWER_SWITCH_INTERNAL:
 			power_switch_ev(eventt);
 		break;
 		
-		case POWER_UP:
+		case EV_POWER_UP:
 			writeOUTPUT(_12V_line_pin, _12V_line_port, 1);
 			writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 			m_audio_system.stripON();
@@ -37,7 +31,7 @@ void system_event(enum_system_event eventt){
 			delayFREERTOS(10);
 		break;
 		
-		case SHUTDOWN:
+		case EV_SHUTDOWN:
 			m_Hardware.status_reg.powered_up = 0;
 			m_audio_system.stripOFF();
 			writeOUTPUT(_12V_line_pin, _12V_line_port, 0);
@@ -45,7 +39,7 @@ void system_event(enum_system_event eventt){
 
 		break;
 		
-		case INITIALIZATION:
+		case EV_INITIALIZATION:
 			/************************************************************************/
 			/*						SET DATA DIRECTION REGISTERS			        */
 			/************************************************************************/
@@ -93,15 +87,15 @@ void power_switch_ev(uint8_t mode)
 {
 	switch(mode)
 	{
-		case POWER_SWITCH_EXTERNAL:
-			system_event(SHUTDOWN);
+		case EV_POWER_SWITCH_EXTERNAL:
+			system_event(EV_SHUTDOWN);
 			delayFREERTOS(3);
 			writeOUTPUT(menjalnik_pin,menjalnik_port,1);
 			m_Hardware.status_reg.external_power = 1;
 		break;
 		
-		case POWER_SWITCH_INTERNAL:
-			system_event(SHUTDOWN);
+		case EV_POWER_SWITCH_INTERNAL:
+			system_event(EV_SHUTDOWN);
 			delayFREERTOS(3);
 			writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
 			m_Hardware.status_reg.external_power = 0;

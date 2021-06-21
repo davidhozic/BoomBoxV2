@@ -2,7 +2,7 @@ import os, time, re
 
 ##############################################################################################
 #   CONFIGURATION   #
-SEARCH_DIR = "ZZ/code"     #Start location of the code
+SEARCH_DIR = "ZZ/code/"     #Start location of the code
 
 EXTERNAL_FOLDERS = []
 GLOBAL_HEADERS = ["stdint.h", "settings.hh"]
@@ -43,6 +43,7 @@ print("STEP[1] FIND ALL THE FILES  ")
 print("----------------------------")
 time.sleep(1)
 for dir, dirname, files in os.walk(SEARCH_DIR):
+    dir = dir.replace("\\","/")
     for file in files:
         if file.find(".cpp") != -1 or file.find(".cc") != -1: 
             found_cpp.append( (dir,file) )
@@ -138,7 +139,12 @@ time.sleep(1)
 dmakefile += "\nall: clean compile flash\n\n"
 
 #clean
-dmakefile += "\nclean:\n\techo \"Cleaning $(OUTPUT_DIR)!\"\n\trm -rf $(OUTPUT_DIR)"
+dmakefile += "\nclean:\n\
+\techo \"------------------------------------\"\n\
+\techo \" STEP[]: Cleaning Folder $(OUTPUT_DIR)     \"\n\
+\techo \"------------------------------------\"\n\
+\trm -rf $(OUTPUT_DIR)\n\
+\tsleep 2\n\n"
 
 #compile
 dmakefile += "\n\ncompile: echo_compile mkdir $(O)\n\
@@ -183,7 +189,7 @@ for src in found_cpp + found_c:
     fsrc.close()
     included_headers = re.findall("#include .*", dsrc)
 
-    dmakefile += ("$(OUTPUT_DIR)/"+src[0] +"/"+ src[1]).replace(".cpp",".o").replace(".cc",".o").replace(".c",".o") + " : "
+    dmakefile += ("$(OUTPUT_DIR)/"+src[0] +"/"+ src[1]).replace(".cpp",".o").replace(".cc",".o").replace(".c",".o") + " : " + src[0] + "/" + src[1] + " "
 
     for included_h in included_headers:
         included_h = find_header_path(included_h.replace("#include","").replace("\"","").replace("<","").replace(">",""), found_head)

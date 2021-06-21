@@ -43,37 +43,10 @@
 #define portFLAGS_INT_ENABLED           ( (StackType_t) 0x80 )
 
 
-#if (port_SLICING_USE_TIMERS == 1)
-	
-	#ifndef portUSE_TIMER0
-	#define portUSE_TIMER0 0
-	#endif
-
-	#ifndef portUSE_TIMER1
-	#define portUSE_TIMER1 0
-	#endif
-
-	#ifndef portUSE_TIMER2
-	#define portUSE_TIMER2 0
-	#endif
-
-	#ifndef portUSE_TIMER3
-	#define portUSE_TIMER3 0
-	#endif
-
-	#ifndef portUSE_TIMER4
-	#define portUSE_TIMER4 0
-	#endif
-
-	#ifndef portUSE_TIMER5
-	#define portUSE_TIMER5 0
-	#endif
-	
-#else
+#if (portUSE_WDTO == 1)
 	#warning "Watchdog Timer used for scheduler."
 	#define portSCHEDULER_ISR           WDT_vect
 #endif
-
 
 
 
@@ -690,7 +663,7 @@ void vPortYieldFromTick( void )
 }
 /*-----------------------------------------------------------*/
 
-#if (port_SLICING_USE_TIMERS == 0)
+#if (portUSE_WDTO == 1)
 /*
  * Setup WDT to generate a tick interrupt.
  */
@@ -704,7 +677,6 @@ void prvSetupTimerInterrupt( void )
 }
 
 #else
-
 static void prvSetupTimerInterrupt( void )
 {	
 	uint16_t outputCompare;

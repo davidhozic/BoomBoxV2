@@ -1,14 +1,13 @@
 
-#include "linked_list.hh"
+
 
 enum enum_system_event
 {
-	POWER_UP,	
-	SHUTDOWN,
-	POWER_SWITCH_EXTERNAL,
-	POWER_SWITCH_INTERNAL,
-	INITIALIZATION
+	EV_POWER_UP,	
+	EV_SHUTDOWN,
+	EV_POWER_SWITCH_EXTERNAL,
+	EV_POWER_SWITCH_INTERNAL,
+	EV_INITIALIZATION
 };
 
 void system_event(enum_system_event event);
-extern LIST_t <enum_system_event> m_event_stack;

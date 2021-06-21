@@ -26,6 +26,7 @@
  * 1 tab == 4 spaces!
  */
 
+
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
@@ -36,8 +37,6 @@
 #define configTICK_RATE_HZ	(1000)
 #define configTICK_PRESCALER (64)   // 1, 8, 64, 256 or 1024 (or 32 for timer2)
 
-
-#define port_SLICING_USE_TIMERS		1   // If this option is off, WDT will  be used 
 #define portUSE_TIMER0				1	// Select which timer you want to use for RTOS tick generation (portUSE_TIMER0:5)
 /************************************************/
 
