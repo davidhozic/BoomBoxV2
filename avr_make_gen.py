@@ -7,13 +7,21 @@ SEARCH_DIR = "ZZ/code/"     #Start location of the code
 EXTERNAL_FOLDERS = []
 GLOBAL_HEADERS = ["stdint.h", "settings.hh"]
 
+# COMPILER SELECTION
 C_COMPILER = "avr-gcc"
 C_FLAGS = ["-std=c99", "-g"]
 
 CPP_COMPILER = "avr-g++"
 CPP_FLAGS = ["-std=c++17","-g"]
 
-COMMON_FLAGS = ["-D F_CPU=16000000", "-mmcu=atmega2560"]
+#LINKER SELECTION
+LINKER = "avr-gcc"
+
+# FLAGS FOR BOTH LANGUAGES (and linker)  
+COMMON_FLAGS = ["-D F_CPU=16000000", "-mmcu=atmega2560"] # also used in linker
+
+
+
 
 OUTPUT_DIR = "Build"
 OUTPUT_NAME = "main"
@@ -75,6 +83,7 @@ time.sleep(1)
 #Compiler Options
 dmakefile += "C_COMPILER := " + C_COMPILER
 dmakefile += "\nCPP_COMPILER := " + CPP_COMPILER
+dmakefile += "\nLINKER := " + LINKER
 
 #Flags
 dmakefile += "\nC_FLAGS := "
@@ -152,7 +161,7 @@ dmakefile += "\n\ncompile: echo_compile mkdir $(O)\n\
 \techo \" STEP[]: LINKING INTO ELF           \"\n\
 \techo \"------------------------------------\"\n\
 \tsleep 2\n\
-\t$(CPP_COMPILER) $(O) $(COMMON_FLAGS) -o $(OUTPUT_DIR)/$(OUTPUT_NAME).elf\n\
+\t$(LINKER) $(O) $(COMMON_FLAGS) -o $(OUTPUT_DIR)/$(OUTPUT_NAME).elf\n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: CONVERTING INTO HEX        \"\n\
 \techo \"------------------------------------\"\n\
