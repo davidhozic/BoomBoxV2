@@ -2,20 +2,20 @@ import os, time, re
 
 ##############################################################################################
 #   CONFIGURATION   #
-SEARCH_DIR = "ZZ/code/"     #Start location of the code
+SEARCH_DIR = "code/"     #Start location of the code
 
 EXTERNAL_FOLDERS = []
 GLOBAL_HEADERS = ["stdint.h", "settings.hh"]
 
 # COMPILER SELECTION
 C_COMPILER = "avr-gcc"
-C_FLAGS = ["-std=c99", "-g"]
+C_FLAGS = ["-std=c99"]
 
 CPP_COMPILER = "avr-g++"
-CPP_FLAGS = ["-std=c++17","-g"]
+CPP_FLAGS = ["-std=c++17"]
 
 #LINKER SELECTION
-LINKER = "avr-gcc"
+LINKER = "avr-g++"
 
 # FLAGS FOR BOTH LANGUAGES (and linker)  
 COMMON_FLAGS = ["-D F_CPU=16000000", "-mmcu=atmega2560", "-Os"] # also used in linker
@@ -152,7 +152,7 @@ dmakefile += "\nclean:\n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: Cleaning Folder $(OUTPUT_DIR)     \"\n\
 \techo \"------------------------------------\"\n\
-\trm -rf $(OUTPUT_DIR)\n\
+\trm -rf  $(OUTPUT_DIR)\n\
 \tsleep 2\n\n"
 
 #compile
@@ -166,7 +166,7 @@ dmakefile += "\n\ncompile: echo_compile mkdir $(O)\n\
 \techo \" STEP[]: CONVERTING INTO HEX        \"\n\
 \techo \"------------------------------------\"\n\
 \tsleep 2\n\
-\tavr-objcopy -j .text -j .data -O ihex $(OUTPUT_DIR)/$(OUTPUT_NAME).elf $(OUTPUT_DIR)/$(OUTPUT_NAME).hex\n\n"
+\tavr-objcopy -j .text -j .data -R .eeprom -O ihex $(OUTPUT_DIR)/$(OUTPUT_NAME).elf $(OUTPUT_DIR)/$(OUTPUT_NAME).hex\n\n"
 
 #flash
 dmakefile += "flash : \n\
