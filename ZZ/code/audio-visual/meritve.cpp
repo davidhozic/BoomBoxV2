@@ -4,7 +4,7 @@
 #include "common/inc/global.hh"
 #include "EEPROM.hh"
 #include "includes/audio.hh"
-#include "castimer/castimer.hh"
+#include "castimer/castimer.hpp"
 #include <math.h>
 
 /************************************************************************/

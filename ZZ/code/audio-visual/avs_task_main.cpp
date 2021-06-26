@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include "libs/EEPROM/EEPROM.hh"
 #include "includes/audio.hh"
-#include "castimer/castimer.hh"
-#include "input.hh"
+#include "castimer/castimer.hpp"
+#include "input.hpp"
 #include "libs/outputs_inputs/outputs_inputs.hh"
 
 /************************************************************************/
@@ -53,7 +53,7 @@ void audio_visual_task(void *p) //Funkcija avdio-vizualnega sistema
 			{
 				m_audio_system.mikrofon_detect = 0;
 				m_audio_system.lucke_filter_timer.reset();
-				m_audio_system.barva_selekt = (m_audio_system.barva_selekt + 1) %  enum_BARVE::barve_end;	
+				m_audio_system.barva_selekt = (m_audio_system.barva_selekt + 1) %  barve_end;	
 				deleteTASK(&m_audio_system.handle_active_strip_mode);
 				xTaskCreate(m_audio_system.list_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
 			}

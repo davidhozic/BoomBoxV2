@@ -5,7 +5,7 @@
 /* NOTE! The function hook functionality is only available in interrupt mode */
 /*
 
-CHANGING THE TIMER_t MODE:
+CHANGING THE TIMER MODE:
     To change the timer to INTERRUPT MULTIPLEXING mode (calls functions every period), simply call the
     - timer_name.set_hook(function name, calling period, parameter pointer);
     and change the parameters. 
@@ -16,9 +16,9 @@ CHANGING THE TIMER_t MODE:
     - timer_name.set_hook(function name, calling period, parameter pointer);
     where first and last parameter are NULL, and the second 0.
 
-STARTING THE TIMER_t:
+STARTING THE TIMER:
     - To start the timer, call timer.value() function.
-GETTING THE TIMER_t VALUE:
+GETTING THE TIMER VALUE:
     - To get the timer value, call the timer.value() function
 RESETTING THE ELAPSED TIME:
     - To reset the elapsed time call the timer.reset() function */																		
@@ -28,7 +28,7 @@ RESETTING THE ELAPSED TIME:
 
 #define SOURCE_INTERUPT								( 1 )			// Use ISR as timing source
 	#define TIMER_ISR_VECTOR						( TIMER3_COMPA_vect )	
-	#define TIMER_INCREMENT_VALUE_MS					( 1 )
+	#define TIMER_INCREMENT_VALUE_MS				( 1 )
 
 #define SOURCE_SYSTEM_TIME							( 0 )			// Use System time as source
 #if (SOURCE_SYSTEM_TIME == 1)

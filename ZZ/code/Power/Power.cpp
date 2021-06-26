@@ -2,19 +2,20 @@
 
 #include "outputs_inputs.hh"
 #include "global.hh"
-#include "castimer/castimer.hh"
-#include "input/input.hh"
+#include "castimer/castimer.hpp"
+#include "input/input.hpp"
 #include "events.hh"
 
 
+
+/*	   	INPUT_t objects		*/
+INPUT_t stikalo(main_power_switch_pin, main_power_switch_port, 0);
+/*		TIMER_t objects		*/
+TIMER_t power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds
+TIMER_t voltage_read_timer	;
+
 void power_task(void *p)
 {
-	/*		TIMER_t objects		*/
-	TIMER_t power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds 
-	TIMER_t voltage_read_timer	;
-
-	/*	   	INPUT_t objects		*/
-	INPUT_t stikalo(main_power_switch_pin, main_power_switch_port, 0);
 
 	while (true)
 	{ 
@@ -47,7 +48,7 @@ void power_task(void *p)
 			power_up_delay_timer.reset();
 			if (m_Hardware.status_reg.powered_up)
 			{
-				system_event(EV_SHUTDOWN);
+			//	system_event(EV_SHUTDOWN);
 			}
 		}
 		

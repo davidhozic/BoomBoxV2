@@ -1,3 +1,5 @@
+#include "task.h"
+
 
 template <typename tip>
 void LIST_t<tip>::pojdi_zacetek()
@@ -41,9 +43,11 @@ unsigned short LIST_t<tip>::length()
 template <typename tip>
 void LIST_t<tip>::add_front(tip vrednost)
 {
-
-    vpdt *nov = (vpdt *) LIST_t<tip>::operator new (sizeof(vpdt));
-
+	#if USE_FREERTOS == 1
+		vpdt *nov = (vpdt *)pvPortMalloc(sizeof(vpdt));
+	#else	
+		vpdt *nov = (vpdt *)malloc(sizeof(vpdt));
+	#endif
     pojdi_zacetek();
 
     if (glava != NULL)
@@ -61,8 +65,12 @@ template <typename tip>
 void LIST_t<tip>::add_end(tip vrednost)
 {
 
-    vpdt *nov = (vpdt *) LIST_t<tip>::operator new(sizeof(vpdt));
-
+	#if USE_FREERTOS == 1
+		vpdt *nov = (vpdt *)pvPortMalloc(sizeof(vpdt));
+	#else
+		vpdt *nov = (vpdt *)malloc(sizeof(vpdt));
+	#endif
+	
     pojdi_konec();
     if (glava != NULL)
     {
@@ -74,6 +82,7 @@ void LIST_t<tip>::add_end(tip vrednost)
     glava = nov;
     count++;
     glava_index = count - 1;
+
 }
 template <typename tip>
 tip LIST_t<tip>::pop_end()
@@ -85,8 +94,11 @@ tip LIST_t<tip>::pop_end()
     if (prev != NULL)
         prev->naslednji = NULL;
 
-    this->operator delete(glava);
-
+	#if USE_FREERTOS == 1
+		pvPortFree(glava);
+	#else
+	    free(glava);
+	#endif
 
     glava = prev;
     count--;
@@ -150,7 +162,10 @@ void LIST_t<tip>::remove_by_index(uint32_t index)
         glava_index--;
     }
 
-    this->operator delete(glava);
+
+    free(glava);
+
+
     glava = new_head;
     count--;
 }
@@ -197,6 +212,7 @@ void LIST_t<tip>::operator+=(tip pod)
 {
     this->add_end(pod);
 }
+
 
 
 #endif

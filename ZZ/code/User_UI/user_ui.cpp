@@ -3,8 +3,8 @@
 #include "common/inc/global.hh"
 #include "../audio-visual/includes/audio.hh"
 #include "libs/outputs_inputs/outputs_inputs.hh"
-#include "input/input.hh"
-#include "castimer/castimer.hh"
+#include "input/input.hpp"
+#include "castimer/castimer.hpp"
 #include "user_ui.hh"
 #include "events.hh"
 
@@ -116,7 +116,7 @@ void showSEEK(SETTINGS_UI *control_block)  // Prikaze element v seeku ce je SU_S
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
-			xTaskCreate(m_audio_system.list_strip_modes[control_block->menu_seek], "seek", 128, NULL, 4, &m_audio_system.handle_active_strip_mode);
+			xTaskCreate(m_audio_system.list_strip_modes[control_block->menu_seek], "seek", 256, NULL, 4, &m_audio_system.handle_active_strip_mode);
 		}
 		break;
 
@@ -279,11 +279,11 @@ void settings_UI()
 
 
 
-
+TIMER_t LCD_timer;
 
 void zaslon()
 {
-	TIMER_t LCD_timer;
+	
 	if (m_Hardware.status_reg.charging_enabled)
 	{
 		if ( LCD_timer.value() >= 1000)

@@ -1,6 +1,6 @@
-#include "input/input.hh"
+#include "input/input.hpp"
 #include "FreeRTOS.h"
-#include "castimer/castimer.hh"
+#include "castimer/castimer.hpp"
 #include "common/inc/global.hh"
 #include "libs/outputs_inputs/outputs_inputs.hh"
 #include "libs/EEPROM/EEPROM.hh"

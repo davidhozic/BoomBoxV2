@@ -1,7 +1,7 @@
 
 #ifndef CASTIMER_H
 #define CASTIMER_H
-#include "settings.hh"
+#include "timer_settings.hh"
 
 #if (	SOURCE_INTERUPT == 1	)	
 	#ifndef SEZNAM_INC
@@ -13,8 +13,8 @@
 class TIMER_t
 {
 private:
-	bool timer_enabled = false;
-	uint32_t timer_value = 0;
+	volatile bool timer_enabled = false;
+	volatile uint32_t timer_value = 0;
 
 	/* Hook Function */
 	void (*function_ptr)(void*) = NULL;
@@ -26,12 +26,12 @@ public:
     void reset();
 	void increment();
 	#if (SOURCE_INTERUPT == 1)
-	void set_hook(void (*function_ptr)(void*), uint32_t call_period, void* function_param_ptr);
-		TIMER_t();
-		static LIST_t <TIMER_t *> timer_list;
+		void set_hook(void (*function_ptr)(void*), uint32_t call_period, void* function_param_ptr);
+		explicit TIMER_t();
 	#endif
 };
 
+extern LIST_t <TIMER_t *> timer_list;
 
 
 

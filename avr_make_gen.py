@@ -18,7 +18,7 @@ CPP_FLAGS = ["-std=c++17","-g"]
 LINKER = "avr-gcc"
 
 # FLAGS FOR BOTH LANGUAGES (and linker)  
-COMMON_FLAGS = ["-D F_CPU=16000000", "-mmcu=atmega2560"] # also used in linker
+COMMON_FLAGS = ["-D F_CPU=16000000", "-mmcu=atmega2560", "-Os"] # also used in linker
 
 
 

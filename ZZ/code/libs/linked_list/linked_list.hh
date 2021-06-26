@@ -67,16 +67,7 @@ public:
     
     void operator+=(tip pod);
 
-    void *operator new(size_t size)
-    {
-        return malloc(size);
-    }
-
-    void operator delete(void *ptr)
-    {
-        free(ptr);
-    }
-
+	
 #endif
 
 };
@@ -88,7 +79,8 @@ LIST_t<tip> operator+(tip pod, cl obj);
 
 
 
-#include "llist_funct.hh"
+
+#include "llist_funct.hpp"
 
 #endif
 

@@ -15,7 +15,7 @@ SRC_DIRS := .//\
 ./List_EXAMPLE/\
 ./.vscode/\
 
-CPP_SRC := ./List_EXAMPLE/l_example.cpp\
+CPP_SRC := ./List_EXAMPLE/test.cpp\
 
 C_SRC := 
 HEADER_SRC := .//llist_funct.hh\

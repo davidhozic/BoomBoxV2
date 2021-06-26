@@ -1,7 +1,7 @@
 
 #include "FreeRTOS.h"
 #include "global.hh"
-#include "libs/input/input.hh"
+#include "libs/input/input.hpp"
 
 
 /************************************************************************/

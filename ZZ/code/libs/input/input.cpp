@@ -1,4 +1,4 @@
-#include "input.hh"
+#include "input.hpp"
 
 
 bool INPUT_t::value()
@@ -100,13 +100,13 @@ bool INPUT_t::value()
 	
 #if (USE_FILTERING == 1)
 	/* Filter input with a timer */
-	if (register_value != filtered_curr_state && filter_timer.value() >= FILTER_TIME_MS)
+	if (register_value != filtered_curr_state && filter_timer->value() >= FILTER_TIME_MS)
 	{
 		filtered_curr_state = register_value;
 	}
 	else if(register_value == filtered_curr_state)
 	{
-		filter_timer.reset();
+		filter_timer->reset();
 	}
 #else
 	filtered_curr_state = register_value;
@@ -177,6 +177,13 @@ INPUT_t::INPUT_t(unsigned char pin, char port, char default_state)
 	this->register_value = 0;
 	this->rising_edge_var  = 0;
 	this->falling_edge_var = 0;
+#if USE_FILTERING
+	#if USE_FREERTOS
+		this->filter_timer = static_cast<TIMER_t *>(pvPortMalloc(sizeof(TIMER_t))); // Needs to be allocated via pvPortMalloc and not initialized as a normal varible due to issues with FreeRTOS
+	#else
+		this->filter_timer = static_cast<TIMER_t *>(malloc(sizeof(TIMER_t))); 
+	#endif
+#endif
 }
 
 

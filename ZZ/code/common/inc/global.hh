@@ -4,7 +4,7 @@
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "input.hh"
+#include "input.hpp"
 
 /****************************************************************************************************************************/
 /*													GLOBAL STRUCTS															*/

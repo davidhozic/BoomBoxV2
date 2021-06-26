@@ -1,12 +1,12 @@
 
 #ifndef VHOD_H
 #define	VHOD_H
-#include "input_settings.hh"
+#include "input_settings.hpp"
 #include <stdint.h>
 #include "avr/io.h"
 
 #if (USE_FILTERING)
-	#include "castimer.hh"
+	#include "castimer.hpp"
 #endif
 
 class INPUT_t // pin, port, stanje ko ni pritisnjen
@@ -24,7 +24,7 @@ private:
     uint8_t port;
 
 #if (USE_FILTERING == 1)
-	TIMER_t filter_timer = TIMER_t();
+	TIMER_t *filter_timer;
 #endif
 
 public:

@@ -5,7 +5,7 @@
 #include "common/inc/global.hh"
 #endif
 #include "audio-visual/includes/barve.hh"
-#include "libs/castimer/castimer.hh"
+#include "libs/castimer/castimer.hpp"
 #ifndef EEPROM_H
 	#error	"EEPROM must be included first"
 #endif
