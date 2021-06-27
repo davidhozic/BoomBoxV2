@@ -11,6 +11,18 @@
 #endif
 #include "linked_list.hpp"
 
+
+/************************************************************************/
+/*								CONFIG				                    */
+/************************************************************************/
+#define  AUVSYS_CONFIG_NORMAL_ANIMATION_TIME_MS				500		// Animation time for mic detection light up
+#define  AUVSYS_CONFIG_FAST_ANIMATION_TIME_MS				250		// Animation time used in flash strip
+#define	 AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS				1000	// Animation time for exit animations and settings ui showcase
+
+#define  AUVSYS_CONFIG_BRIGHTNESS_CHANGE					5
+
+
+
 /************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
 /************************************************************************/
@@ -77,7 +89,7 @@ public:
 	/****************************************************************************/
 	/****  Strip parameters   ****/
 	uint8_t strip_mode = NORMAL_FADE;						// Current strip mode
-	uint16_t animation_time = NORMAL_ANIMATION_TIME_MS;
+	uint16_t animation_time = AUVSYS_CONFIG_NORMAL_ANIMATION_TIME_MS;
 	/**** Strip current state ****/
 	int16_t current_color[3] = {255, 255, 255};				// Current RGB color of the strip
 	int16_t current_brightness = 0;							// Current brightness level of the strip
@@ -88,10 +100,9 @@ public:
 	TIMER_t  lucke_filter_timer;						// Timer that prevents strip from triggering too fast after last trigger (filter timer)
 	
 	/****	Measurements	****/
-	uint16_t average_volume = 2048;			// Variable that stores the average volume
 	
 	/****   Task handles	****/
-	TaskHandle_t handle_average_volume = NULL;
+	TaskHandle_t handle_audio_meass = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
 	/***	Strip mode functions ***/
 	void (*list_strip_modes[3])(void*) =  {normal_fade_task, inverted_fade_task, breathe_fade_task};

@@ -58,7 +58,7 @@ void audio_visual_task(void *p) //Funkcija avdio-vizualnega sistema
 				xTaskCreate(m_audio_system.list_strip_modes[m_audio_system.strip_mode], "strip mode", 128, &m_audio_system.barva_selekt, 4, &m_audio_system.handle_active_strip_mode);
 			}
 		}
-		delayFREERTOS(100);
+		delay_FreeRTOS_ms(100);
 		//End task loop
 	}
 }
@@ -84,8 +84,8 @@ void breathe_fade_task(void *input)
 {
 	m_audio_system.select_strip_color(*(uint8_t*)input);
 	
-	brightUP(m_audio_system.animation_time);
-	brightDOWN(m_audio_system.animation_time);
+	brightUP(m_audio_system.animation_time/2);
+	brightDOWN(m_audio_system.animation_time/2);
 	
 	m_audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);

@@ -28,7 +28,7 @@ void system_event(enum_system_event eventt){
 			writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
 			m_audio_system.stripON();
 			m_Hardware.status_reg.powered_up = 1;
-			delayFREERTOS(10);
+			delay_FreeRTOS_ms(10);
 		break;
 		
 		case EV_SHUTDOWN:
@@ -93,14 +93,14 @@ void power_switch_ev(uint8_t mode)
 	{
 		case EV_POWER_SWITCH_EXTERNAL:
 			system_event(EV_SHUTDOWN);
-			delayFREERTOS(3);
+			delay_FreeRTOS_ms(3);
 			writeOUTPUT(menjalnik_pin,menjalnik_port,1);
 			m_Hardware.status_reg.external_power = 1;
 		break;
 		
 		case EV_POWER_SWITCH_INTERNAL:
 			system_event(EV_SHUTDOWN);
-			delayFREERTOS(3);
+			delay_FreeRTOS_ms(3);
 			writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
 			m_Hardware.status_reg.external_power = 0;
 		break;

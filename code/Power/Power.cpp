@@ -64,7 +64,7 @@ void power_task(void *p)
 			system_event(EV_POWER_SWITCH_INTERNAL);
 		}
 		/************************************************************************/
-		delayFREERTOS(100);
+		delay_FreeRTOS_ms(100);
 	}
 }
 

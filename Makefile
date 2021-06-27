@@ -55,7 +55,7 @@ code/User_UI/user_ui.cpp\
 
 C := code/libs/FreeRTOS_m2560/croutine.c\
 code/libs/FreeRTOS_m2560/event_groups.c\
-code/libs/FreeRTOS_m2560/heap_3.c\
+code/libs/FreeRTOS_m2560/heap_4.c\
 code/libs/FreeRTOS_m2560/list.c\
 code/libs/FreeRTOS_m2560/port.c\
 code/libs/FreeRTOS_m2560/queue.c\
@@ -68,7 +68,7 @@ SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/c
 
 O := $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/croutine.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/event_groups.o\
-$(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/heap_3.o\
+$(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/heap_4.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/list.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/port.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/queue.o\
@@ -133,7 +133,7 @@ $(OUTPUT_DIR)/code//bootloader.o : code//bootloader.cpp code/Events/inc/events.h
 	echo "Compiling C++ source file:bootloader.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code//bootloader.cpp
 
-$(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o : code/audio-visual/audio_system_functions.cpp code/common/inc/global.hh code/libs/EEPROM/EEPROM.hh code/audio-visual/includes/audio.hh code/libs/outputs_inputs/outputs_inputs.hh 
+$(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o : code/audio-visual/audio_system_functions.cpp code/common/inc/global.hpp code/libs/EEPROM/EEPROM.hh code/audio-visual/includes/audio.hh code/libs/outputs_inputs/outputs_inputs.hh 
 	echo "Compiling C++ source file:audio_system_functions.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/audio_system_functions.cpp
 
@@ -141,15 +141,15 @@ $(OUTPUT_DIR)/code/audio-visual/avs_task_main.o : code/audio-visual/avs_task_mai
 	echo "Compiling C++ source file:avs_task_main.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/avs_task_main.cpp
 
-$(OUTPUT_DIR)/code/audio-visual/meritve.o : code/audio-visual/meritve.cpp code/libs/outputs_inputs/outputs_inputs.hh code/common/inc/global.hh code/libs/EEPROM/EEPROM.hh code/audio-visual/includes/audio.hh code/libs/castimer/castimer.hpp 
+$(OUTPUT_DIR)/code/audio-visual/meritve.o : code/audio-visual/meritve.cpp code/libs/outputs_inputs/outputs_inputs.hh code/common/inc/global.hpp code/libs/EEPROM/EEPROM.hh code/audio-visual/includes/audio.hh code/libs/castimer/castimer.hpp 
 	echo "Compiling C++ source file:meritve.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/meritve.cpp
 
-$(OUTPUT_DIR)/code/common/global.o : code/common/global.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/global.hh code/libs/input/input.hpp 
+$(OUTPUT_DIR)/code/common/global.o : code/common/global.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/global.hpp code/libs/input/input.hpp 
 	echo "Compiling C++ source file:global.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/common/global.cpp
 
-$(OUTPUT_DIR)/code/Events/events.o : code/Events/events.cpp code/Events/inc/events.hh code/common/inc/global.hh code/libs/outputs_inputs/outputs_inputs.hh code/libs/EEPROM/EEPROM.hh code/audio-visual/includes/audio.hh 
+$(OUTPUT_DIR)/code/Events/events.o : code/Events/events.cpp code/Events/inc/events.hh code/common/inc/global.hpp code/libs/outputs_inputs/outputs_inputs.hh code/libs/EEPROM/EEPROM.hh code/audio-visual/includes/audio.hh 
 	echo "Compiling C++ source file:events.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/Events/events.cpp
 
@@ -157,7 +157,7 @@ $(OUTPUT_DIR)/code/libs/castimer/castimer.o : code/libs/castimer/castimer.cpp co
 	echo "Compiling C++ source file:castimer.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/castimer/castimer.cpp
 
-$(OUTPUT_DIR)/code/libs/EEPROM/eeprom.o : code/libs/EEPROM/eeprom.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/EEPROM/EEPROM.hh code/common/inc/global.hh 
+$(OUTPUT_DIR)/code/libs/EEPROM/eeprom.o : code/libs/EEPROM/eeprom.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/EEPROM/EEPROM.hh code/common/inc/global.hpp 
 	echo "Compiling C++ source file:eeprom.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/EEPROM/eeprom.cpp
 
@@ -165,19 +165,19 @@ $(OUTPUT_DIR)/code/libs/input/input.o : code/libs/input/input.cpp code/libs/inpu
 	echo "Compiling C++ source file:input.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/input/input.cpp
 
-$(OUTPUT_DIR)/code/libs/outputs_inputs/outputs_inputs.o : code/libs/outputs_inputs/outputs_inputs.cpp code/libs/outputs_inputs/outputs_inputs.hh code/libs/FreeRTOS_m2560/include/atomic.h code/common/inc/global.hh 
+$(OUTPUT_DIR)/code/libs/outputs_inputs/outputs_inputs.o : code/libs/outputs_inputs/outputs_inputs.cpp code/libs/outputs_inputs/outputs_inputs.hh code/libs/FreeRTOS_m2560/include/atomic.h code/common/inc/global.hpp 
 	echo "Compiling C++ source file:outputs_inputs.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/outputs_inputs/outputs_inputs.cpp
 
-$(OUTPUT_DIR)/code/Power/charging.o : code/Power/charging.cpp code/libs/input/input.hpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/castimer/castimer.hpp code/common/inc/global.hh code/libs/outputs_inputs/outputs_inputs.hh code/libs/EEPROM/EEPROM.hh 
+$(OUTPUT_DIR)/code/Power/charging.o : code/Power/charging.cpp code/libs/input/input.hpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/castimer/castimer.hpp code/common/inc/global.hpp code/libs/outputs_inputs/outputs_inputs.hh code/libs/EEPROM/EEPROM.hh 
 	echo "Compiling C++ source file:charging.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/Power/charging.cpp
 
-$(OUTPUT_DIR)/code/Power/Power.o : code/Power/Power.cpp code/libs/outputs_inputs/outputs_inputs.hh code/common/inc/global.hh code/libs/castimer/castimer.hpp code/libs/input/input.hpp code/Events/inc/events.hh 
+$(OUTPUT_DIR)/code/Power/Power.o : code/Power/Power.cpp code/libs/outputs_inputs/outputs_inputs.hh code/common/inc/global.hpp code/libs/castimer/castimer.hpp code/libs/input/input.hpp code/Events/inc/events.hh 
 	echo "Compiling C++ source file:Power.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/Power/Power.cpp
 
-$(OUTPUT_DIR)/code/User_UI/user_ui.o : code/User_UI/user_ui.cpp code/libs/EEPROM/EEPROM.hh code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/global.hh code/audio-visual/includes/audio.hh code/libs/outputs_inputs/outputs_inputs.hh code/libs/input/input.hpp code/libs/castimer/castimer.hpp code/User_UI/inc/user_ui.hh code/Events/inc/events.hh 
+$(OUTPUT_DIR)/code/User_UI/user_ui.o : code/User_UI/user_ui.cpp code/libs/EEPROM/EEPROM.hh code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/global.hpp code/audio-visual/includes/audio.hh code/libs/outputs_inputs/outputs_inputs.hh code/libs/input/input.hpp code/libs/castimer/castimer.hpp code/User_UI/inc/user_ui.hpp code/Events/inc/events.hh 
 	echo "Compiling C++ source file:user_ui.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/User_UI/user_ui.cpp
 
@@ -189,9 +189,9 @@ $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/event_groups.o : code/libs/FreeRTOS_m2560
 	echo "Compiling C source file:event_groups.c"
 	$(C_COMPILER) $(C_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/FreeRTOS_m2560/event_groups.c
 
-$(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/heap_3.o : code/libs/FreeRTOS_m2560/heap_3.c code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/FreeRTOS_m2560/include/task.h 
-	echo "Compiling C source file:heap_3.c"
-	$(C_COMPILER) $(C_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/FreeRTOS_m2560/heap_3.c
+$(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/heap_4.o : code/libs/FreeRTOS_m2560/heap_4.c code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/FreeRTOS_m2560/include/task.h 
+	echo "Compiling C source file:heap_4.c"
+	$(C_COMPILER) $(C_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/FreeRTOS_m2560/heap_4.c
 
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/list.o : code/libs/FreeRTOS_m2560/list.c code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/FreeRTOS_m2560/include/list.h 
 	echo "Compiling C source file:list.c"

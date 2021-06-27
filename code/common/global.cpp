@@ -35,7 +35,7 @@ void deleteTASK(TaskHandle_t* task)
 	{
 		vTaskDelete(*task);
 		*task = NULL;
-		delayFREERTOS(2); // Ensures task gets deleted
+		delay_FreeRTOS_ms(2); // Ensures task gets deleted
 	}
 }
 

@@ -39,7 +39,6 @@
 
 #define portUSE_TIMER0				1	// Select which timer you want to use for RTOS tick generation (portUSE_TIMER0:5)
 /************************************************/
-
 	
 #define configMAX_PRIORITIES 5				// Maximum priority each task can have 
 #define configMINIMAL_STACK_SIZE 256		// Stack size for the idle task

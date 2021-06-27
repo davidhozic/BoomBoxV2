@@ -41,6 +41,6 @@ void charging_task(void *p)
 			writeOUTPUT(bat_charge_pin, bat_charge_port,1);
 			m_Hardware.status_reg.charging_enabled = 1;
 		}
-		delayFREERTOS(250);
+		delay_FreeRTOS_ms(250);
 	}
 }

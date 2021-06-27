@@ -20,16 +20,22 @@ void class_AUDIO_SYS::updateSTRIP()
 
 void class_AUDIO_SYS::flashSTRIP() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
 {
+	select_strip_color(BELA);
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		brightDOWN (FAST_ANIMATION_TIME_MS);
-		brightUP   (FAST_ANIMATION_TIME_MS);
+		current_brightness = 0;
+		updateSTRIP();
+		delay_FreeRTOS_ms(125);
+		current_brightness = 255;
+		updateSTRIP();
+		delay_FreeRTOS_ms(125);
 	}
 }
 
 void class_AUDIO_SYS::colorSHIFT(uint8_t BARVA, unsigned short animation_time)
 {
 	char smer[3];
+	m_audio_system.current_brightness = 255;
 	while ( m_audio_system.current_color[RED]	 != m_mozne_barve.barvni_ptr[BARVA][RED] ||
 			m_audio_system.current_color[GREEN]  != m_mozne_barve.barvni_ptr[BARVA][GREEN] ||
 			m_audio_system.current_color[BLUE]	 != m_mozne_barve.barvni_ptr[BARVA][BLUE]		)	// While current colors different from wanted
@@ -38,9 +44,9 @@ void class_AUDIO_SYS::colorSHIFT(uint8_t BARVA, unsigned short animation_time)
 		m_mozne_barve.barvni_ptr[BARVA][GREEN] >= m_audio_system.current_color[GREEN] ? smer[GREEN] = 1 : smer[GREEN] = -1;
 		m_mozne_barve.barvni_ptr[BARVA][BLUE] >= m_audio_system.current_color[BLUE]  ? smer[BLUE]  = 1 : smer[BLUE]  = -1;
 
-		m_audio_system.current_color[RED]	+=	(6 * smer[RED]);
-		m_audio_system.current_color[GREEN]	+=	(6 * smer[GREEN]);
-		m_audio_system.current_color[BLUE]	+=	(6 * smer[BLUE]);
+		m_audio_system.current_color[RED]	+=	(AUVSYS_CONFIG_BRIGHTNESS_CHANGE * smer[RED]);
+		m_audio_system.current_color[GREEN]	+=	(AUVSYS_CONFIG_BRIGHTNESS_CHANGE * smer[GREEN]);
+		m_audio_system.current_color[BLUE]	+=	(AUVSYS_CONFIG_BRIGHTNESS_CHANGE * smer[BLUE]);
 
 		//Preveri prenihaj:
 
@@ -55,7 +61,7 @@ void class_AUDIO_SYS::colorSHIFT(uint8_t BARVA, unsigned short animation_time)
 
 		updateSTRIP();
 		
-		delayFREERTOS(  (animation_time*6)/255  );
+		delay_FreeRTOS_ms(  (animation_time*AUVSYS_CONFIG_BRIGHTNESS_CHANGE)/255  );
 	}
 }
 
@@ -63,11 +69,11 @@ void class_AUDIO_SYS::brightnessFADE(char smer, unsigned short animation_time)
 {
 	while (smer > 0 ? m_audio_system.current_brightness < 255 : m_audio_system.current_brightness > 0)
 	{
-		m_audio_system.current_brightness += 6 * smer;
+		m_audio_system.current_brightness += AUVSYS_CONFIG_BRIGHTNESS_CHANGE * smer;
 		m_audio_system.current_brightness = m_audio_system.current_brightness < 0 ? 0 : m_audio_system.current_brightness;
 		m_audio_system.current_brightness = m_audio_system.current_brightness > 255 ? 255 : m_audio_system.current_brightness;
 		updateSTRIP();
-		delayFREERTOS(  (animation_time*6)/255  );
+		delay_FreeRTOS_ms(  (animation_time*AUVSYS_CONFIG_BRIGHTNESS_CHANGE)/255  );
 	}
 }
 
@@ -75,16 +81,16 @@ void class_AUDIO_SYS::brightnessFADE(char smer, unsigned short animation_time)
 void class_AUDIO_SYS::stripOFF()
 {
 	strip_mode = STRIP_OFF;
-	deleteTASK(&handle_average_volume);
+	deleteTASK(&handle_audio_meass);
 	deleteTASK(&handle_active_strip_mode);
-	delayFREERTOS(10);
-	m_audio_system.animation_time = SLOW_ANIMATION_TIME_MS;
-	brightDOWN(SLOW_ANIMATION_TIME_MS);
+	delay_FreeRTOS_ms(10);
+	m_audio_system.animation_time = AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS;
+	brightDOWN(AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS);
 }
 
 void class_AUDIO_SYS::stripON()
 {
-	xTaskCreate(signal_measure, "avg_vol", 128, NULL, 3, &handle_average_volume);
+	xTaskCreate(signal_measure, "avg_vol", 128, NULL, 3, &handle_audio_meass);
 	strip_mode = EEPROM.beri(EEPROM_ADDRESS_STRIP_MODE);
 	
 	/* EEPROM address is empty */
@@ -93,6 +99,6 @@ void class_AUDIO_SYS::stripON()
 		strip_mode = 0;
 	}   
 
-	m_audio_system.animation_time = NORMAL_ANIMATION_TIME_MS;
-	delayFREERTOS(10);
+	m_audio_system.animation_time = AUVSYS_CONFIG_NORMAL_ANIMATION_TIME_MS;
+	delay_FreeRTOS_ms(10);
 }

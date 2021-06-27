@@ -4,12 +4,7 @@
 #define SETTINGS_H
 
 
-/************************************************************************/
-/*					 	   AUDIO SYSTEM SETTINGS                       */
-/************************************************************************/
-	#define  NORMAL_ANIMATION_TIME_MS		500		// Animation time for mic detection light up
-	#define  FAST_ANIMATION_TIME_MS			125		// Animation time used in flash strip
-	#define	 SLOW_ANIMATION_TIME_MS			2000	// Animation time for exit animations and settings ui showcase
+
 /************************************************************************/
 /*								EEPROM IDs                              */
 /************************************************************************/

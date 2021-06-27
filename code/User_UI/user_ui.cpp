@@ -108,14 +108,14 @@ void showSEEK(USER_UI *control_block)  // Prikaze element v seeku ce je SU_STATE
 	switch(control_block->state)
 	{
 	case SU_STATE_SCROLL:
-		m_audio_system.current_brightness = 255;
-		m_audio_system.colorSHIFT(control_block->menu_seek, SLOW_ANIMATION_TIME_MS);
+		m_audio_system.colorSHIFT(control_block->menu_seek, AUVSYS_CONFIG_FAST_ANIMATION_TIME_MS);
 		break;
 
 	case SU_STATE_STRIP_SELECTION:
 		if (control_block->menu_seek == MENU_STRIP_OFF)
 		{
-			m_audio_system.colorSHIFT(RED, SLOW_ANIMATION_TIME_MS);
+			deleteTASK(&m_audio_system.handle_active_strip_mode);
+			m_audio_system.colorSHIFT(RDECA, AUVSYS_CONFIG_FAST_ANIMATION_TIME_MS);
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
@@ -130,11 +130,11 @@ void showSEEK(USER_UI *control_block)  // Prikaze element v seeku ce je SU_STATE
 
 void exit_scroll()
 {
-	m_user_ui.init();
-	m_audio_system.current_brightness = 255;
-	brightDOWN(SLOW_ANIMATION_TIME_MS);
-	delayFREERTOS(500);
+	m_audio_system.flashSTRIP();
+	brightDOWN(AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS);
+	delay_FreeRTOS_ms(1000);
 	m_audio_system.stripON();
+	m_user_ui.init();
 }
 /*******************************************************************************************/
 
@@ -148,7 +148,7 @@ void user_ui_task(void *p)
 		/* Settigns (scroll) menu */
 		settings_UI();
 		zaslon();
-		delayFREERTOS(50);
+		delay_FreeRTOS_ms(50);
 	}
 
 }
@@ -214,6 +214,11 @@ void settings_UI()
 
 		case SU_STATE_SCROLL:
 
+			if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
+			{
+				exit_scroll();
+			}
+
 			showSEEK(&m_user_ui);
 			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	 /* Long press -> execute selected option from the menu */
 			{
@@ -226,6 +231,7 @@ void settings_UI()
 
 				case MENU_STRIP_ANIMATION:
 					m_user_ui.state = SU_STATE_STRIP_SELECTION;
+					brightDOWN(AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS);
 				break;
 				}
 
@@ -234,13 +240,20 @@ void settings_UI()
 			}
 
 			else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
+			{
 				SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_scroll);	
-
+				m_user_ui.state_exit_timer.reset();
+			}
 		break;
 
 			/*****	END CASE *****/
 
 		case SU_STATE_STRIP_SELECTION:
+
+			if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
+			{
+				exit_scroll();
+			}
 
 			showSEEK(&m_user_ui);
 			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)
@@ -249,9 +262,10 @@ void settings_UI()
 				exit_scroll();
 			}
 
-			else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)
+			else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
 			{
-				SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_strip_animation);
+				SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_strip_animation);	
+				m_user_ui.state_exit_timer.reset();
 			}
 
 		break;

@@ -40,11 +40,11 @@ extern INPUT_t m_napajalnik;
 /************************************************************************/
 /*					  Safe FreeRTOS functions/macros		            */
 /************************************************************************/
-
+#define delay_FreeRTOS_us(x)	vTaskDelay(x/(1000000/configTICK_RATE_HZ))
 #ifndef DEBUG
-	#define delayFREERTOS(x)	vTaskDelay((double)x/portTICK_PERIOD_MS)
+	#define delay_FreeRTOS_ms(x)	vTaskDelay(x/portTICK_PERIOD_MS)
 #else
-	#define delayFREERTOS(x)	vTaskDelay(1)
+	#define delay_FreeRTOS_ms(x)	vTaskDelay(1)
 #endif
 
 void holdTASK	(TaskHandle_t* task);
