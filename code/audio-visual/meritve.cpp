@@ -1,9 +1,9 @@
 
 
-#include "libs/outputs_inputs/outputs_inputs.hh"
+#include "libs/outputs_inputs/outputs_inputs.hpp"
 #include "common/inc/global.hpp"
-#include "EEPROM.hh"
-#include "includes/audio.hh"
+#include "EEPROM.hpp"
+#include "includes/audio.hpp"
 #include "castimer/castimer.hpp"
 #include <math.h>
 
@@ -12,8 +12,6 @@
 	#define LOG_PERIOD_MS	( 10 )
 	#define	MIC_TRIGGER_PERCENT										((( 30.00/600 * m_microphone.average_volume + 6)/100.00))
 /************************************************************************/
-
-
 
 struct struct_microphone_t
 {
@@ -34,7 +32,7 @@ struct struct_microphone_t
 
 
 /* Measures average volume */
-void signal_measure(void* param)
+void signal_measure(void* p)
 {	
 	while (1)
 	{

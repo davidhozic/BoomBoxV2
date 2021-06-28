@@ -1,10 +1,10 @@
 
 
-#include "outputs_inputs.hh"
+#include "outputs_inputs.hpp"
 #include "global.hpp"
 #include "castimer/castimer.hpp"
 #include "input/input.hpp"
-#include "events.hh"
+#include "events.hpp"
 
 
 

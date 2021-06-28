@@ -5,7 +5,7 @@ import os, time, re
 SEARCH_DIR = "code/"     #Start location of the code
 
 EXTERNAL_FOLDERS = []
-GLOBAL_HEADERS = ["stdint.h", "settings.hh"]
+GLOBAL_HEADERS = ["stdint.h", "settings.hpp"]
 
 # COMPILER SELECTION
 C_COMPILER = "avr-gcc"
@@ -152,20 +152,20 @@ dmakefile += "\nclean:\n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: Cleaning Folder $(OUTPUT_DIR)     \"\n\
 \techo \"------------------------------------\"\n\
-\trm -rf  $(OUTPUT_DIR)\n\
-\tsleep 2\n\n"
+\trm -rf $(OUTPUT_DIR)\n\
+\tsleep 0.5\n\n"
 
 #compile
 dmakefile += "\n\ncompile: echo_compile mkdir $(O)\n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: LINKING INTO ELF           \"\n\
 \techo \"------------------------------------\"\n\
-\tsleep 2\n\
+\tsleep 0.5\n\
 \t$(LINKER) $(O) $(COMMON_FLAGS) -o $(OUTPUT_DIR)/$(OUTPUT_NAME).elf\n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: CONVERTING INTO HEX        \"\n\
 \techo \"------------------------------------\"\n\
-\tsleep 2\n\
+\tsleep 0.5\n\
 \tavr-objcopy -j .text -j .data -R .eeprom -O ihex $(OUTPUT_DIR)/$(OUTPUT_NAME).elf $(OUTPUT_DIR)/$(OUTPUT_NAME).hex\n\n"
 
 #flash
@@ -173,7 +173,7 @@ dmakefile += "flash : \n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: FLASHING TO $(MCU_PART)    \"\n\
 \techo \"------------------------------------\"\n\
-\tsleep 2\n\
+\tsleep 0.5\n\
 \tavrdude -p $(MCU_PART) -c $(PROGRAMMER) -U flash:w:\"$(OUTPUT_DIR)/$(OUTPUT_NAME).hex\"\n\n"
 
 #mkdir
@@ -185,7 +185,7 @@ dmakefile+= "echo_compile : \n\
 \techo \"------------------------------------\"\n\
 \techo \" STEP[]: COMPILING SOURCE FILES     \"\n\
 \techo \"------------------------------------\"\n\
-\tsleep 2\n\n"
+\tsleep 0.5\n\n"
 
 
 

@@ -1,7 +1,7 @@
 
 #ifndef CASTIMER_H
 #define CASTIMER_H
-#include "timer_settings.hh"
+#include "timer_settings.hpp"
 
 #if (	SOURCE_INTERUPT == 1	)	
 	#ifndef SEZNAM_INC

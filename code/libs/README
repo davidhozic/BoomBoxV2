@@ -1,7 +1,7 @@
 LITL - Linked list, input, timer, library
 
 This library includes:
-- Timer (Can work in interrupt mode or system time mode, configure in settings.hh)
+- Timer (Can work in interrupt mode or system time mode, configure in settings.hpp)
   FUNCTIONS: value() -> starts the timer and returns it's value; reset() -> resets the timer and turns it off; set_hook(function ptr, period, parameter ptr) -> attaches a function to the timer that gets called every period
 
 - Input - Controls inputs of the atmega mcu, includes optional timed filtering (requires the castimer). Functions: value() - returns value of input; risen_edge() - returns 1 if input has risen (edge gets cleared only after the call, or if input is unpressed); fallen_edge()- returns 1 if input has fallen. NOTE! Input class constructor accepts pin, port and unpressed state of the input. If the third (unpressed state) parameter is set to 1, the input object will return inverted value of what the PIN register is actually reading.

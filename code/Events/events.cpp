@@ -1,8 +1,8 @@
-#include "events.hh"
+#include "events.hpp"
 #include "global.hpp"
-#include "outputs_inputs.hh"
-#include "EEPROM.hh"
-#include "audio.hh"
+#include "outputs_inputs.hpp"
+#include "EEPROM.hpp"
+#include "audio.hpp"
 
 /************************************************************************/
 /*								 PROTOS						            */
@@ -26,14 +26,14 @@ void system_event(enum_system_event eventt){
 		case EV_POWER_UP:
 			writeOUTPUT(_12V_line_pin, _12V_line_port, 1);
 			writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
-			m_audio_system.stripON();
+			m_audio_system.strip_on();
 			m_Hardware.status_reg.powered_up = 1;
 			delay_FreeRTOS_ms(10);
 		break;
 		
 		case EV_SHUTDOWN:
 			m_Hardware.status_reg.powered_up = 0;
-			m_audio_system.stripOFF();
+			m_audio_system.strip_off();
 			writeOUTPUT(_12V_line_pin, _12V_line_port, 0);
 			writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
 
@@ -71,7 +71,7 @@ void system_event(enum_system_event eventt){
 			xTaskCreate(power_task, "Power", 256, NULL, 1, NULL);
 			xTaskCreate(charging_task, "charging", 256, NULL, 1, NULL);
 			xTaskCreate(user_ui_task, "User UI", 256, NULL, 3, NULL);
-			xTaskCreate(audio_visual_task, "m_audio_system", 256, NULL, 3, NULL);
+			xTaskCreate(audio_visual_task, "m_audio_system", 256, NULL, 2, NULL);
 			
 			/************************************************************************/
 			/*								OTHER                                   */

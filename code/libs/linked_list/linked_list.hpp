@@ -2,7 +2,7 @@
 #define SEZNAM_INC
 #include <stdlib.h>
 #include <stdint.h>
-#include "list_settings.hh"
+#include "list_settings.hpp"
 
 #if (USE_FREERTOS == 1)
 	#include "FreeRTOS.h"

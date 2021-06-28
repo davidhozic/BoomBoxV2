@@ -1,5 +1,5 @@
-#include "events.hh"
-#include "outputs_inputs.hh"
+#include "events.hpp"
+#include "outputs_inputs.hpp"
 #include "util/delay.h"
 int main()
 {

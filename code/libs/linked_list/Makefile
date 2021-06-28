@@ -19,7 +19,7 @@ CPP_SRC := ./List_EXAMPLE/test.cpp\
 
 C_SRC := 
 HEADER_SRC := .//llist_funct.hh\
-.//list_settings.hh\
+.//list_settings.hpp\
 .//linked_list.hpp\
 
 O_FILES := Build/List_EXAMPLE/l_example.o\

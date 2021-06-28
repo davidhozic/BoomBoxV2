@@ -2,8 +2,8 @@
 #include "FreeRTOS.h"
 #include "castimer/castimer.hpp"
 #include "common/inc/global.hpp"
-#include "libs/outputs_inputs/outputs_inputs.hh"
-#include "libs/EEPROM/EEPROM.hh"
+#include "libs/outputs_inputs/outputs_inputs.hpp"
+#include "libs/EEPROM/EEPROM.hpp"
 
 
 void charging_task(void *p)

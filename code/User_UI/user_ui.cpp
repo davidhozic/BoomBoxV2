@@ -1,12 +1,12 @@
-#include "EEPROM.hh"
+#include "EEPROM.hpp"
 #include "FreeRTOS.h"
 #include "common/inc/global.hpp"
-#include "../audio-visual/includes/audio.hh"
-#include "libs/outputs_inputs/outputs_inputs.hh"
+#include "../audio-visual/includes/audio.hpp"
+#include "libs/outputs_inputs/outputs_inputs.hpp"
 #include "input/input.hpp"
 #include "castimer/castimer.hpp"
 #include "user_ui.hpp"
-#include "events.hh"
+#include "events.hpp"
 
 /******************************************************************************************/
 /*                                      STATES                                            */
@@ -24,16 +24,16 @@ enum SETTINGS_UI_STATES
 /******************************************************************************************/
 enum SETTINGS_UI_MENU_SCROLL
 {
-	MENU_TOGGLE_LCD = 0,
-	MENU_STRIP_ANIMATION,
+	SU_MENU_SCROLL_TOGGLE_LCD = 0,
+	SU_MENU_SCROLL_STRIP_ANIMATION,
 };
 
 enum SETTINGS_UI_MENU_STRIP_SELECTION
 {
-	MENU_NORMAL_FADE = 0,
-	MENU_INVERTED_FADE,
-	MENU_BREATHE_FADE,
-	MENU_STRIP_OFF
+	SU_MENU_STRIP_ANIMATION_NORMAL_FADE = 0,
+	SU_MENU_STRIP_ANIMATION_INVERTED_FADE,
+	SU_MENU_STRIP_ANIMATION_BREATHE_FADE,
+	SU_MENU_STRIP_ANIMATION_STRIP_OFF
 };
 
 /******************************************************************************************/
@@ -41,22 +41,19 @@ enum SETTINGS_UI_MENU_STRIP_SELECTION
 /******************************************************************************************/
 
 
-SETTINGS_UI_MENU_LIST su_menu_scroll[] =
+static SETTINGS_UI_MENU_LIST su_menu_scroll[] =
 {
-		{ MENU_TOGGLE_LCD, 			SU_STATE_SCROLL },
-		{ MENU_STRIP_ANIMATION, 	SU_STATE_SCROLL }
+		{ SU_MENU_SCROLL_TOGGLE_LCD, 			SU_STATE_SCROLL },
+		{ SU_MENU_SCROLL_STRIP_ANIMATION, 		SU_STATE_SCROLL }
 };
 
-SETTINGS_UI_MENU_LIST su_menu_strip_animation[] =
+static SETTINGS_UI_MENU_LIST su_menu_strip_animation[] =
 {
-		{ MENU_NORMAL_FADE, 		SU_STATE_STRIP_SELECTION },
-		{ MENU_INVERTED_FADE,		SU_STATE_STRIP_SELECTION },
-		{ MENU_BREATHE_FADE,		SU_STATE_STRIP_SELECTION },
-		{ MENU_STRIP_OFF,			SU_STATE_STRIP_SELECTION }
+		{ SU_MENU_STRIP_ANIMATION_NORMAL_FADE, 			SU_STATE_STRIP_SELECTION },
+		{ SU_MENU_STRIP_ANIMATION_INVERTED_FADE,		SU_STATE_STRIP_SELECTION },
+		{ SU_MENU_STRIP_ANIMATION_BREATHE_FADE,			SU_STATE_STRIP_SELECTION },
+		{ SU_MENU_STRIP_ANIMATION_STRIP_OFF,			SU_STATE_STRIP_SELECTION }
 };
-
-
-
 
 /************************************************************************/
 /*							VARIABLE STRUCT	                            */
@@ -83,7 +80,7 @@ struct USER_UI
 	void init()
 	{
 		state = SU_STATE_UNSET;
-		menu_seek =  MENU_TOGGLE_LCD;
+		menu_seek =  SU_MENU_SCROLL_TOGGLE_LCD;
 		SW2 = INPUT_t(red_button_pin, red_button_port, 0);
 		hold_time = 0;
 		hold_timer.reset();
@@ -102,38 +99,39 @@ USER_UI m_user_ui;
 /*                                 FUNKCIJE | MAKRI EVENTOV                               */
 /******************************************************************************************/
 
-
-void showSEEK(USER_UI *control_block)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
+void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
 {		
-	switch(control_block->state)
+	switch(element.state)
 	{
 	case SU_STATE_SCROLL:
-		m_audio_system.colorSHIFT(control_block->menu_seek, AUVSYS_CONFIG_FAST_ANIMATION_TIME_MS);
-		break;
+		m_audio_system.color_shift(element.index, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+		brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+	break;
 
 	case SU_STATE_STRIP_SELECTION:
-		if (control_block->menu_seek == MENU_STRIP_OFF)
+		if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
 		{
 			deleteTASK(&m_audio_system.handle_active_strip_mode);
-			m_audio_system.colorSHIFT(RDECA, AUVSYS_CONFIG_FAST_ANIMATION_TIME_MS);
+			m_audio_system.color_shift(COLOR_RED, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+			brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
-			xTaskCreate(m_audio_system.list_strip_modes[control_block->menu_seek], "seek", 256, NULL, 4, &m_audio_system.handle_active_strip_mode);
+			xTaskCreate(m_audio_system.strip_animations[element.index].f_ptr, "seek", 256, &AUVS::strip_colors[COLOR_WHITE].color_index, 4, &m_audio_system.handle_active_strip_mode);
 		}
-		break;
+	break;
 
 	default:
-		break;
+	break;
 	}
 }
 
 void exit_scroll()
 {
-	m_audio_system.flashSTRIP();
-	brightDOWN(AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS);
+	m_audio_system.flash_strip();
+	brightDOWN(AUVS_CONFIG_SLOW_ANIMATION_TIME_MS);
 	delay_FreeRTOS_ms(1000);
-	m_audio_system.stripON();
+	m_audio_system.strip_on();
 	m_user_ui.init();
 }
 /*******************************************************************************************/
@@ -148,7 +146,7 @@ void user_ui_task(void *p)
 		/* Settigns (scroll) menu */
 		settings_UI();
 		zaslon();
-		delay_FreeRTOS_ms(50);
+		delay_FreeRTOS_ms(20);
 	}
 
 }
@@ -163,36 +161,49 @@ void settings_UI()
 	 *  will set their state to IGNORE all keys until the button has been unpressed.
 	 *****************************************************************************************/ 			
 
-	if (m_user_ui.key_event != SU_KEY_CLEAR) /* Event was triggered -> ignore event until button has been released */
+	/* Key machine */
+	switch(m_user_ui.key_event)
 	{
-		m_user_ui.key_event = SU_KEY_IGNORE_KEY;
-	}
-
-	if (m_user_ui.key_event != SU_KEY_IGNORE_KEY)
-	{
-
-		if (m_user_ui.SW2.value())
-		{
-			m_user_ui.hold_time = m_user_ui.hold_timer.value();
-
-			if (m_user_ui.hold_time >= SU_LONG_PRESS_PERIOD)
+		/* No previous press -> scan for press*/
+		case SU_KEY_CLEAR:
+			if (m_user_ui.SW2.value())
 			{
-				m_user_ui.key_event = SU_KEY_LONG_PRESS;
+				m_user_ui.hold_time = m_user_ui.hold_timer.value();
+
+				if (m_user_ui.hold_time >= SU_LONG_PRESS_PERIOD)
+				{
+					m_user_ui.key_event = SU_KEY_LONG_PRESS;
+				}
 			}
-		}
+			else 
+			{
+				if (m_user_ui.hold_time > 0 && m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
+				{
+					m_user_ui.key_event = SU_KEY_SHORT_PRESS;
+				}
+				m_user_ui.hold_timer.reset();
+				m_user_ui.hold_time = 0;
+			}
+		break;
 
-		else if (m_user_ui.hold_time > 0 && m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
-		{
-			m_user_ui.key_event = SU_KEY_SHORT_PRESS;
-		}
 
+		/* Previous press detected -> ignore presses */
+		case SU_KEY_LONG_PRESS:
+		case SU_KEY_SHORT_PRESS:
+			m_user_ui.key_event = SU_KEY_IGNORE_KEY;
+		break;
+
+		/* Ignore presses 'till button release */
+		case SU_KEY_IGNORE_KEY:
+			if (m_user_ui.SW2.value() == 0)
+			{
+				m_user_ui.key_event = SU_KEY_CLEAR;
+				m_user_ui.hold_timer.reset();
+				m_user_ui.hold_time = 0;
+			}	
+		break;
 	}
-	else if (m_user_ui.SW2.value() == 0)
-	{
-		m_user_ui.key_event = SU_KEY_CLEAR;
-		m_user_ui.hold_timer.reset();
-		m_user_ui.hold_time = 0;
-	}
+
 
 	/**************************************************************************/
 	/*		State machine	    */
@@ -204,10 +215,10 @@ void settings_UI()
 		case SU_STATE_UNSET:
 			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	/* Long press -> Enter into settings scroll menu */
 			{
-				m_audio_system.stripOFF();
+				m_audio_system.strip_off();
 				m_user_ui.state = SU_STATE_SCROLL;
-				m_user_ui.menu_seek = MENU_TOGGLE_LCD;
-				m_audio_system.flashSTRIP();
+				m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
+				m_audio_system.flash_strip();
 			}
 		break;
 			/*****	END CASE *****/
@@ -219,19 +230,19 @@ void settings_UI()
 				exit_scroll();
 			}
 
-			showSEEK(&m_user_ui);
+			showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
 			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	 /* Long press -> execute selected option from the menu */
 			{
 				switch(m_user_ui.menu_seek)
 				{
-				case MENU_TOGGLE_LCD:
+				case SU_MENU_SCROLL_TOGGLE_LCD:
 					m_user_ui.capacity_lcd_en = !m_user_ui.capacity_lcd_en;
 					exit_scroll();
 				break;
 
-				case MENU_STRIP_ANIMATION:
+				case SU_MENU_SCROLL_STRIP_ANIMATION:
 					m_user_ui.state = SU_STATE_STRIP_SELECTION;
-					brightDOWN(AUVSYS_CONFIG_SLOW_ANIMATION_TIME_MS);
+					brightDOWN(AUVS_CONFIG_SLOW_ANIMATION_TIME_MS);
 				break;
 				}
 
@@ -255,7 +266,7 @@ void settings_UI()
 				exit_scroll();
 			}
 
-			showSEEK(&m_user_ui);
+			showSEEK(su_menu_strip_animation[m_user_ui.menu_seek]);
 			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)
 			{
 				m_audio_system.set_strip_mode(m_user_ui.menu_seek);
@@ -281,7 +292,7 @@ void settings_UI()
 	/* Speaker has been turned off while in state -> reset */
 	else if (m_user_ui.state != SU_STATE_UNSET)
 	{
-		m_user_ui.init();
+		exit_scroll();
 	}
 }
 
