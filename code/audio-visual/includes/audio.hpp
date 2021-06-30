@@ -25,7 +25,9 @@
 
 #define brightUP(animation_time)				    			m_audio_system.brightness_fade(1,  animation_time)
 #define brightDOWN(animation_time)								m_audio_system.brightness_fade(-1, animation_time)
-#define COLOR_NEXT( ind, color_arr )							ind = AUVS::strip_colors[ind + 1].color_index >= COLOR_TERMINATOR ? 0 : ind + 1
+
+#define COLOR_NEXT( ind, color_arr )							ind = color_arr[ind + 1].color_index >= COLOR_TERMINATOR ? 0 : ind + 1
+
 
 /*********************************************/
 /*             Prototipi taskov              */
@@ -86,10 +88,13 @@ struct STRIP_ANIMATION_t
 };
 
 
+
 class AUVS
 {
 public:
-	void update_strip();
+	
+    /*   Function Prototypes   */
+    void update_strip();
 	void strip_off();
 	void strip_on();
 	void color_shift(uint8_t BARVA, unsigned short animation_time);
@@ -98,8 +103,10 @@ public:
 	void set_strip_color(unsigned char barva_index);
 	void set_strip_mode(uint8_t mode);
 	void set_strip_brightness(uint8_t value);
-
-	/****************************************************************************/
+    void CREATE_ANIMATION(uint8_t task_index, uint8_t color);
+	
+    
+    /****************************************************************************/
 	/****  Strip parameters   ****/
 	uint8_t strip_mode = AUVS_AN_NORMAL_FADE;							// Current strip mode
 	uint16_t animation_time = AUVS_CONFIG_NORMAL_ANIMATION_TIME_MS;
@@ -111,8 +118,6 @@ public:
 
 	/****		Timers		 ****/
 	TIMER_t  lucke_filter_timer;								// Timer that prevents strip from triggering too fast after last trigger (filter timer)
-	
-	/****	Measurements	****/
 	
 	/****   Task handles	****/
 	TaskHandle_t handle_audio_meass = NULL;

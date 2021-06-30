@@ -67,7 +67,6 @@ public:
     
     void operator+=(tip pod);
 
-	
 #endif
 
 };

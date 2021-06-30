@@ -1,3 +1,4 @@
+.gitignore
 *.zip
 .*rar
 *.cppproj
@@ -15,3 +16,4 @@ ZZ/Debug/Makefile
 .atsuo
 *.json
 ZZ/Release/Makefile
+.project

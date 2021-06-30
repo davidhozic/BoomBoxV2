@@ -13,8 +13,8 @@
 class TIMER_t
 {
 private:
-	volatile bool timer_enabled = false;
-	volatile uint32_t timer_value = 0;
+	bool timer_enabled = false;
+	uint32_t timer_value = 0;
 
 	/* Hook Function */
 	void (*function_ptr)(void*) = NULL;

@@ -1,11 +1,5 @@
 
 
-/************************/
-/*         MACROS       */
-/************************/
-
-#define SU_MENU_SCROLL(index, menu_table)       index + 1 >= sizeof(menu_table)/sizeof(menu_table[0])  ?  index = 0 :  index++  
-
 
 
 /*******************************************************************************************/
@@ -23,9 +17,6 @@ struct SETTINGS_UI_MENU_LIST
     uint8_t state;
 };
 
-
-
-
 /********************************************************************************************/
 /*                                         ENUMS                                            */
 /********************************************************************************************/
@@ -38,11 +29,18 @@ enum SETTINGS_UI_KEY_EVENT
 	SU_KEY_IGNORE_KEY
 };
 
-
-
-
 /*********************************************************************************************/
 /*											PROTOS											 */
 /*********************************************************************************************/
 void zaslon();
 void settings_UI();
+void exit_scroll();
+void showSEEK(SETTINGS_UI_MENU_LIST element) ;
+/************************/
+/*         MACROS       */
+/************************/
+
+#define SU_MENU_SCROLL(index, menu_table)  index + 1 >= sizeof(menu_table)/sizeof(menu_table[0])  ?  index = 0 :  index++
+
+
+

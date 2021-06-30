@@ -24,7 +24,6 @@ void power_task(void *p)
 {
 	while (true)
 	{ 
-
 		/************************************************************************/
 		/*							POWER UP							        */
 		/************************************************************************/
@@ -32,7 +31,7 @@ void power_task(void *p)
 		/* No need to worry about the timer running because the first condition will always be false while speaker is enabled, meaning other elements won't execute in the if statement */
 		if ( !m_Hardware.status_reg.powered_up && (BATTERY_VOLTAGE_PERCENT > 8 || m_Hardware.status_reg.external_power) && m_power.power_up_delay_timer.value() >= 2000 )
 		{ // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
-			system_event(EV_POWER_UP);
+			 system_event(EV_POWER_UP);
 			 m_power.power_up_delay_timer.reset();
 		}			
 		
@@ -64,7 +63,7 @@ void power_task(void *p)
 			system_event(EV_POWER_SWITCH_INTERNAL);
 		}
 		/************************************************************************/
-		delay_FreeRTOS_ms(100);
+		delay_FreeRTOS_ms(200);
 	}
 }
 

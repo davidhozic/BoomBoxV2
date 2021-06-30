@@ -14,7 +14,7 @@ STRIP_COLOR_t AUVS::strip_colors[] =
 };
 
 
-/* Index of array must match the animation index(inside structure) */
+/* Needs to be sorted by enum */
 STRIP_ANIMATION_t AUVS::strip_animations[] = 
 { 
 	{ AUVS_AN_NORMAL_FADE,    normal_fade_task   },

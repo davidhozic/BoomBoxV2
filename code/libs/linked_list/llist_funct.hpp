@@ -199,13 +199,6 @@ tip &LIST_t<tip>::operator[](unsigned long index)
     return (glava->podatek);
 }
 
-template <typename tip, class cl>
-LIST_t<tip> operator+(tip pod, cl obj)
-{
-    obj.add_front(pod);
-    return obj;
-}
-
 template <typename tip>
 LIST_t<tip> LIST_t<tip>::operator+(tip pod)
 {
@@ -218,6 +211,8 @@ void LIST_t<tip>::operator+=(tip pod)
 {
     this->add_end(pod);
 }
+
+
 
 
 

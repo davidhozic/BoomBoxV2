@@ -31,6 +31,9 @@ struct struct_microphone_t
 }m_microphone;
 
 
+
+
+
 /* Measures average volume */
 void signal_measure(void* p)
 {	
@@ -67,7 +70,8 @@ void signal_measure(void* p)
 			}
 			
 		}
-		delay_FreeRTOS_ms(2);
+
+		delay_FreeRTOS_ms(3);
 		//END LOOP
 	}
 }

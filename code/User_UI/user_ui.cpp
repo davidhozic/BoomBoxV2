@@ -15,8 +15,8 @@
 enum SETTINGS_UI_STATES
 {
 	SU_STATE_UNSET = 0,
-	SU_STATE_SCROLL,
-	SU_STATE_STRIP_SELECTION,
+	SU_STATE_SCROLL, 
+	SU_STATE_STRIP_SELECTION
 };
 
 /******************************************************************************************/
@@ -40,31 +40,30 @@ enum SETTINGS_UI_MENU_STRIP_SELECTION
 /*									MENU STRUCTS										  */
 /******************************************************************************************/
 
-
-static SETTINGS_UI_MENU_LIST su_menu_scroll[] =
+static SETTINGS_UI_MENU_LIST su_menu_scroll[]  =
 {
-		{ SU_MENU_SCROLL_TOGGLE_LCD, 			SU_STATE_SCROLL },
-		{ SU_MENU_SCROLL_STRIP_ANIMATION, 		SU_STATE_SCROLL }
+    { SU_MENU_SCROLL_TOGGLE_LCD, 			SU_STATE_SCROLL },
+    { SU_MENU_SCROLL_STRIP_ANIMATION, 		SU_STATE_SCROLL }
 };
 
+/* Does not need to be sorted, but is more clean if it is */
 static SETTINGS_UI_MENU_LIST su_menu_strip_animation[] =
 {
-		{ SU_MENU_STRIP_ANIMATION_NORMAL_FADE, 			SU_STATE_STRIP_SELECTION },
-		{ SU_MENU_STRIP_ANIMATION_INVERTED_FADE,		SU_STATE_STRIP_SELECTION },
-		{ SU_MENU_STRIP_ANIMATION_BREATHE_FADE,			SU_STATE_STRIP_SELECTION },
-		{ SU_MENU_STRIP_ANIMATION_STRIP_OFF,			SU_STATE_STRIP_SELECTION }
+    { SU_MENU_STRIP_ANIMATION_NORMAL_FADE, 			SU_STATE_STRIP_SELECTION },
+    { SU_MENU_STRIP_ANIMATION_INVERTED_FADE,		SU_STATE_STRIP_SELECTION },
+    { SU_MENU_STRIP_ANIMATION_BREATHE_FADE,			SU_STATE_STRIP_SELECTION },
+    { SU_MENU_STRIP_ANIMATION_STRIP_OFF,			SU_STATE_STRIP_SELECTION }
 };
+
 
 /************************************************************************/
 /*							VARIABLE STRUCT	                            */
 /************************************************************************/
-
 struct USER_UI
 {
 	/* Settings ui module variables */
 	SETTINGS_UI_STATES state = SU_STATE_UNSET;
 	SETTINGS_UI_KEY_EVENT key_event = SU_KEY_CLEAR;
-	SETTINGS_UI_KEY_EVENT prev_key_event = SU_KEY_CLEAR;
 
 	unsigned short hold_time;
 	uint8_t	menu_seek = 0;
@@ -75,7 +74,7 @@ struct USER_UI
 	/* LCD charge display module variables */
 	TIMER_t lcd_call_timer;
 	TIMER_t LCD_timer;
-	uint8_t capacity_lcd_en		: 1;	/* This bit is set if it was set in settings ui */
+	uint8_t capacity_lcd_en;	/* This bit is set if it was set in settings ui */
 	
 	void init()
 	{
@@ -92,49 +91,7 @@ struct USER_UI
 		init();
 	}
 };
-
-USER_UI m_user_ui;
-
-/******************************************************************************************/
-/*                                 FUNKCIJE | MAKRI EVENTOV                               */
-/******************************************************************************************/
-
-void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
-{		
-	switch(element.state)
-	{
-	case SU_STATE_SCROLL:
-		m_audio_system.color_shift(element.index, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
-		brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
-	break;
-
-	case SU_STATE_STRIP_SELECTION:
-		if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
-		{
-			deleteTASK(&m_audio_system.handle_active_strip_mode);
-			m_audio_system.color_shift(COLOR_RED, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
-			brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
-		}
-		else if (m_audio_system.handle_active_strip_mode == NULL)
-		{
-			xTaskCreate(m_audio_system.strip_animations[element.index].f_ptr, "seek", 256, &AUVS::strip_colors[COLOR_WHITE].color_index, 4, &m_audio_system.handle_active_strip_mode);
-		}
-	break;
-
-	default:
-	break;
-	}
-}
-
-void exit_scroll()
-{
-	m_audio_system.flash_strip();
-	brightDOWN(AUVS_CONFIG_SLOW_ANIMATION_TIME_MS);
-	delay_FreeRTOS_ms(1000);
-	m_audio_system.strip_on();
-	m_user_ui.init();
-}
-/*******************************************************************************************/
+static USER_UI m_user_ui;
 
 
 
@@ -146,9 +103,8 @@ void user_ui_task(void *p)
 		/* Settigns (scroll) menu */
 		settings_UI();
 		zaslon();
-		delay_FreeRTOS_ms(20);
+		delay_FreeRTOS_ms(30);
 	}
-
 }
 
 
@@ -175,9 +131,9 @@ void settings_UI()
 					m_user_ui.key_event = SU_KEY_LONG_PRESS;
 				}
 			}
-			else 
+			else if (m_user_ui.hold_time > 0)
 			{
-				if (m_user_ui.hold_time > 0 && m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
+				if(m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
 				{
 					m_user_ui.key_event = SU_KEY_SHORT_PRESS;
 				}
@@ -269,7 +225,7 @@ void settings_UI()
 			showSEEK(su_menu_strip_animation[m_user_ui.menu_seek]);
 			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)
 			{
-				m_audio_system.set_strip_mode(m_user_ui.menu_seek);
+				m_audio_system.set_strip_mode(su_menu_strip_animation[m_user_ui.menu_seek].index);
 				exit_scroll();
 			}
 
@@ -296,9 +252,10 @@ void settings_UI()
 	}
 }
 
+
+
 void zaslon()
 {
-	
 	if (m_Hardware.status_reg.charging_enabled)
 	{
 		if ( m_user_ui.LCD_timer.value() >= 1000)
@@ -329,6 +286,62 @@ void zaslon()
 	{
 		writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
 	}
+}
 
 
+
+/*********************************************************
+ *                                                       *
+ *                      FUNCTIONS                        *          
+ *                                                       *
+ *********************************************************/
+
+
+/**********************************************************************
+ *  FUNCTION:    showSEEK
+ *  PARAMETERS:  SETTINGS_UI_MENU_LIST menu_element
+ *  DESCRIPTION: Displays the currently selected element in the
+ *               settings ui.
+ **********************************************************************/
+void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
+{		
+	switch(element.state)
+	{
+	case SU_STATE_SCROLL:
+		m_audio_system.color_shift(element.index, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+		brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+	break;
+
+	case SU_STATE_STRIP_SELECTION:
+		if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
+		{
+			deleteTASK(&m_audio_system.handle_active_strip_mode);
+			m_audio_system.color_shift(COLOR_RED, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+			brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+		}
+		else if (m_audio_system.handle_active_strip_mode == NULL)
+		{
+            m_audio_system.CREATE_ANIMATION(element.index, COLOR_WHITE);
+		}
+	break;
+
+	default:
+	break;
+	}
+}
+
+
+
+/**********************************************************************
+ *  FUNCTION:    exit_scroll
+ *  PARAMETERS:  void
+ *  DESCRIPTION: exits scroll menu to unset menu                         
+ **********************************************************************/
+void exit_scroll()
+{
+	m_audio_system.flash_strip();
+	brightDOWN(AUVS_CONFIG_SLOW_ANIMATION_TIME_MS);
+	delay_FreeRTOS_ms(1000);
+	m_audio_system.strip_on();
+	m_user_ui.init();
 }

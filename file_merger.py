@@ -6,7 +6,7 @@ SEARCH_DIR = "./"
 OUTPUT_FILE = "ALL_IN_ONE.cpp"
 
 EXTENSIONS_TO_USE = [".cpp",".c",".h",".hpp",".hh"]
-FOLDERS_TO_IGNORE = ["FreeRTOS_m2560"]
+FOLDERS_TO_IGNORE = []
 
 
 #STEP CREATE FILE DATA
