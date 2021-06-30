@@ -17,3 +17,4 @@ ZZ/Debug/Makefile
 *.json
 ZZ/Release/Makefile
 .project
+code/libs/FreeRTOS_m2560/*
