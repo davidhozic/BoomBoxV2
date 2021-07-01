@@ -8,60 +8,59 @@
 /************************************************************************/
 /*								EEPROM IDs                              */
 /************************************************************************/
-    #define EEPROM_ADDRESS_BATTERY_CHARGING_STATUS		0x0		  
-    #define EEPROM_ADDRESS_STRIP_MODE					0x1		  
+    #define GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS		0x0		  
+    #define GLOBAL_CFG_EEPROM_ADDR_STRIP_MODE					0x1		  
 /************************************************************************/
 
 
 /************************************************************************/
 /*					        VOLTAGE SETTINGS					        */
 /************************************************************************/
-	#define adc_milivolt_ref							5000	  
-	#define adc_volt_ref								5.00	  
-	#define min_battery_voltage							3000	  
-	#define max_battery_voltage							4150	  
-	#define polnilna_histereza							5		// When charging finishes, the speaker needs to discharge for atleast this percent
+	#define GLOBAL_CFG_ADC_REF_mV							        5000	  
+	#define GLOBAL_CFG_MIN_BATTERY_VOLTAGE							3000	  
+	#define GLOBAL_CFG_MAX_BATTERY_VOLTAGE							4150	  
+	#define GLOBAL_CFG_CHARGE_HYSTERESIS 							5		// When charging finishes, the speaker needs to discharge for atleast this percent
 /************************************************************************/
 
 /************************************************************************/                             
 /*							  ADC PIN MACROS               		        */
 /************************************************************************/    
-	#define mic_pin						0	//ADC				  
-    #define vDIV_pin					2	//ADC				  
+	#define GLOBAL_CFG_PIN_MICROPHONE				0	//ADC				  
+    #define GLOBAL_CFG_PIN_VOLTAGE_DIV				2	//ADC				  
 /************************************************************************/
 
 
 /************************************************************************/
 /*						  DIGITAL PINS & PORTS                          */
 /************************************************************************/
-	#define BAT_LCD_pin						0
-	#define BAT_LCD_port				   'E'
+	#define GLOBAL_CFG_PIN_BATTERY_LCD						0
+	#define GLOBAL_CFG_PORT_BATTERY_LCD				       'E'
 
-	#define _21VPSU_pin						0
-	#define  _21VPSU_port				   'K'
+	#define GLOBAL_CFG_PIN_21V_PSU						    0
+	#define GLOBAL_CFG_PORT_21V_PSU				           'K'
 	
-	#define	main_power_switch_pin		    1
-	#define main_power_switch_port		   'K'
+	#define	GLOBAL_CFG_PIN_MAIN_POWER_SWITCH			    1
+	#define GLOBAL_CFG_PORT_MAIN_POWER_SWITCH		       'K'
 		
-	#define main_mosfet_pin					3			
-	#define main_mosfet_port			   'H'	
+	#define GLOBAL_CFG_PIN_OUTPUT_MOSFET					3			
+	#define GLOBAL_CFG_PORT_OUTPUT_MOSFET			       'H'	
 
-	#define menjalnik_pin					4	
-	#define menjalnik_port			       'H'	
+	#define GLOBAL_CFG_PIN_MENJALNIK				       	4	
+	#define GLOBAL_CFG_PORT_MENJALNIK			           'H'	
 	
-	#define bat_charge_pin					5			
-	#define bat_charge_port				   'H'	
+	#define GLOBAL_CFG_PIN_CHARGE					        5			
+	#define GLOBAL_CFG_PORT_CHARGE			        	   'H'	
 	
-	#define red_button_pin					5
-	#define red_button_port				   'G'
+	#define GLOBAL_CFG_PIN_SU_SWITCH				        5
+	#define GLOBAL_CFG_PORT_SU_SWITCH				       'G'
 
-	#define _12V_line_pin					7			
-	#define  _12V_line_port				   'B'
+	#define  GLOBAL_CFG_PIN_12V_LINE				        7			
+	#define  GLOBAL_CFG_PORT_12V_LINE				       'B'
 	
-	#define strip_red_pin					4 
-	#define strip_green_pin					5
-	#define strip_blue_pin					6
-	#define strip_port					   'B'
+	#define GLOBAL_CFG_PIN_LED_STRIP_R				    	4 
+	#define GLOBAL_CFG_PIN_LED_STRIP_G				    	5
+	#define GLOBAL_CFG_PIN_LED_STRIP_B					    6
+	#define GLOBAL_CFG_PORT_LED_STRIP					   'B'
 /************************************************************************/
 /*								OTHER                                   */
 /************************************************************************/

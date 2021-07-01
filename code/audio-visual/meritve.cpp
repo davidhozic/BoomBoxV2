@@ -1,7 +1,7 @@
 
 
 #include "libs/outputs_inputs/outputs_inputs.hpp"
-#include "common/inc/global.hpp"
+#include "common/inc/common.hpp"
 #include "EEPROM.hpp"
 #include "includes/audio.hpp"
 #include "castimer/castimer.hpp"
@@ -42,7 +42,7 @@ void signal_measure(void* p)
 		/************************************************************************/
 		/*							 AVERAGE VOLUME		                        */
 		/************************************************************************/
-		m_microphone.current_value = readANALOG(mic_pin);
+		m_microphone.current_value = readANALOG(GLOBAL_CFG_PIN_MICROPHONE);
 		
 		/* Volume spike detected -> Trigger the led strip*/
 		if (m_microphone.current_value > (double)m_microphone.average_volume + (double)m_microphone.average_volume * MIC_TRIGGER_PERCENT)

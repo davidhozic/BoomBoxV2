@@ -26,7 +26,7 @@ void audio_visual_task(void *p) //Funkcija avdio-vizualnega sistema
 {
 	while (1)
 	{	
-		if (m_Hardware.status_reg.powered_up && m_audio_system.strip_mode != AUVS_AN_STRIP_OFF)
+		if (m_audio_system.strip_mode != AUVS_AN_STRIP_OFF)
 		{	
 			if (m_audio_system.lucke_filter_timer.value() >= 200 && m_audio_system.mikrofon_detect) /* mikrofon_detect gets triggered in the measurement task*/
 			{

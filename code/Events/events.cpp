@@ -1,5 +1,5 @@
 #include "events.hpp"
-#include "global.hpp"
+#include "common.hpp"
 #include "outputs_inputs.hpp"
 #include "EEPROM.hpp"
 #include "audio.hpp"
@@ -24,18 +24,18 @@ void system_event(enum_system_event eventt){
 		break;
 		
 		case EV_POWER_UP:
-			writeOUTPUT(_12V_line_pin, _12V_line_port, 1);
-			writeOUTPUT(main_mosfet_pin, main_mosfet_port, 1);
+			writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 1);
+			writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET, 1);
 			m_audio_system.strip_on();
-			m_Hardware.status_reg.powered_up = 1;
+			m_hw_status.powered_up = 1;
 			delay_FreeRTOS_ms(10);
 		break;
 		
 		case EV_SHUTDOWN:
-			m_Hardware.status_reg.powered_up = 0;
+			m_hw_status.powered_up = 0;
 			m_audio_system.strip_off();
-			writeOUTPUT(_12V_line_pin, _12V_line_port, 0);
-			writeOUTPUT(main_mosfet_pin, main_mosfet_port , 0);
+			writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 0);
+			writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET , 0);
 
 		break;
 		
@@ -68,16 +68,13 @@ void system_event(enum_system_event eventt){
 			/************************************************************************/
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
-			xTaskCreate(power_task, "Power", 256, NULL, 1, NULL);
-			xTaskCreate(charging_task, "charging", 256, NULL, 1, NULL);
-			xTaskCreate(user_ui_task, "User UI", 256, NULL, 3, NULL);
-			xTaskCreate(audio_visual_task, "m_audio_system", 256, NULL, 2, NULL);
-			
+			xTaskCreate(power_task, "Power", 64, NULL, 1, NULL);
+			xTaskCreate(user_ui_task, "User UI", 64, NULL, 3, NULL);
+			xTaskCreate(audio_visual_task, "m_audio_system", 64, NULL, 2, NULL);
 			/************************************************************************/
 			/*								OTHER                                   */
 			/************************************************************************/
-			m_Hardware.status_reg.charging_finished = EEPROM.beri(EEPROM_ADDRESS_BATTERY_CHARGING_STATUS);
-			
+			m_hw_status.charging_finished = EEPROM.beri(GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS);
 			/************************************************************************/
 			/*								START TASKS                             */
 			/************************************************************************/
@@ -86,7 +83,6 @@ void system_event(enum_system_event eventt){
 	}
 }
 
-
 void power_switch_ev(uint8_t mode)
 {
 	switch(mode)
@@ -94,15 +90,15 @@ void power_switch_ev(uint8_t mode)
 		case EV_POWER_SWITCH_EXTERNAL:
 			system_event(EV_SHUTDOWN);
 			delay_FreeRTOS_ms(3);
-			writeOUTPUT(menjalnik_pin,menjalnik_port,1);
-			m_Hardware.status_reg.external_power = 1;
+			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK,1);
+			m_hw_status.external_power = 1;
 		break;
 		
 		case EV_POWER_SWITCH_INTERNAL:
 			system_event(EV_SHUTDOWN);
 			delay_FreeRTOS_ms(3);
-			writeOUTPUT(menjalnik_pin,menjalnik_port, 0);
-			m_Hardware.status_reg.external_power = 0;
+			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK, 0);
+			m_hw_status.external_power = 0;
 		break;
 	}
 }

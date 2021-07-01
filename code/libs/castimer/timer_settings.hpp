@@ -27,9 +27,12 @@ RESETTING THE ELAPSED TIME:
 /*********************************************	SETTINGS	*************************************************/
 
 #define SOURCE_INTERUPT								( 1 )			// Use ISR as timing source
-	#define TIMER_ISR_VECTOR						( TIMER3_COMPA_vect )	
-	#define TIMER_INCREMENT_VALUE_MS				( 1 )
-
+	#define TIMER_ISR_VECTOR						( TIMER3_COMPA_vect )
+    #ifndef DEBUG	
+	    #define TIMER_INCREMENT_VALUE_MS				( 1 )
+    #else
+        #define TIMER_INCREMENT_VALUE_MS            ( 500 )
+    #endif
 #define SOURCE_SYSTEM_TIME							( 0 )			// Use System time as source
 #if (SOURCE_SYSTEM_TIME == 1)
 	#include "path_to_system_time_function_prototype"	

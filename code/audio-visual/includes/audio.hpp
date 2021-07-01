@@ -3,7 +3,7 @@
 #define AUDIO_H
 
 
-#include "common/inc/global.hpp"
+#include "common/inc/common.hpp"
 #include "libs/castimer/castimer.hpp"
 #include "linked_list.hpp"
 
@@ -13,7 +13,7 @@
 /************************************************************************/
 #define  AUVS_CONFIG_NORMAL_ANIMATION_TIME_MS			500		// Animation time for mic detection light up
 #define  AUVS_CONFIG_FAST_ANIMATION_TIME_MS				250		// Animation time used in flash strip
-#define	 AUVS_CONFIG_SLOW_ANIMATION_TIME_MS				1000	// Animation time for exit animations and settings ui showcase
+#define	 AUVS_CFG_SLOW_ANIMATION_TIME_MS				1000	// Animation time for exit animations and settings ui showcase
 
 #define  AUVS_CONFIG_BRIGHTNESS_CHANGE					5
 
@@ -108,7 +108,7 @@ public:
     
     /****************************************************************************/
 	/****  Strip parameters   ****/
-	uint8_t strip_mode = AUVS_AN_NORMAL_FADE;							// Current strip mode
+	uint8_t strip_mode = AUVS_AN_STRIP_OFF;							// Current strip mode
 	uint16_t animation_time = AUVS_CONFIG_NORMAL_ANIMATION_TIME_MS;
 	/**** Strip current state ****/
 	int16_t current_color[3] = {255, 255, 255};					// Current RGB color of the strip

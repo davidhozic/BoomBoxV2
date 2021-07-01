@@ -12,9 +12,10 @@
 *.lss
 *.eep
 *.elf
-ZZ/Debug/Makefile
 .atsuo
 *.json
-ZZ/Release/Makefile
 .project
 code/libs/FreeRTOS_m2560/*
+avr_make_gen.py
+file_merger.py
+Makefile

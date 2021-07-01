@@ -36,6 +36,7 @@ FOLDER_INCLUDE:= -I code/\
 -I code/libs/linked_list/.vscode\
 -I code/libs/outputs_inputs\
 -I code/Power\
+-I code/Power/inc\
 -I code/User_UI\
 -I code/User_UI/inc\
 
@@ -44,13 +45,12 @@ code/audio-visual/audio_system_functions.cpp\
 code/audio-visual/avs_colors_animations.cpp\
 code/audio-visual/avs_task_main.cpp\
 code/audio-visual/meritve.cpp\
-code/common/global.cpp\
+code/common/common.cpp\
 code/Events/events.cpp\
 code/libs/castimer/castimer.cpp\
 code/libs/EEPROM/eeprom.cpp\
 code/libs/input/input.cpp\
 code/libs/outputs_inputs/outputs_inputs.cpp\
-code/Power/charging.cpp\
 code/Power/Power.cpp\
 code/User_UI/user_ui.cpp\
 
@@ -64,7 +64,7 @@ code/libs/FreeRTOS_m2560/stream_buffer.c\
 code/libs/FreeRTOS_m2560/tasks.c\
 code/libs/FreeRTOS_m2560/timers.c\
 
-SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/common/inc code/Events code/Events/inc code/libs code/libs/castimer code/libs/castimer/.vscode code/libs/EEPROM code/libs/FreeRTOS_m2560 code/libs/FreeRTOS_m2560/include code/libs/input code/libs/linked_list code/libs/linked_list/.vscode code/libs/outputs_inputs code/Power code/User_UI code/User_UI/inc 
+SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/common/inc code/Events code/Events/inc code/libs code/libs/castimer code/libs/castimer/.vscode code/libs/EEPROM code/libs/FreeRTOS_m2560 code/libs/FreeRTOS_m2560/include code/libs/input code/libs/linked_list code/libs/linked_list/.vscode code/libs/outputs_inputs code/Power code/Power/inc code/User_UI code/User_UI/inc 
 
 
 O := $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/croutine.o\
@@ -81,13 +81,12 @@ $(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o\
 $(OUTPUT_DIR)/code/audio-visual/avs_colors_animations.o\
 $(OUTPUT_DIR)/code/audio-visual/avs_task_main.o\
 $(OUTPUT_DIR)/code/audio-visual/meritve.o\
-$(OUTPUT_DIR)/code/common/global.o\
+$(OUTPUT_DIR)/code/common/common.o\
 $(OUTPUT_DIR)/code/Events/events.o\
 $(OUTPUT_DIR)/code/libs/castimer/castimer.o\
 $(OUTPUT_DIR)/code/libs/EEPROM/eeprom.o\
 $(OUTPUT_DIR)/code/libs/input/input.o\
 $(OUTPUT_DIR)/code/libs/outputs_inputs/outputs_inputs.o\
-$(OUTPUT_DIR)/code/Power/charging.o\
 $(OUTPUT_DIR)/code/Power/Power.o\
 $(OUTPUT_DIR)/code/User_UI/user_ui.o\
 
@@ -135,7 +134,7 @@ $(OUTPUT_DIR)/code//bootloader.o : code//bootloader.cpp code/Events/inc/events.h
 	echo "Compiling C++ source file:bootloader.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code//bootloader.cpp
 
-$(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o : code/audio-visual/audio_system_functions.cpp code/common/inc/global.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/outputs_inputs/outputs_inputs.hpp 
+$(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o : code/audio-visual/audio_system_functions.cpp code/common/inc/common.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/outputs_inputs/outputs_inputs.hpp 
 	echo "Compiling C++ source file:audio_system_functions.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/audio_system_functions.cpp
 
@@ -147,15 +146,15 @@ $(OUTPUT_DIR)/code/audio-visual/avs_task_main.o : code/audio-visual/avs_task_mai
 	echo "Compiling C++ source file:avs_task_main.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/avs_task_main.cpp
 
-$(OUTPUT_DIR)/code/audio-visual/meritve.o : code/audio-visual/meritve.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/common/inc/global.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/castimer/castimer.hpp 
+$(OUTPUT_DIR)/code/audio-visual/meritve.o : code/audio-visual/meritve.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/common/inc/common.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/castimer/castimer.hpp 
 	echo "Compiling C++ source file:meritve.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/meritve.cpp
 
-$(OUTPUT_DIR)/code/common/global.o : code/common/global.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/global.hpp code/libs/input/input.hpp 
-	echo "Compiling C++ source file:global.cpp"
-	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/common/global.cpp
+$(OUTPUT_DIR)/code/common/common.o : code/common/common.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/common.hpp code/libs/input/input.hpp 
+	echo "Compiling C++ source file:common.cpp"
+	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/common/common.cpp
 
-$(OUTPUT_DIR)/code/Events/events.o : code/Events/events.cpp code/Events/inc/events.hpp code/common/inc/global.hpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp 
+$(OUTPUT_DIR)/code/Events/events.o : code/Events/events.cpp code/Events/inc/events.hpp code/common/inc/common.hpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp 
 	echo "Compiling C++ source file:events.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/Events/events.cpp
 
@@ -163,7 +162,7 @@ $(OUTPUT_DIR)/code/libs/castimer/castimer.o : code/libs/castimer/castimer.cpp co
 	echo "Compiling C++ source file:castimer.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/castimer/castimer.cpp
 
-$(OUTPUT_DIR)/code/libs/EEPROM/eeprom.o : code/libs/EEPROM/eeprom.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/EEPROM/EEPROM.hpp code/common/inc/global.hpp 
+$(OUTPUT_DIR)/code/libs/EEPROM/eeprom.o : code/libs/EEPROM/eeprom.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/EEPROM/EEPROM.hpp code/common/inc/common.hpp 
 	echo "Compiling C++ source file:eeprom.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/EEPROM/eeprom.cpp
 
@@ -171,19 +170,15 @@ $(OUTPUT_DIR)/code/libs/input/input.o : code/libs/input/input.cpp code/libs/inpu
 	echo "Compiling C++ source file:input.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/input/input.cpp
 
-$(OUTPUT_DIR)/code/libs/outputs_inputs/outputs_inputs.o : code/libs/outputs_inputs/outputs_inputs.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/FreeRTOS_m2560/include/atomic.h code/common/inc/global.hpp 
+$(OUTPUT_DIR)/code/libs/outputs_inputs/outputs_inputs.o : code/libs/outputs_inputs/outputs_inputs.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/FreeRTOS_m2560/include/atomic.h code/common/inc/common.hpp 
 	echo "Compiling C++ source file:outputs_inputs.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/outputs_inputs/outputs_inputs.cpp
 
-$(OUTPUT_DIR)/code/Power/charging.o : code/Power/charging.cpp code/libs/input/input.hpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/castimer/castimer.hpp code/common/inc/global.hpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/EEPROM/EEPROM.hpp 
-	echo "Compiling C++ source file:charging.cpp"
-	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/Power/charging.cpp
-
-$(OUTPUT_DIR)/code/Power/Power.o : code/Power/Power.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/common/inc/global.hpp code/libs/castimer/castimer.hpp code/libs/input/input.hpp code/Events/inc/events.hpp 
+$(OUTPUT_DIR)/code/Power/Power.o : code/Power/Power.cpp code/common/inc/common.hpp code/Events/inc/events.hpp code/libs/input/input.hpp code/libs/castimer/castimer.hpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/EEPROM/EEPROM.hpp code/Power/inc/power.hpp 
 	echo "Compiling C++ source file:Power.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/Power/Power.cpp
 
-$(OUTPUT_DIR)/code/User_UI/user_ui.o : code/User_UI/user_ui.cpp code/libs/EEPROM/EEPROM.hpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/global.hpp code/audio-visual/includes/audio.hpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/input/input.hpp code/libs/castimer/castimer.hpp code/User_UI/inc/user_ui.hpp code/Events/inc/events.hpp 
+$(OUTPUT_DIR)/code/User_UI/user_ui.o : code/User_UI/user_ui.cpp code/libs/EEPROM/EEPROM.hpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/common.hpp code/audio-visual/includes/audio.hpp code/libs/outputs_inputs/outputs_inputs.hpp code/libs/input/input.hpp code/libs/castimer/castimer.hpp code/User_UI/inc/user_ui.hpp code/Events/inc/events.hpp 
 	echo "Compiling C++ source file:user_ui.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/User_UI/user_ui.cpp
 

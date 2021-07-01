@@ -1,6 +1,6 @@
 #include "EEPROM.hpp"
 #include "FreeRTOS.h"
-#include "common/inc/global.hpp"
+#include "common/inc/common.hpp"
 #include "../audio-visual/includes/audio.hpp"
 #include "libs/outputs_inputs/outputs_inputs.hpp"
 #include "input/input.hpp"
@@ -67,7 +67,7 @@ struct USER_UI
 
 	unsigned short hold_time;
 	uint8_t	menu_seek = 0;
-	INPUT_t SW2 = INPUT_t(red_button_pin, red_button_port, 0);
+	INPUT_t SW2 = INPUT_t(GLOBAL_CFG_PIN_SU_SWITCH, GLOBAL_CFG_PORT_SU_SWITCH, 0);
 	TIMER_t state_exit_timer;
 	TIMER_t hold_timer;
 	
@@ -80,7 +80,7 @@ struct USER_UI
 	{
 		state = SU_STATE_UNSET;
 		menu_seek =  SU_MENU_SCROLL_TOGGLE_LCD;
-		SW2 = INPUT_t(red_button_pin, red_button_port, 0);
+		SW2 = INPUT_t(GLOBAL_CFG_PIN_SU_SWITCH, GLOBAL_CFG_PORT_SU_SWITCH, 0);
 		hold_time = 0;
 		hold_timer.reset();
 		state_exit_timer.reset();
@@ -164,7 +164,7 @@ void settings_UI()
 	/**************************************************************************/
 	/*		State machine	    */
 
-	if (m_Hardware.status_reg.powered_up)
+	if (m_hw_status.powered_up)
 	{
 		switch (m_user_ui.state)
 		{
@@ -198,7 +198,7 @@ void settings_UI()
 
 				case SU_MENU_SCROLL_STRIP_ANIMATION:
 					m_user_ui.state = SU_STATE_STRIP_SELECTION;
-					brightDOWN(AUVS_CONFIG_SLOW_ANIMATION_TIME_MS);
+					brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
 				break;
 				}
 
@@ -256,25 +256,25 @@ void settings_UI()
 
 void zaslon()
 {
-	if (m_Hardware.status_reg.charging_enabled)
+	if (m_hw_status.charging_enabled)
 	{
 		if ( m_user_ui.LCD_timer.value() >= 1000)
 		{
-			toggleOUTPUT(BAT_LCD_pin, BAT_LCD_port);
+			toggleOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD);
 			m_user_ui.LCD_timer.reset();
 		}
 	}
 
-	else if (m_user_ui.capacity_lcd_en && m_Hardware.status_reg.powered_up)
+	else if (m_user_ui.capacity_lcd_en && m_hw_status.powered_up)
 	{
 
 		if (m_user_ui.LCD_timer.value() < 5000)
 		{
-			writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+			writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
 		}
 		else if(m_user_ui.LCD_timer.value() <= 8000)
 		{
-			writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 1);
+			writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 1);
 		}
 		else
 		{
@@ -284,7 +284,7 @@ void zaslon()
 
 	else
 	{
-		writeOUTPUT(BAT_LCD_pin, BAT_LCD_port, 0);
+		writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
 	}
 }
 
@@ -340,7 +340,7 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 void exit_scroll()
 {
 	m_audio_system.flash_strip();
-	brightDOWN(AUVS_CONFIG_SLOW_ANIMATION_TIME_MS);
+	brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
 	delay_FreeRTOS_ms(1000);
 	m_audio_system.strip_on();
 	m_user_ui.init();
