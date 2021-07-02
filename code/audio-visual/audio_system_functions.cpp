@@ -3,6 +3,7 @@
 #include "includes/audio.hpp"
 #include "libs/outputs_inputs/outputs_inputs.hpp"
 
+#include <string.h>
 /**************************************************************************************************************************
 *                                                                                                                         *
 *                                                           Pomozne funkcije                                              *
@@ -22,7 +23,7 @@ void AUVS::CREATE_ANIMATION(uint8_t task_index, uint8_t color)
 {
     set_strip_color(color);
     deleteTASK(&handle_active_strip_mode);
-    xTaskCreate(AUVS::strip_animations[task_index].f_ptr, "str", 64, NULL, 4, &handle_active_strip_mode);
+    xTaskCreate(AUVS::strip_animations[task_index].f_ptr, "str", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
 }
 
 
@@ -33,9 +34,9 @@ void AUVS::CREATE_ANIMATION(uint8_t task_index, uint8_t color)
  **********************************************************************/
 void AUVS::update_strip()
 {
-	writePWM(GLOBAL_CFG_PIN_LED_STRIP_R, GLOBAL_CFG_PORT_LED_STRIP,		current_color[STRIP_RED]	*	 current_brightness / 255.00);
-	writePWM(GLOBAL_CFG_PIN_LED_STRIP_G, GLOBAL_CFG_PORT_LED_STRIP, 	current_color[STRIP_GREEN]  *	 current_brightness / 255.00);
-	writePWM(GLOBAL_CFG_PIN_LED_STRIP_G, GLOBAL_CFG_PORT_LED_STRIP,	    current_color[STRIP_BLUE]	*    current_brightness / 255.00);
+	writePWM(GLOBAL_CFG_PIN_LED_STRIP_R, GLOBAL_CFG_PORT_LED_STRIP,		current_color[STRIP_RED]	*	 (current_brightness / 255.00));
+	writePWM(GLOBAL_CFG_PIN_LED_STRIP_G, GLOBAL_CFG_PORT_LED_STRIP, 	current_color[STRIP_GREEN]  *	 (current_brightness / 255.00));
+	writePWM(GLOBAL_CFG_PIN_LED_STRIP_B, GLOBAL_CFG_PORT_LED_STRIP,	    current_color[STRIP_BLUE]	*    (current_brightness / 255.00));
 }
 
 
@@ -145,7 +146,7 @@ void AUVS::strip_off()
  **********************************************************************/
 void AUVS::strip_on()
 {
-	xTaskCreate(signal_measure, "avg_vol", 64, NULL, 1, &handle_audio_meass);
+	xTaskCreate(signal_measure, "avg_vol", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, &handle_audio_meass);
 	strip_mode = EEPROM.beri(GLOBAL_CFG_EEPROM_ADDR_STRIP_MODE);
 	
 	/* EEPROM address is empty */
@@ -177,9 +178,10 @@ void AUVS::set_strip_mode(uint8_t mode)
  **********************************************************************/
 void AUVS::set_strip_color(unsigned char barva_index)
 {
-		current_color[STRIP_RED]   = strip_colors[barva_index].color_data[STRIP_RED];
-		current_color[STRIP_GREEN] = strip_colors[barva_index].color_data[STRIP_GREEN];
-		current_color[STRIP_BLUE]  = strip_colors[barva_index].color_data[STRIP_BLUE];
+		this->curr_color_index = barva_index;
+        current_color[STRIP_RED]  = strip_colors[barva_index].color_data[STRIP_RED];
+        current_color[STRIP_GREEN] = strip_colors[barva_index].color_data[STRIP_GREEN];
+        current_color[STRIP_BLUE]  = strip_colors[barva_index].color_data[STRIP_BLUE];
         update_strip();
 }
 

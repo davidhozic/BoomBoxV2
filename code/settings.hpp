@@ -62,7 +62,10 @@
 	#define GLOBAL_CFG_PIN_LED_STRIP_B					    6
 	#define GLOBAL_CFG_PORT_LED_STRIP					   'B'
 /************************************************************************/
-/*								OTHER                                   */
+/*								TASK RELATED                            */
 /************************************************************************/
-	
+
+    #define GLOBAL_CFG_TASK_DEFAULT_STACK                   128
+
+
 #endif

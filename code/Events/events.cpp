@@ -68,9 +68,9 @@ void system_event(enum_system_event eventt){
 			/************************************************************************/
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
-			xTaskCreate(power_task, "Power", 64, NULL, 1, NULL);
-			xTaskCreate(user_ui_task, "User UI", 64, NULL, 3, NULL);
-			xTaskCreate(audio_visual_task, "m_audio_system", 64, NULL, 2, NULL);
+			xTaskCreate(power_task, "Power", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
+			xTaskCreate(user_ui_task, "User UI", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 3, NULL);
+			xTaskCreate(audio_visual_task, "m_audio_system", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 2, NULL);
 			/************************************************************************/
 			/*								OTHER                                   */
 			/************************************************************************/
