@@ -186,5 +186,5 @@ INPUT_t::INPUT_t(unsigned char pin, char port, char default_state)
 /*							WARNINGS/ERRORS                             */
 /************************************************************************/
 #if (USE_FILTERING == 1)
-	#warning "LITL: USE_FILTERING is enabled, LITL's timer will be used"
+	#warning "LITL input:  INPUT objects have filtering enabled, please configure CASTIMER if you haven't already"
 #endif

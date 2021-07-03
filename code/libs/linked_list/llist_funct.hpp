@@ -294,5 +294,4 @@ void LIST_t<tip>::operator+=(tip pod)
 }
 
 
-
 #endif

@@ -19,3 +19,10 @@ code/libs/FreeRTOS_m2560/*
 avr_make_gen.py
 file_merger.py
 Makefile
+ALL_IN_ONE.cpp
+code/libs/castimer/timer_settings.hpp
+code/libs/input/input_settings.hpp
+code/libs/linked_list/linked_list.hpp
+code/libs/linked_list/list_settings.hpp
+code/libs/linked_list/llist_funct.hpp
+code/libs/castimer/castimer.cpp

@@ -116,14 +116,14 @@ void user_ui_task(void *p)
                 {
                     m_user_ui.hold_time = m_user_ui.hold_timer.value();
 
-                    if (m_user_ui.hold_time >= SU_LONG_PRESS_PERIOD)
+                    if (m_user_ui.hold_time >= SU_CFG_LONG_PRESS_PERIOD)
                     {
                         m_user_ui.key_event = SU_KEY_LONG_PRESS;
                     }
                 }
                 else if (m_user_ui.hold_time > 0)
                 {
-                    if(m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
+                    if(m_user_ui.hold_time < SU_CFG_SHORT_PRESS_PERIOD)
                     {
                         m_user_ui.key_event = SU_KEY_SHORT_PRESS;
                     }
@@ -171,7 +171,7 @@ void user_ui_task(void *p)
 
             case SU_STATE_SCROLL:
 
-                if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
+                if (m_user_ui.state_exit_timer.value() > SU_CFG_AUTO_EXIT_SCROLL_PERIOD)
                 {
                     exit_scroll();
                 }
@@ -207,7 +207,7 @@ void user_ui_task(void *p)
 
             case SU_STATE_STRIP_SELECTION:
 
-                if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
+                if (m_user_ui.state_exit_timer.value() > SU_CFG_AUTO_EXIT_SCROLL_PERIOD)
                 {
                     exit_scroll();
                 }

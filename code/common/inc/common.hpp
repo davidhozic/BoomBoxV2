@@ -15,6 +15,9 @@ struct HW_STATUS_t
 }extern m_hw_status;
 
 
+
+
+
 /************************************************************************/
 /*					  Safe FreeRTOS functions/macros		            */
 /************************************************************************/
@@ -27,8 +30,6 @@ struct HW_STATUS_t
 void holdTASK	(TaskHandle_t* task);
 void resumeTASK	(TaskHandle_t* task);
 void deleteTASK	(TaskHandle_t* task);
-
-
 
 
 

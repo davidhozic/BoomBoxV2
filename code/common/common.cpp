@@ -2,7 +2,7 @@
 #include "FreeRTOS.h"
 #include "common.hpp"
 #include "libs/input/input.hpp"
-
+#include "avr/interrupt.h"
 /************************************************************************/
 /*						    COMMON STRUCTS                              */
 /************************************************************************/
@@ -34,4 +34,3 @@ void deleteTASK(TaskHandle_t* task)
 		delay_FreeRTOS_ms(2); // Ensures task gets deleted
 	}
 }
-

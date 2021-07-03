@@ -20,8 +20,8 @@ void user_ui_task(void *);
  *  DESCRIPTION: Performs a system event                         
  *  RETURN:      void
  **********************************************************************/
-void system_event(enum_system_event eventt){
-	switch(eventt)
+void system_event(enum_system_event event){
+	switch(event)
 	{
 		case EV_POWER_SWITCH_EXTERNAL:
         	system_event(EV_SHUTDOWN);
@@ -38,7 +38,7 @@ void system_event(enum_system_event eventt){
 		break;
 		
         case EV_SLEEP:
-            cli();
+            asm("cli");
             /* Set sleep mode to power down */
             SMCR = 0;
             SMCR |= (1 << SM1);
@@ -46,16 +46,16 @@ void system_event(enum_system_event eventt){
             /* Setup PCINT interrupt */
             PCICR = (1 << PCIE2);
             PCMSK2 = (1 << PCINT16) | (1 << PCINT17);
-            sei();
+            asm("sei");
             asm("SLEEP"); 
         break;
 
         case EV_WAKE:
-            cli();
+            asm("cli");
             SMCR = 0;
             PCICR = 0;
             PCMSK2 = 0;
-            sei();
+            asm("sei");
         break;
 
 		case EV_POWER_UP:

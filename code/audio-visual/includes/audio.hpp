@@ -9,23 +9,6 @@
 
 
 /************************************************************************/
-/*								CONFIG				                    */
-/************************************************************************/
-#define AUVS_CFG_NORMAL_ANIMATION_TIME_MS		    500		// Animation time for mic detection light up
-#define AUVS_CFG_FAST_ANIMATION_TIME_MS				150		// Animation time used in flash strip
-#define	AUVS_CFG_SLOW_ANIMATION_TIME_MS				1000	// Animation time for exit animations and settings ui showcase
-
-/* Maximum changes of color / brighness */
-#define AUVS_CFG_BRIGHTNESS_CHANGE					5
-#define AUVS_CFG_COLOR_CHANGE                       5
-                                                        
-
-#define	AUVS_CFG_MEASS_MAX_READINGS	                30 
-#define AUVS_CFG_MEASS_LOG_PERIOD_MS	            10 
-#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			0.20
-#define AUVS_CFG_MEASS_FILTER_TIME_MS               200
-
-/************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
 /************************************************************************/
 

@@ -14,14 +14,41 @@
 
 
 /************************************************************************/
-/*					        VOLTAGE SETTINGS					        */
+/*					        POWER SETTINGS  					        */
 /************************************************************************/
-	#define GLOBAL_CFG_ADC_REF_mV							        5000	  
-	#define GLOBAL_CFG_MIN_BATTERY_VOLTAGE							3200	  
-	#define GLOBAL_CFG_MAX_BATTERY_VOLTAGE							4150	  
-	#define GLOBAL_CFG_CHARGE_HYSTERESIS 							5		// When charging finishes, the speaker needs to discharge for atleast this percent
-    #define GLOBAL_CFG_SLEEP_DELAY_MS                               2000
+	#define POWER_CFG_ADC_REF_mV							        5000	  
+	#define POWER_CFG_MIN_BATTERY_VOLTAGE							3200	  
+	#define POWER_CFG_MAX_BATTERY_VOLTAGE							4150	  
+	#define POWER_CFG_CHARGE_HYSTERESIS_PERCENT 					5		// When charging finishes, the speaker needs to discharge for atleast this percent
+    #define POWER_CFG_SLEEP_DELAY_MS                                2000
+    #define POWER_CFG_VOLTAGE_READ_PERIOD_MS                        200
 /************************************************************************/
+
+/************************************************************************/
+/*					       USER UI SETTINGS  					        */
+/************************************************************************/
+    #define SU_CFG_AUTO_EXIT_SCROLL_PERIOD			                15000
+    #define SU_CFG_LONG_PRESS_PERIOD				                1000
+    #define SU_CFG_SHORT_PRESS_PERIOD				                500
+/************************************************************************/
+
+
+/************************************************************************/
+/*					  AUDIO VISUAL SYSTEM SETTINGS  				    */
+/************************************************************************/
+/*  STRIP ANIMATION_CONFIG  */
+#define AUVS_CFG_NORMAL_ANIMATION_TIME_MS		                    500		// Animation time for mic detection light up
+#define AUVS_CFG_FAST_ANIMATION_TIME_MS				                150		// Animation time used in flash strip
+#define	AUVS_CFG_SLOW_ANIMATION_TIME_MS				                1000	// Animation time for exit animations and settings ui showcase
+#define AUVS_CFG_BRIGHTNESS_CHANGE					                5
+#define AUVS_CFG_COLOR_CHANGE                                       5
+/*   MEASSUREMENT CONFIG   */          
+#define	AUVS_CFG_MEASS_MAX_READINGS	                                30 
+#define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            10 
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                0.20
+#define AUVS_CFG_MEASS_FILTER_TIME_MS                               200
+/************************************************************************/
+
 
 /************************************************************************/                             
 /*							  ADC PIN MACROS               		        */

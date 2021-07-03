@@ -1,7 +1,7 @@
 /************************************************************/
 					/*		 SETTINGS		*/
 
-/* Timer will wait for AUVS_CFG_MEASS_FILTER_TIME_MS befor updating the input state after the state has changed (if the state goes back to unchanged, the timer auto resets) */
+/* Timer will wait for FILTER_TIME_MS befor updating the input state after the state has changed (if the state goes back to unchanged, the timer auto resets) */
 #define USE_FILTERING									1    
 #define FILTER_TIME_MS									5
 

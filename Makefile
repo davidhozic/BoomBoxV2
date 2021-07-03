@@ -25,6 +25,7 @@ FOLDER_INCLUDE:= -I code/\
 -I code/common/inc\
 -I code/Events\
 -I code/Events/inc\
+-I code/libs\
 -I code/libs/castimer\
 -I code/libs/castimer/.vscode\
 -I code/libs/EEPROM\
@@ -36,7 +37,6 @@ FOLDER_INCLUDE:= -I code/\
 -I code/Power\
 -I code/Power/inc\
 -I code/User_UI\
--I code/libs\
 -I code/User_UI/inc\
 
 CPP := code//bootloader.cpp\
@@ -59,10 +59,11 @@ code/libs/FreeRTOS_m2560/heap_4.c\
 code/libs/FreeRTOS_m2560/list.c\
 code/libs/FreeRTOS_m2560/port.c\
 code/libs/FreeRTOS_m2560/queue.c\
+code/libs/FreeRTOS_m2560/stream_buffer.c\
 code/libs/FreeRTOS_m2560/tasks.c\
 code/libs/FreeRTOS_m2560/timers.c\
 
-SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/common/inc code/Events code/Events/inc code/libs/castimer code/libs/castimer/.vscode code/libs/EEPROM code/libs/FreeRTOS_m2560 code/libs/FreeRTOS_m2560/include code/libs/input code/libs/linked_list code/libs/outputs_inputs code/Power code/Power/inc code/User_UI code/User_UI/inc 
+SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/common/inc code/Events code/Events/inc code/libs code/libs/castimer code/libs/castimer/.vscode code/libs/EEPROM code/libs/FreeRTOS_m2560 code/libs/FreeRTOS_m2560/include code/libs/input code/libs/linked_list code/libs/outputs_inputs code/Power code/Power/inc code/User_UI code/User_UI/inc 
 
 
 O := $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/croutine.o\
@@ -71,6 +72,7 @@ $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/heap_4.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/list.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/port.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/queue.o\
+$(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/stream_buffer.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/tasks.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/timers.o\
 $(OUTPUT_DIR)/code//bootloader.o\
@@ -202,6 +204,10 @@ $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/port.o : code/libs/FreeRTOS_m2560/port.c 
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/queue.o : code/libs/FreeRTOS_m2560/queue.c code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/FreeRTOS_m2560/include/task.h code/libs/FreeRTOS_m2560/include/queue.h code/libs/FreeRTOS_m2560/include/croutine.h 
 	echo "Compiling C source file:queue.c"
 	$(C_COMPILER) $(C_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/FreeRTOS_m2560/queue.c
+
+$(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/stream_buffer.o : code/libs/FreeRTOS_m2560/stream_buffer.c code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/FreeRTOS_m2560/include/task.h code/libs/FreeRTOS_m2560/include/stream_buffer.h 
+	echo "Compiling C source file:stream_buffer.c"
+	$(C_COMPILER) $(C_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/libs/FreeRTOS_m2560/stream_buffer.c
 
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/tasks.o : code/libs/FreeRTOS_m2560/tasks.c code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/libs/FreeRTOS_m2560/include/task.h code/libs/FreeRTOS_m2560/include/timers.h code/libs/FreeRTOS_m2560/include/stack_macros.h 
 	echo "Compiling C source file:tasks.c"
