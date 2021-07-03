@@ -17,9 +17,10 @@
 /*					        VOLTAGE SETTINGS					        */
 /************************************************************************/
 	#define GLOBAL_CFG_ADC_REF_mV							        5000	  
-	#define GLOBAL_CFG_MIN_BATTERY_VOLTAGE							3000	  
+	#define GLOBAL_CFG_MIN_BATTERY_VOLTAGE							3200	  
 	#define GLOBAL_CFG_MAX_BATTERY_VOLTAGE							4150	  
 	#define GLOBAL_CFG_CHARGE_HYSTERESIS 							5		// When charging finishes, the speaker needs to discharge for atleast this percent
+    #define GLOBAL_CFG_SLEEP_DELAY_MS                               2000
 /************************************************************************/
 
 /************************************************************************/                             

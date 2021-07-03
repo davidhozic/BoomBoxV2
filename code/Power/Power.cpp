@@ -7,6 +7,12 @@
 #include "EEPROM.hpp"
 #include "power.hpp"
 
+/***************************/
+/*      System macros      */
+/***************************/
+#include <avr/sleep.h>
+#include <avr/interrupt.h>
+
 
 /**    Structs    **/
 struct POWER_t
@@ -17,12 +23,21 @@ struct POWER_t
 
 	/*		TIMER_t objects		*/
 	TIMER_t power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds
-    
+    TIMER_t sleep_timer;
+
     /*      Other        */
     uint16_t battery_voltage;   // Battery voltage in milivolts
 }m_power;
 
 
+/************************************************/
+/*       POWER INTERRUPT SERVICE ROUTINE        */
+/************************************************/
+/* WAKE_UP ISR */
+ISR(PCINT2_vect)
+{
+    system_event(EV_WAKE);
+}
 
 void power_task(void *p)
 {
@@ -34,19 +49,36 @@ void power_task(void *p)
 
         m_power.battery_voltage = readANALOG(GLOBAL_CFG_PIN_VOLTAGE_DIV) * (5000.00/1023);
         /* No need to worry about the timer running because the first condition will always be false while speaker is enabled, meaning other elements won't execute in the if statement */
-        if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > 8 || m_hw_status.external_power) && m_power.power_up_delay_timer.value() >= 2000 )
+        if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > GLOBAL_CFG_CHARGE_HYSTERESIS || m_hw_status.external_power) && m_power.power_up_delay_timer.value() >= 2000 )
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
             system_event(EV_POWER_UP);
             m_power.power_up_delay_timer.reset();
         }			
         
         
-        if (!m_power.switch_pwr.value() || (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > 0 && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) < 5 && !m_hw_status.external_power) )
+        /* Switch disabled or power too low */
+        if (!m_power.switch_pwr.value() || (m_power.battery_voltage <= GLOBAL_CFG_MIN_BATTERY_VOLTAGE && !m_hw_status.external_power))
         {
-            m_power.power_up_delay_timer.reset();
+            /* Shutdown in any case */
             if (m_hw_status.powered_up)
             {
                 system_event(EV_SHUTDOWN);
+                m_power.power_up_delay_timer.reset();
+            }
+
+            /***************************/
+            /*          SLEEP          */
+            /***************************/
+            /* If not on external power (for charging) -> go to sleep after timer elapses */
+            if (!m_hw_status.external_power && m_power.sleep_timer.value() >= GLOBAL_CFG_SLEEP_DELAY_MS)
+            {
+                m_power.sleep_timer.reset();
+                system_event(EV_SLEEP);
+            }
+            /* Reset timer in case power went from internal to external while timer was running */
+            else if (m_hw_status.external_power)
+            {
+                m_power.sleep_timer.reset();
             }
         }
         
@@ -90,5 +122,6 @@ void power_task(void *p)
             m_hw_status.charging_enabled = 1;
         }
         delay_FreeRTOS_ms(100);
-    } 
+    }
 }
+

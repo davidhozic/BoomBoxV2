@@ -37,6 +37,27 @@ void system_event(enum_system_event eventt){
 			m_hw_status.external_power = 0;
 		break;
 		
+        case EV_SLEEP:
+            cli();
+            /* Set sleep mode to power down */
+            SMCR = 0;
+            SMCR |= (1 << SM1);
+            SMCR |= (1 << SE);
+            /* Setup PCINT interrupt */
+            PCICR = (1 << PCIE2);
+            PCMSK2 = (1 << PCINT16) | (1 << PCINT17);
+            sei();
+            asm("SLEEP"); 
+        break;
+
+        case EV_WAKE:
+            cli();
+            SMCR = 0;
+            PCICR = 0;
+            PCMSK2 = 0;
+            sei();
+        break;
+
 		case EV_POWER_UP:
 			writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 1);
 			writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET, 1);
@@ -69,15 +90,15 @@ void system_event(enum_system_event eventt){
 			/************************************************************************/
 			/*								SETUP ADC                               */
 			/************************************************************************/
+
 			ADMUX   =	(1 << REFS0);
 			ADCSRA  =	(1 << ADPS0) | (1 << ADPS2);
 			ADCSRB  =	 0;
 			ADCSRA |=	(1 << ADEN);
 			DIDR0   =	0xFF;
 			ADMUX = 1;
-			ADCSRA |=	(1 << ADSC);
-
-			
+			ADCSRA |=	(1 << ADSC);		
+            
 			/************************************************************************/
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
@@ -95,3 +116,5 @@ void system_event(enum_system_event eventt){
 		break;
 	}
 }
+
+

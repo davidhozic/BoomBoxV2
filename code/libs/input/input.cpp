@@ -100,7 +100,7 @@ bool INPUT_t::value()
 	
 #if (USE_FILTERING == 1)
 	/* Filter input with a timer */
-	if (register_value != filtered_curr_state && filter_timer.value() >= AUVS_CFG_MEASS_FILTER_TIME_MS)
+	if (register_value != filtered_curr_state && filter_timer.value() >= FILTER_TIME_MS)
 	{
 		filtered_curr_state = register_value;
 	}

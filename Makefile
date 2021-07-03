@@ -36,6 +36,7 @@ FOLDER_INCLUDE:= -I code/\
 -I code/Power\
 -I code/Power/inc\
 -I code/User_UI\
+-I code/libs\
 -I code/User_UI/inc\
 
 CPP := code//bootloader.cpp\
