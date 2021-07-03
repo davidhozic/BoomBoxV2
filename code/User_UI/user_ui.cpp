@@ -46,7 +46,7 @@ static SETTINGS_UI_MENU_LIST su_menu_scroll[]  =
     { SU_MENU_SCROLL_STRIP_ANIMATION, 		SU_STATE_SCROLL }
 };
 
-/* Does not need to be sorted, but is more clean if it is */
+
 static SETTINGS_UI_MENU_LIST su_menu_strip_animation[] =
 {
     { SU_MENU_STRIP_ANIMATION_NORMAL_FADE, 			SU_STATE_STRIP_SELECTION },
@@ -98,195 +98,192 @@ static USER_UI m_user_ui;
 /* user ui task */
 void user_ui_task(void *p)
 {
-	for(;;)
-	{
-		/* Settigns (scroll) menu */
-		settings_UI();
-		zaslon();
-		delay_FreeRTOS_ms(30);
-	}
+    for(;;)
+    {
+        /******************************		KEY EVENTS DESCRIPTION 	*******************************
+         * 
+         *	The key events section tracks key press/hold and triggers an event. 
+        *  In the next iteration, after the event has been triggered, the key events
+        *  will set their state to IGNORE all keys until the button has been unpressed.
+        *****************************************************************************************/ 			
+
+        /* Key machine */
+        switch(m_user_ui.key_event)
+        {
+            /* No previous press -> scan for press*/
+            case SU_KEY_CLEAR:
+                if (m_user_ui.SW2.value())
+                {
+                    m_user_ui.hold_time = m_user_ui.hold_timer.value();
+
+                    if (m_user_ui.hold_time >= SU_LONG_PRESS_PERIOD)
+                    {
+                        m_user_ui.key_event = SU_KEY_LONG_PRESS;
+                    }
+                }
+                else if (m_user_ui.hold_time > 0)
+                {
+                    if(m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
+                    {
+                        m_user_ui.key_event = SU_KEY_SHORT_PRESS;
+                    }
+                    m_user_ui.hold_timer.reset();
+                    m_user_ui.hold_time = 0;
+                }
+            break;
+
+
+            /* Previous press detected -> ignore presses */
+            case SU_KEY_LONG_PRESS:
+            case SU_KEY_SHORT_PRESS:
+                m_user_ui.key_event = SU_KEY_IGNORE_KEY;
+            break;
+
+            /* Ignore presses 'till button release */
+            case SU_KEY_IGNORE_KEY:
+                if (m_user_ui.SW2.value() == 0)
+                {
+                    m_user_ui.key_event = SU_KEY_CLEAR;
+                    m_user_ui.hold_timer.reset();
+                    m_user_ui.hold_time = 0;
+                }	
+            break;
+        }
+
+
+        /**************************************************************************/
+        /*		State machine	    */
+
+        if (m_hw_status.powered_up)
+        {
+            switch (m_user_ui.state)
+            {
+            case SU_STATE_UNSET:
+                if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	/* Long press -> Enter into settings scroll menu */
+                {
+                    m_audio_system.strip_off();
+                    m_user_ui.state = SU_STATE_SCROLL;
+                    m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
+                    m_audio_system.flash_strip();
+                }
+            break;
+                /*****	END CASE *****/
+
+            case SU_STATE_SCROLL:
+
+                if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
+                {
+                    exit_scroll();
+                }
+
+                showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
+                if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	 /* Long press -> execute selected option from the menu */
+                {
+                    switch(m_user_ui.menu_seek)
+                    {
+                    case SU_MENU_SCROLL_TOGGLE_LCD:
+                        m_user_ui.capacity_lcd_en = !m_user_ui.capacity_lcd_en;
+                        exit_scroll();
+                    break;
+
+                    case SU_MENU_SCROLL_STRIP_ANIMATION:
+                        m_user_ui.state = SU_STATE_STRIP_SELECTION;
+                        brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
+                    break;
+                    }
+
+                    m_user_ui.menu_seek = 0;
+                    break;
+                }
+
+                else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
+                {
+                    SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_scroll);	
+                    m_user_ui.state_exit_timer.reset();
+                }
+            break;
+
+                /*****	END CASE *****/
+
+            case SU_STATE_STRIP_SELECTION:
+
+                if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
+                {
+                    exit_scroll();
+                }
+
+                showSEEK(su_menu_strip_animation[m_user_ui.menu_seek]);
+                if (m_user_ui.key_event == SU_KEY_LONG_PRESS)
+                {
+                    m_audio_system.set_strip_mode(su_menu_strip_animation[m_user_ui.menu_seek].index);
+                    exit_scroll();
+                }
+
+                else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
+                {
+                    SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_strip_animation);	
+                    m_user_ui.state_exit_timer.reset();
+                }
+
+            break;
+                /*****	END CASE *****/
+
+            default:
+            break;
+            }
+
+            /**************************************************************************/
+        }
+
+        /* Speaker has been turned off while in state -> reset */
+        else if (m_user_ui.state != SU_STATE_UNSET)
+        {
+            exit_scroll();
+        }
+
+
+        /******************************************/
+        /*         Battery charge level           */
+        /*         display                        */
+        /******************************************/
+        if (m_hw_status.charging_enabled)
+        {
+            if ( m_user_ui.LCD_timer.value() >= 1000)
+            {
+                toggleOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD);
+                m_user_ui.LCD_timer.reset();
+            }
+	    }
+
+        else if (m_user_ui.capacity_lcd_en && m_hw_status.powered_up)
+        {
+
+            if (m_user_ui.LCD_timer.value() < 5000)
+            {
+                writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
+            }
+            else if(m_user_ui.LCD_timer.value() <= 8000)
+            {
+                writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 1);
+            }
+            else
+            {
+                m_user_ui.LCD_timer.reset();
+            }
+        }
+
+        else
+        {
+            writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
+        }
+
+
+        delay_FreeRTOS_ms(50);
+        //End loop
+    }
 }
 
 
-void settings_UI()
-{
-	/******************************		KEY EVENTS DESCRIPTION 	*******************************
-	 * 
-	 *	The key events section tracks key press/hold and triggers an event. 
-	 *  In the next iteration, after the event has been triggered, the key events
-	 *  will set their state to IGNORE all keys until the button has been unpressed.
-	 *****************************************************************************************/ 			
-
-	/* Key machine */
-	switch(m_user_ui.key_event)
-	{
-		/* No previous press -> scan for press*/
-		case SU_KEY_CLEAR:
-			if (m_user_ui.SW2.value())
-			{
-				m_user_ui.hold_time = m_user_ui.hold_timer.value();
-
-				if (m_user_ui.hold_time >= SU_LONG_PRESS_PERIOD)
-				{
-					m_user_ui.key_event = SU_KEY_LONG_PRESS;
-				}
-			}
-			else if (m_user_ui.hold_time > 0)
-			{
-				if(m_user_ui.hold_time < SU_SHORT_PRESS_PERIOD)
-				{
-					m_user_ui.key_event = SU_KEY_SHORT_PRESS;
-				}
-				m_user_ui.hold_timer.reset();
-				m_user_ui.hold_time = 0;
-			}
-		break;
-
-
-		/* Previous press detected -> ignore presses */
-		case SU_KEY_LONG_PRESS:
-		case SU_KEY_SHORT_PRESS:
-			m_user_ui.key_event = SU_KEY_IGNORE_KEY;
-		break;
-
-		/* Ignore presses 'till button release */
-		case SU_KEY_IGNORE_KEY:
-			if (m_user_ui.SW2.value() == 0)
-			{
-				m_user_ui.key_event = SU_KEY_CLEAR;
-				m_user_ui.hold_timer.reset();
-				m_user_ui.hold_time = 0;
-			}	
-		break;
-	}
-
-
-	/**************************************************************************/
-	/*		State machine	    */
-
-	if (m_hw_status.powered_up)
-	{
-		switch (m_user_ui.state)
-		{
-		case SU_STATE_UNSET:
-			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	/* Long press -> Enter into settings scroll menu */
-			{
-				m_audio_system.strip_off();
-				m_user_ui.state = SU_STATE_SCROLL;
-				m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
-				m_audio_system.flash_strip();
-			}
-		break;
-			/*****	END CASE *****/
-
-		case SU_STATE_SCROLL:
-
-			if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
-			{
-				exit_scroll();
-			}
-
-			showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
-			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	 /* Long press -> execute selected option from the menu */
-			{
-				switch(m_user_ui.menu_seek)
-				{
-				case SU_MENU_SCROLL_TOGGLE_LCD:
-					m_user_ui.capacity_lcd_en = !m_user_ui.capacity_lcd_en;
-					exit_scroll();
-				break;
-
-				case SU_MENU_SCROLL_STRIP_ANIMATION:
-					m_user_ui.state = SU_STATE_STRIP_SELECTION;
-					brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
-				break;
-				}
-
-				m_user_ui.menu_seek = 0;
-				break;
-			}
-
-			else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
-			{
-				SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_scroll);	
-				m_user_ui.state_exit_timer.reset();
-			}
-		break;
-
-			/*****	END CASE *****/
-
-		case SU_STATE_STRIP_SELECTION:
-
-			if (m_user_ui.state_exit_timer.value() > SU_AUTO_EXIT_SCROLL_PERIOD)
-			{
-				exit_scroll();
-			}
-
-			showSEEK(su_menu_strip_animation[m_user_ui.menu_seek]);
-			if (m_user_ui.key_event == SU_KEY_LONG_PRESS)
-			{
-				m_audio_system.set_strip_mode(su_menu_strip_animation[m_user_ui.menu_seek].index);
-				exit_scroll();
-			}
-
-			else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
-			{
-				SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_strip_animation);	
-				m_user_ui.state_exit_timer.reset();
-			}
-
-		break;
-			/*****	END CASE *****/
-
-		default:
-		break;
-		}
-
-		/**************************************************************************/
-	}
-
-	/* Speaker has been turned off while in state -> reset */
-	else if (m_user_ui.state != SU_STATE_UNSET)
-	{
-		exit_scroll();
-	}
-}
-
-
-
-void zaslon()
-{
-	if (m_hw_status.charging_enabled)
-	{
-		if ( m_user_ui.LCD_timer.value() >= 1000)
-		{
-			toggleOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD);
-			m_user_ui.LCD_timer.reset();
-		}
-	}
-
-	else if (m_user_ui.capacity_lcd_en && m_hw_status.powered_up)
-	{
-
-		if (m_user_ui.LCD_timer.value() < 5000)
-		{
-			writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
-		}
-		else if(m_user_ui.LCD_timer.value() <= 8000)
-		{
-			writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 1);
-		}
-		else
-		{
-			m_user_ui.LCD_timer.reset();
-		}
-	}
-
-	else
-	{
-		writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
-	}
-}
 
 
 
@@ -308,16 +305,16 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 	switch(element.state)
 	{
 	case SU_STATE_SCROLL:
-		m_audio_system.color_shift(element.index, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
-		brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+		m_audio_system.color_shift(element.index, AUVS_CFG_FAST_ANIMATION_TIME_MS);
+		brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS);
 	break;
 
 	case SU_STATE_STRIP_SELECTION:
 		if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
 		{
 			deleteTASK(&m_audio_system.handle_active_strip_mode);
-			m_audio_system.color_shift(COLOR_RED, AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
-			brightUP(AUVS_CONFIG_FAST_ANIMATION_TIME_MS);
+			m_audio_system.color_shift(COLOR_RED, AUVS_CFG_FAST_ANIMATION_TIME_MS);
+			brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS);
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
@@ -340,7 +337,6 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 void exit_scroll()
 {
 	m_audio_system.flash_strip();
-	brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
 	delay_FreeRTOS_ms(1000);
 	m_audio_system.strip_on();
 	m_user_ui.init();

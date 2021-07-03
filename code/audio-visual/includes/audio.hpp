@@ -11,13 +11,19 @@
 /************************************************************************/
 /*								CONFIG				                    */
 /************************************************************************/
-#define  AUVS_CONFIG_NORMAL_ANIMATION_TIME_MS			500		// Animation time for mic detection light up
-#define  AUVS_CONFIG_FAST_ANIMATION_TIME_MS				250		// Animation time used in flash strip
-#define	 AUVS_CFG_SLOW_ANIMATION_TIME_MS				1000	// Animation time for exit animations and settings ui showcase
+#define AUVS_CFG_NORMAL_ANIMATION_TIME_MS		    500		// Animation time for mic detection light up
+#define AUVS_CFG_FAST_ANIMATION_TIME_MS				150		// Animation time used in flash strip
+#define	AUVS_CFG_SLOW_ANIMATION_TIME_MS				1000	// Animation time for exit animations and settings ui showcase
 
-#define  AUVS_CONFIG_BRIGHTNESS_CHANGE					5
+/* Maximum changes of color / brighness */
+#define AUVS_CFG_BRIGHTNESS_CHANGE					5
+#define AUVS_CFG_COLOR_CHANGE                       5
+                                                        
 
-
+#define	AUVS_CFG_MEASS_MAX_READINGS	                30 
+#define AUVS_CFG_MEASS_LOG_PERIOD_MS	            10 
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			0.20
+#define AUVS_CFG_MEASS_FILTER_TIME_MS               200
 
 /************************************************************************/
 /*						AUDIO VISUAL SYSTEM MACROS	                    */
@@ -92,7 +98,6 @@ struct STRIP_ANIMATION_t
 class AUVS
 {
 public:
-	
     /*   Function Prototypes   */
     void update_strip();
 	void strip_off();
@@ -104,21 +109,16 @@ public:
 	void set_strip_mode(uint8_t mode);
 	void set_strip_brightness(uint8_t value);
     void CREATE_ANIMATION(uint8_t task_index, uint8_t color);
-	
-    
     /****************************************************************************/
 	/****  Strip parameters   ****/
 	uint8_t strip_mode = AUVS_AN_STRIP_OFF;							// Current strip mode
-	uint16_t animation_time = AUVS_CONFIG_NORMAL_ANIMATION_TIME_MS;
+	uint16_t animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
 	/**** Strip current state ****/
 	int16_t current_color[3] = {255, 255, 255};					// Current RGB color of the strip
 	int16_t current_brightness = 0;								// Current brightness level of the strip
 	uint8_t curr_color_index = 0;									// Index of color that strip will turn on
 	bool mikrofon_detect = 0;									// Is set to 1 if spike is detected and then strip is turned on
 
-	/****		Timers		 ****/
-	TIMER_t  lucke_filter_timer;								// Timer that prevents strip from triggering too fast after last trigger (filter timer)
-	
 	/****   Task handles	****/
 	TaskHandle_t handle_audio_meass = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
@@ -127,7 +127,6 @@ public:
 	/***	Strip colors	***/
 	static STRIP_COLOR_t strip_colors[];
 };
-
 
 
 extern AUVS m_audio_system;

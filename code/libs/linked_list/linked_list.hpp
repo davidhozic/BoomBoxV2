@@ -13,8 +13,6 @@
 #endif
 
 
-
-
 template <typename tip>
 class LIST_t
 {
@@ -37,16 +35,21 @@ private:
     void pojdi_zacetek();
     void pojdi_konec();
     void head_to_index(uint32_t index);
-    
+   
 public:
 
     unsigned short length();
 	void add_front(tip vrednost);
     void add_end(tip vrednost);
     tip pop_end();
+    
+    ~LIST_t<tip>()
+    {
+        splice(0, length());
+    }
 
 #if (INCLUDE_SORT == 1)
-    void sort(tip(*comparator_fnct)(tip , tip));
+    void sort(int (*comparator_fnct)(tip , tip));
 #endif
 
 
@@ -67,16 +70,11 @@ public:
     
     void operator+=(tip pod);
 
+	
 #endif
 
 };
     
-#if (USE_OPERATORS == 1)
-template <typename tip, class cl>
-LIST_t<tip> operator+(tip pod, cl obj);
-#endif
-
-
 
 
 #include "llist_funct.hpp"

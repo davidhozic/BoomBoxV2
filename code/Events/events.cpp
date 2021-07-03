@@ -12,15 +12,29 @@ void zaslon_task(void *);
 void audio_visual_task(void *);
 void charging_task(void *);
 void user_ui_task(void *);
-void power_switch_ev(uint8_t mode);
 
 
+/**********************************************************************
+ *  FUNCTION:    system_event
+ *  PARAMETERS:  enum_system_event event
+ *  DESCRIPTION: Performs a system event                         
+ *  RETURN:      void
+ **********************************************************************/
 void system_event(enum_system_event eventt){
 	switch(eventt)
 	{
 		case EV_POWER_SWITCH_EXTERNAL:
+        	system_event(EV_SHUTDOWN);
+			delay_FreeRTOS_ms(3);
+			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK,1);
+			m_hw_status.external_power = 1;
+        break;
+
 		case EV_POWER_SWITCH_INTERNAL:
-			power_switch_ev(eventt);
+			system_event(EV_SHUTDOWN);
+			delay_FreeRTOS_ms(3);
+			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK, 0);
+			m_hw_status.external_power = 0;
 		break;
 		
 		case EV_POWER_UP:
@@ -33,10 +47,9 @@ void system_event(enum_system_event eventt){
 		
 		case EV_SHUTDOWN:
 			m_hw_status.powered_up = 0;
-			m_audio_system.strip_off();
-			writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 0);
+            writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 0);
 			writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET , 0);
-
+			m_audio_system.strip_off();
 		break;
 		
 		case EV_INITIALIZATION:
@@ -47,7 +60,7 @@ void system_event(enum_system_event eventt){
 			DDRH = 1 << PH3 | 1 << PH4 | 1 << PH5;
 			DDRB = 1 << PB4 | 1 << PB5 | 1 << PB6 | 1 << PB7;
 			/************************************************************************/
-			/*						SETUP TIMER3 FOR TIMER_t LIBRARY                  */
+			/*						SETUP TIMER3 FOR TIMER_t LIBRARY                */
 			/************************************************************************/
 			TCCR3A  = 0;
 			OCR3A = 249;												// Output compare match na 249 tickov (1ms)
@@ -69,8 +82,8 @@ void system_event(enum_system_event eventt){
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
 			xTaskCreate(power_task, "Power", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
-			xTaskCreate(user_ui_task, "User UI", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 3, NULL);
-			xTaskCreate(audio_visual_task, "m_audio_system", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 2, NULL);
+			xTaskCreate(user_ui_task, "User UI", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
+			xTaskCreate(audio_visual_task, "m_audio_system", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
 			/************************************************************************/
 			/*								OTHER                                   */
 			/************************************************************************/
@@ -82,26 +95,3 @@ void system_event(enum_system_event eventt){
 		break;
 	}
 }
-
-void power_switch_ev(uint8_t mode)
-{
-	switch(mode)
-	{
-		case EV_POWER_SWITCH_EXTERNAL:
-			system_event(EV_SHUTDOWN);
-			delay_FreeRTOS_ms(3);
-			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK,1);
-			m_hw_status.external_power = 1;
-		break;
-		
-		case EV_POWER_SWITCH_INTERNAL:
-			system_event(EV_SHUTDOWN);
-			delay_FreeRTOS_ms(3);
-			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK, 0);
-			m_hw_status.external_power = 0;
-		break;
-	}
-}
-
-
-

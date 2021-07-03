@@ -26,24 +26,16 @@ void audio_visual_task(void *p) //Funkcija avdio-vizualnega sistema
 {
 	while (1)
 	{	
-		if (m_audio_system.strip_mode != AUVS_AN_STRIP_OFF)
+		if (m_audio_system.strip_mode != AUVS_AN_STRIP_OFF && m_audio_system.mikrofon_detect)
 		{	
-			if (m_audio_system.lucke_filter_timer.value() >= 200 && m_audio_system.mikrofon_detect) /* mikrofon_detect gets triggered in the measurement task*/
-			{
-				m_audio_system.mikrofon_detect = 0;
-				m_audio_system.lucke_filter_timer.reset();
-
-				COLOR_NEXT(m_audio_system.curr_color_index, AUVS::strip_colors);
-                
-				m_audio_system.CREATE_ANIMATION(m_audio_system.strip_mode, m_audio_system.curr_color_index);
-			}
+            m_audio_system.mikrofon_detect = 0;
+            COLOR_NEXT(m_audio_system.curr_color_index, AUVS::strip_colors);
+            m_audio_system.CREATE_ANIMATION(m_audio_system.strip_mode, m_audio_system.curr_color_index);
 		}
 		delay_FreeRTOS_ms(100);
 		//End task loop
 	}
 }
-
-
 
 /**************************************************************************************************************************
 *                                                                                                                         *

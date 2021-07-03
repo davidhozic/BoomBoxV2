@@ -51,15 +51,10 @@ void AUVS::flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikr
 	set_strip_color(COLOR_WHITE);
 	for (uint8_t i = 0; i < 5; i++)
 	{
-		set_strip_brightness(0);
-        update_strip();
-		delay_FreeRTOS_ms(125);
-		set_strip_brightness(255);
-        update_strip();
-		delay_FreeRTOS_ms(125);
+        brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS/2);
+		brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS/2);
 	}
 }
-
 
 /**********************************************************************
  *  FUNCTION:    color_shift
@@ -69,15 +64,16 @@ void AUVS::flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikr
 void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 {
 	char smer[3];
+    update_strip();
     do
 	{
-		strip_colors[BARVA].color_data[STRIP_RED] >= current_color[STRIP_RED]	  ? smer[STRIP_RED]	= 1 : smer[STRIP_RED]	  = -1;
-		strip_colors[BARVA].color_data[STRIP_GREEN] >= current_color[STRIP_GREEN] ? smer[STRIP_GREEN] = 1 : smer[STRIP_GREEN] = -1;
-		strip_colors[BARVA].color_data[STRIP_BLUE] >= current_color[STRIP_BLUE]  ? smer[STRIP_BLUE]  = 1 : smer[STRIP_BLUE]  = -1;
+		strip_colors[BARVA].color_data[STRIP_RED]   >= current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	  = -1;
+		strip_colors[BARVA].color_data[STRIP_GREEN] >= current_color[STRIP_GREEN]  ?  smer[STRIP_GREEN] = 1 : smer[STRIP_GREEN] = -1;
+		strip_colors[BARVA].color_data[STRIP_BLUE]  >= current_color[STRIP_BLUE]   ?  smer[STRIP_BLUE]  = 1 : smer[STRIP_BLUE]  = -1;
 
-		current_color[STRIP_RED]	+=	(AUVS_CONFIG_BRIGHTNESS_CHANGE * smer[STRIP_RED]);
-		current_color[STRIP_GREEN]	+=	(AUVS_CONFIG_BRIGHTNESS_CHANGE * smer[STRIP_GREEN]);
-		current_color[STRIP_BLUE]	+=	(AUVS_CONFIG_BRIGHTNESS_CHANGE * smer[STRIP_BLUE]);
+		current_color[STRIP_RED]	+=	(AUVS_CFG_COLOR_CHANGE * smer[STRIP_RED]);
+		current_color[STRIP_GREEN]	+=	(AUVS_CFG_COLOR_CHANGE * smer[STRIP_GREEN]);
+		current_color[STRIP_BLUE]	+=	(AUVS_CFG_COLOR_CHANGE * smer[STRIP_BLUE]);
 
 		/* Check over color for seperate color indexes */
 		if (smer[STRIP_RED] == 1 && current_color[STRIP_RED] > strip_colors[BARVA].color_data[STRIP_RED] || smer[STRIP_RED] == -1 && current_color[STRIP_RED] < strip_colors[BARVA].color_data[STRIP_RED] )
@@ -98,7 +94,7 @@ void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 
 		update_strip();
 		
-		delay_FreeRTOS_ms(  (animation_time*AUVS_CONFIG_BRIGHTNESS_CHANGE) / 255  );
+		delay_FreeRTOS_ms(  (animation_time*AUVS_CFG_COLOR_CHANGE) / 255  );
 
 	}while ( current_color[STRIP_RED]	  != strip_colors[BARVA].color_data[STRIP_RED]   ||
 			 current_color[STRIP_GREEN]   != strip_colors[BARVA].color_data[STRIP_GREEN] ||
@@ -112,13 +108,14 @@ void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
  **********************************************************************/
 void AUVS::brightness_fade(char smer, unsigned short animation_time)
 {
+    update_strip();
 	do
 	{
-		current_brightness += AUVS_CONFIG_BRIGHTNESS_CHANGE * smer;
+		current_brightness += AUVS_CFG_BRIGHTNESS_CHANGE * smer;
 		current_brightness = current_brightness < 0 ? 0 :    current_brightness;
 		current_brightness = current_brightness > 255 ? 255 : current_brightness;
 		update_strip();
-		delay_FreeRTOS_ms(  (animation_time*AUVS_CONFIG_BRIGHTNESS_CHANGE)/255  );
+		delay_FreeRTOS_ms(  (animation_time*AUVS_CFG_BRIGHTNESS_CHANGE)/255 );
 	}while (smer > 0 ? current_brightness < 255 : current_brightness > 0);
 }
 
@@ -146,7 +143,7 @@ void AUVS::strip_off()
  **********************************************************************/
 void AUVS::strip_on()
 {
-	xTaskCreate(signal_measure, "avg_vol", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, &handle_audio_meass);
+	xTaskCreate(signal_measure, "signal_meass", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 2, &handle_audio_meass);
 	strip_mode = EEPROM.beri(GLOBAL_CFG_EEPROM_ADDR_STRIP_MODE);
 	
 	/* EEPROM address is empty */
@@ -155,7 +152,7 @@ void AUVS::strip_on()
 		strip_mode = 0;
 	}   
 
-	animation_time = AUVS_CONFIG_NORMAL_ANIMATION_TIME_MS;
+	animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
 	delay_FreeRTOS_ms(10);
 }
 
@@ -178,13 +175,10 @@ void AUVS::set_strip_mode(uint8_t mode)
  **********************************************************************/
 void AUVS::set_strip_color(unsigned char barva_index)
 {
-		this->curr_color_index = barva_index;
-        current_color[STRIP_RED]  = strip_colors[barva_index].color_data[STRIP_RED];
-        current_color[STRIP_GREEN] = strip_colors[barva_index].color_data[STRIP_GREEN];
-        current_color[STRIP_BLUE]  = strip_colors[barva_index].color_data[STRIP_BLUE];
-        update_strip();
+    current_color[STRIP_RED]   = strip_colors[barva_index].color_data[STRIP_RED];
+    current_color[STRIP_GREEN] = strip_colors[barva_index].color_data[STRIP_GREEN];
+    current_color[STRIP_BLUE]  = strip_colors[barva_index].color_data[STRIP_BLUE];
 }
-
 
 
 /**********************************************************************
@@ -196,5 +190,4 @@ void AUVS::set_strip_color(unsigned char barva_index)
 void AUVS::set_strip_brightness(uint8_t value)
 {
 	current_brightness = value;
-    update_strip();
 }

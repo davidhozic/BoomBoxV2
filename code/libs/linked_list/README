@@ -1,2 +1,0 @@
-To build the example in the example folder, run gnu make with these commands: clean all
-and then attach debugger to the example.exe

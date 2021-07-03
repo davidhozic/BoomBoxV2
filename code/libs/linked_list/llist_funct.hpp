@@ -1,4 +1,6 @@
-#include "task.h"
+#if (USE_FREERTOS == 1)
+    #include "task.h"
+#endif
 
 
 template <typename tip>
@@ -20,6 +22,14 @@ void LIST_t<tip>::pojdi_konec()
     if (count > 0)
         glava_index = count - 1;
 }
+
+/**********************************************************************
+ *  FUNCTION:    head_to_index()   
+ *  PARAMETERS:  uint32_index
+ *  DESCRIPTION: Moves the head of list to a specific index 
+ *  RETURN:      void                                        
+ **********************************************************************/
+
 template <typename tip>
 void LIST_t<tip>::head_to_index(uint32_t index)
 {
@@ -35,13 +45,28 @@ void LIST_t<tip>::head_to_index(uint32_t index)
         glava_index++;
     }
 }
+
+
+/**********************************************************************
+ *  FUNCTION:    length()
+ *  PARAMETERS:  void
+ *  DESCRIPTION: Returns the number of elements in the list     
+ *  RETURN:      void                                   
+ **********************************************************************/
 template <typename tip>
 unsigned short LIST_t<tip>::length()
 {
     return count;
 }
+
+/**********************************************************************
+ *  FUNCTION:    add_front()
+ *  PARAMETERS:  custom_type value
+ *  DESCRIPTION: adds element to the front of the list  
+ *  RETURN:      void               
+ **********************************************************************/
 template <typename tip>
-void LIST_t<tip>::add_front(tip vrednost)
+void LIST_t<tip>::add_front(tip value)
 {
 	vpdt *nov;
 
@@ -59,15 +84,22 @@ void LIST_t<tip>::add_front(tip vrednost)
     }
     nov->prejsnji = NULL;
     nov->naslednji = glava;
-    nov->podatek = vrednost;
+    nov->podatek = value;
     glava = nov;
     count++;
     glava_index = 0;
 }
+
+
+/**********************************************************************
+ *  FUNCTION:    add_end()
+ *  PARAMETERS:  custom_type value
+ *  DESCRIPTION: adds element to the end of the list        
+ *  RETURN:      void         
+ **********************************************************************/
 template <typename tip>
-void LIST_t<tip>::add_end(tip vrednost)
+void LIST_t<tip>::add_end(tip value)
 {
-	
 	vpdt *nov;
 
 	#if USE_FREERTOS == 1
@@ -84,12 +116,20 @@ void LIST_t<tip>::add_end(tip vrednost)
     }
     nov->prejsnji = glava;
     nov->naslednji = NULL;
-    nov->podatek = vrednost;
+    nov->podatek = value;
     glava = nov;
     count++;
     glava_index = count - 1;
 
 }
+
+
+/**********************************************************************
+ *  FUNCTION:    pop_end()
+ *  PARAMETERS:  void
+ *  DESCRIPTION: removes the last element and returns it
+ *  RETURN:      Custom type element at the end of the list                     
+ **********************************************************************/
 template <typename tip>
 tip LIST_t<tip>::pop_end()
 {
@@ -113,9 +153,17 @@ tip LIST_t<tip>::pop_end()
     return return_data;
 }
 
+
+/**********************************************************************
+ *  FUNCTION:    sort()
+ *  PARAMETERS:  int function_comparator_function
+ *               (must return < 0 if element 1 is before element 2)
+ *  DESCRIPTION: Sorts elements in the list                         
+ *  RETURN:      void
+ **********************************************************************/
 #if (INCLUDE_SORT == 1)
 template <typename tip>
-void LIST_t<tip>::sort(tip (*comparator_fnct)(tip, tip))
+void LIST_t<tip>::sort(int (*comparator_fnct)(tip, tip))
 {
     tip temp;
     for (uint32_t i = 0; i < count - 1;)
@@ -134,6 +182,14 @@ void LIST_t<tip>::sort(tip (*comparator_fnct)(tip, tip))
 }
 #endif
 
+
+/**********************************************************************
+ *  FUNCTION:    print_console()
+ *  PARAMETERS:  void
+ *  DESCRIPTION: Prints the contents of the list to the console 
+ *               ( elements must be a string or a number )                          
+ *  RETURN:      void
+ **********************************************************************/
 #if (INCLUDE_IOSTREAM == 1)
 template <typename tip>
 void LIST_t<tip>::print_console()
@@ -146,6 +202,15 @@ void LIST_t<tip>::print_console()
     }
 }
 #endif
+
+
+/**********************************************************************
+ *  FUNCTION:    remove_by_index ()
+ *  PARAMETERS:  uint32_t index of element to remove
+ *  DESCRIPTION: Removes the element by index,  moves the contents on
+ *               the right to the left                        
+ *  RETURN:      void
+ **********************************************************************/
 template <typename tip>
 void LIST_t<tip>::remove_by_index(uint32_t index)
 {
@@ -168,27 +233,45 @@ void LIST_t<tip>::remove_by_index(uint32_t index)
         glava_index--;
     }
 
-
+    this->glava->podatek.~tip();  // Call the deconstructor in case data is another list 
     free(glava);
 
 
     glava = new_head;
     count--;
 }
+
+
+/**********************************************************************
+ *  FUNCTION:    splice ()
+ *  PARAMETERS:  uint32 start_index, uint32 number of elements to remove
+ *  DESCRIPTION: Removes the specified number of elements, starting at                       
+ *               start index  
+ *  RETURN:      void
+ **********************************************************************/
 template <typename tip>
-void LIST_t<tip>::splice(uint32_t index, uint32_t num_to_remove)
+void LIST_t<tip>::splice(uint32_t start_index, uint32_t num_to_remove)
 {
     while (num_to_remove > 0)
     {
-        remove_by_index(index);
+        remove_by_index(start_index);
         num_to_remove--;
     }
 }
 
 
 
+/********************************************************************************************/
+/*                                       OPERATORS                                          */    
+/********************************************************************************************/
 
-/*************************************************/
+/**********************************************************************
+ *  OPERATOR:    [] 
+ *  PARAMETERS:  unsigned long index
+ *  DESCRIPTION: returns the element at specific index by reference                    
+ *  RETURN:      Reference return of custom type data at specific index
+ **********************************************************************/
+
 #if (USE_OPERATORS == 1)
 template <typename tip>
 tip &LIST_t<tip>::operator[](unsigned long index)
@@ -198,21 +281,17 @@ tip &LIST_t<tip>::operator[](unsigned long index)
     
     return (glava->podatek);
 }
-
-template <typename tip>
-LIST_t<tip> LIST_t<tip>::operator+(tip pod)
-{
-    this->add_end(pod);
-    return (*this);
-}
-
+/**********************************************************************
+ *  OPERATOR:    +=
+ *  PARAMETERS:  custom data
+ *  DESCRIPTION: Adds data to the back of the list                   
+ *  RETURN:      void
+ **********************************************************************/
 template <typename tip>
 void LIST_t<tip>::operator+=(tip pod)
 {
     this->add_end(pod);
 }
-
-
 
 
 

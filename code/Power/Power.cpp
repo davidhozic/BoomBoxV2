@@ -28,6 +28,10 @@ void power_task(void *p)
 {
     for (;;)
     {
+        /******************************************************************/
+        /*                      POWER ON/OFF/SWITCH                       */                                                
+        /******************************************************************/
+
         m_power.battery_voltage = readANALOG(GLOBAL_CFG_PIN_VOLTAGE_DIV) * (5000.00/1023);
         /* No need to worry about the timer running because the first condition will always be false while speaker is enabled, meaning other elements won't execute in the if statement */
         if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > 8 || m_hw_status.external_power) && m_power.power_up_delay_timer.value() >= 2000 )
@@ -58,7 +62,9 @@ void power_task(void *p)
         }
 
 
-        
+        /******************************************************************/
+        /*                           CHARGING                             */                                                
+        /******************************************************************/
         if (m_hw_status.charging_finished == 0 && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) >= 100)
         {
             m_hw_status.charging_finished = 1;
@@ -83,6 +89,6 @@ void power_task(void *p)
             writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE,1);
             m_hw_status.charging_enabled = 1;
         }
-        delay_FreeRTOS_ms(200);
+        delay_FreeRTOS_ms(100);
     } 
 }
