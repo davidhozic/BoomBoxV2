@@ -3,16 +3,6 @@
 #include "includes/audio.hpp"
 #include "libs/outputs_inputs/outputs_inputs.hpp"
 
-#include <string.h>
-/**************************************************************************************************************************
-*                                                                                                                         *
-*                                                           Pomozne funkcije                                              *
-*                                                                                                                         *
-**************************************************************************************************************************/
-
-
-
-
 /**********************************************************************
  *  FUNCTION:    CREATE_ANIMATION
  *  PARAMETERS:  uint8_t task_index, uint8_t color
@@ -21,9 +11,12 @@
  **********************************************************************/
 void AUVS::CREATE_ANIMATION(uint8_t task_index, uint8_t color)                
 {
-    set_strip_color(color);
+    /* If terminator is sent in, don't change color (assume task will take care of that) */
+    if (color < COLOR_TERMINATOR)
+        set_strip_color(color);
+        
     deleteTASK(&handle_active_strip_mode);
-    xTaskCreate(AUVS::strip_animations[task_index].f_ptr, "str", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
+    xTaskCreate(AUVS::strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
 }
 
 
@@ -48,12 +41,17 @@ void AUVS::update_strip()
  **********************************************************************/
 void AUVS::flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
 {
-	set_strip_color(COLOR_WHITE);
+	set_strip_color(COLOR_PINK);
 	for (uint8_t i = 0; i < 5; i++)
 	{
-        brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS/2);
-		brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS/2);
+        set_strip_brightness(0);
+        update_strip();
+        delay_FreeRTOS_ms(125);
+        set_strip_brightness(255);
+        update_strip();
+        delay_FreeRTOS_ms(125);
 	}
+    brightDOWN(AUVS_CFG_NORMAL_ANIMATION_TIME_MS);
 }
 
 /**********************************************************************
@@ -64,7 +62,6 @@ void AUVS::flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikr
 void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 {
 	char smer[3];
-    update_strip();
     do
 	{
 		strip_colors[BARVA].color_data[STRIP_RED]   >= current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	  = -1;
@@ -76,17 +73,20 @@ void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 		current_color[STRIP_BLUE]	+=	(AUVS_CFG_COLOR_CHANGE * smer[STRIP_BLUE]);
 
 		/* Check over color for seperate color indexes */
-		if (smer[STRIP_RED] == 1 && current_color[STRIP_RED] > strip_colors[BARVA].color_data[STRIP_RED] || smer[STRIP_RED] == -1 && current_color[STRIP_RED] < strip_colors[BARVA].color_data[STRIP_RED] )
+		if (smer[STRIP_RED] == 1  && current_color[STRIP_RED] > strip_colors[BARVA].color_data[STRIP_RED] ||
+            smer[STRIP_RED] == -1 && current_color[STRIP_RED] < strip_colors[BARVA].color_data[STRIP_RED] )
 		{
 			current_color[STRIP_RED] = strip_colors[BARVA].color_data[STRIP_RED];
 		}
 	
-		if (smer[STRIP_GREEN] == 1 && current_color[STRIP_GREEN] > strip_colors[BARVA].color_data[STRIP_GREEN] 	|| smer[STRIP_GREEN] == -1 && current_color[STRIP_GREEN] < strip_colors[BARVA].color_data[STRIP_GREEN] )
+		if (smer[STRIP_GREEN] ==  1 && current_color[STRIP_GREEN] > strip_colors[BARVA].color_data[STRIP_GREEN] || 
+            smer[STRIP_GREEN] == -1 && current_color[STRIP_GREEN] < strip_colors[BARVA].color_data[STRIP_GREEN] )
 		{
 			current_color[STRIP_GREEN] = strip_colors[BARVA].color_data[STRIP_GREEN];
 		}
 
-		if (smer[STRIP_BLUE] == 1 && current_color[STRIP_BLUE] > strip_colors[BARVA].color_data[STRIP_BLUE] || smer[STRIP_BLUE] == -1 && current_color[STRIP_BLUE] < strip_colors[BARVA].color_data[STRIP_BLUE] )
+		if (smer[STRIP_BLUE] ==  1 && current_color[STRIP_BLUE] > strip_colors[BARVA].color_data[STRIP_BLUE] ||
+            smer[STRIP_BLUE] == -1 && current_color[STRIP_BLUE] < strip_colors[BARVA].color_data[STRIP_BLUE] )
 		{
 			current_color[STRIP_BLUE] = strip_colors[BARVA].color_data[STRIP_BLUE];
 		}
@@ -128,7 +128,7 @@ void AUVS::brightness_fade(char smer, unsigned short animation_time)
 void AUVS::strip_off()
 {
 	strip_mode = AUVS_AN_STRIP_OFF;
-	deleteTASK(&handle_audio_meass);
+	holdTASK(&handle_audio_system);
 	deleteTASK(&handle_active_strip_mode);
 	delay_FreeRTOS_ms(10);
 	animation_time = AUVS_CFG_SLOW_ANIMATION_TIME_MS;
@@ -143,7 +143,7 @@ void AUVS::strip_off()
  **********************************************************************/
 void AUVS::strip_on()
 {
-	xTaskCreate(signal_measure, "signal_meass", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 2, &handle_audio_meass);
+    resumeTASK(&m_audio_system.handle_audio_system);
 	strip_mode = EEPROM.beri(GLOBAL_CFG_EEPROM_ADDR_STRIP_MODE);
 	
 	/* EEPROM address is empty */

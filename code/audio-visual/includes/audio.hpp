@@ -21,10 +21,10 @@
 /*********************************************/
 /*             Prototipi taskov              */
 /*********************************************/
-void normal_fade_task(void *input);
-void inverted_fade_task(void *input);
-void breathe_fade_task(void *input);
-void signal_measure(void* p);
+void normal_fade_task(void *);
+void inverted_fade_task(void *);
+void breathe_fade_task(void *);
+void audio_visual_task (void *);
 /*********************************************/
 
 /****************************************************/
@@ -39,14 +39,12 @@ enum enum_STRIP_MODES
 	AUVS_AN_STRIP_OFF,
 };
 
-
 enum enum_COLOR_SPACE_indexes
 {
 	STRIP_RED = 0,
 	STRIP_GREEN,
 	STRIP_BLUE
 };
-
 
 enum enum_BARVE
 {
@@ -61,14 +59,11 @@ enum enum_BARVE
 	COLOR_TERMINATOR
 };
 
-
 struct STRIP_COLOR_t
 {
 	uint8_t color_index;
 	uint8_t color_data[3];
 };
-
-
 
 struct STRIP_ANIMATION_t
 {
@@ -76,7 +71,20 @@ struct STRIP_ANIMATION_t
 	void (*f_ptr)(void *);
 };
 
+struct MEASSUREMENT_t
+{
+	uint16_t  max_value = 0;
+	uint32_t  readings_sum	 = 0;
+	uint8_t	  readings_num : 7;
+	bool	  value_logged : 1;
+	uint16_t  current_value  = 0;
+	uint16_t  previous_value = 0;
 
+	uint16_t average_volume = 2048;
+    
+	TIMER_t val_log_timer;		// Timer that delays logging of max measured volume voltage
+    TIMER_t filter_timer;
+};
 
 class AUVS
 {
@@ -100,15 +108,17 @@ public:
 	int16_t current_color[3] = {255, 255, 255};					// Current RGB color of the strip
 	int16_t current_brightness = 0;								// Current brightness level of the strip
 	uint8_t curr_color_index = 0;									// Index of color that strip will turn on
-	bool mikrofon_detect = 0;									// Is set to 1 if spike is detected and then strip is turned on
 
 	/****   Task handles	****/
-	TaskHandle_t handle_audio_meass = NULL;
+	TaskHandle_t handle_audio_system = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
 	/***	Strip mode functions ***/
 	static STRIP_ANIMATION_t strip_animations[];
 	/***	Strip colors	***/
 	static STRIP_COLOR_t strip_colors[];
+
+    /***    Meassurement    ***/
+    MEASSUREMENT_t  meass;
 };
 
 

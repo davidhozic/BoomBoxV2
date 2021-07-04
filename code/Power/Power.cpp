@@ -56,7 +56,7 @@ void power_task(void *p)
         }   
 
         /* No need to worry about the timer running because the first condition will always be false while speaker is enabled, meaning other elements won't execute in the if statement */
-        if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > POWER_CFG_CHARGE_HYSTERESIS_PERCENT || m_hw_status.external_power) && m_power.power_up_delay_timer.value() >= 2000 )
+        if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > POWER_CFG_CHARGE_HYSTERESIS_PERCENT || m_hw_status.external_power) && m_power.switch_pwr.value() && m_power.power_up_delay_timer.value() >= 2000 )
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
             system_event(EV_POWER_UP);
             m_power.power_up_delay_timer.reset();
@@ -128,7 +128,7 @@ void power_task(void *p)
             writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE,1);
             m_hw_status.charging_enabled = 1;
         }
-        delay_FreeRTOS_ms(30);
+        delay_FreeRTOS_ms(50);
     }
 }
 

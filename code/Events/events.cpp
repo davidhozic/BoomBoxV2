@@ -78,33 +78,34 @@ void system_event(enum_system_event event){
 			/*						SET DATA DIRECTION REGISTERS			        */
 			/************************************************************************/
 			DDRE = 1;
-			DDRH = 1 << PH3 | 1 << PH4 | 1 << PH5;
-			DDRB = 1 << PB4 | 1 << PB5 | 1 << PB6 | 1 << PB7;
+			DDRH = (1 << PH3) | (1 << PH4) | (1 << PH5);
+			DDRB =( 1 << PB4) | (1 << PB5) | (1 << PB6) | (1 << PB7);
 			/************************************************************************/
 			/*						SETUP TIMER3 FOR TIMER_t LIBRARY                */
 			/************************************************************************/
 			TCCR3A  = 0;
 			OCR3A = 249;												// Output compare match na 249 tickov (1ms)
-			TIMSK3	= 1 << OCIE3A;										// Vklopi output compare match ISR
-			TCCR3B	= 1 << WGM32 | 1 << CS31 | 1 << CS30;				// Clear timer on compare match	, /64 prescaler
+			TIMSK3	= (1 << OCIE3A);										// Vklopi output compare match ISR
+			TCCR3B	= (1 << WGM32) | (1 << CS31) | (1 << CS30);				// Clear timer on compare match	, /64 prescaler
 			/************************************************************************/
 			/*								SETUP ADC                               */
 			/************************************************************************/
 
 			ADMUX   =	(1 << REFS0);
 			ADCSRA  =	(1 << ADPS0) | (1 << ADPS2);
-			ADCSRB  =	 0;
+			ADCSRB  =	0;
 			ADCSRA |=	(1 << ADEN);
 			DIDR0   =	0xFF;
-			ADMUX = 1;
+			ADMUX   =   1;
 			ADCSRA |=	(1 << ADSC);		
             
 			/************************************************************************/
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
-			xTaskCreate(power_task, "Power", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
-			xTaskCreate(user_ui_task, "User UI", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
-			xTaskCreate(audio_visual_task, "m_audio_system", GLOBAL_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
+			xTaskCreate(power_task, "Power", TASK_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
+			xTaskCreate(user_ui_task, "User UI", TASK_CFG_TASK_DEFAULT_STACK, NULL, 2, NULL);
+            xTaskCreate(audio_visual_task, "audio-visual", TASK_CFG_TASK_DEFAULT_STACK, NULL, 3, NULL);
+            holdTASK(&m_audio_system.handle_audio_system); // <---- Gets resumed after strip .strip_on() function gets called
 			/************************************************************************/
 			/*								OTHER                                   */
 			/************************************************************************/

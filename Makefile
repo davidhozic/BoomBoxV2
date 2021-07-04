@@ -41,9 +41,8 @@ FOLDER_INCLUDE:= -I code/\
 
 CPP := code//bootloader.cpp\
 code/audio-visual/audio_system_functions.cpp\
+code/audio-visual/auvs_task.cpp\
 code/audio-visual/avs_colors_animations.cpp\
-code/audio-visual/avs_task_main.cpp\
-code/audio-visual/meritve.cpp\
 code/common/common.cpp\
 code/Events/events.cpp\
 code/libs/castimer/castimer.cpp\
@@ -77,9 +76,8 @@ $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/tasks.o\
 $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/timers.o\
 $(OUTPUT_DIR)/code//bootloader.o\
 $(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o\
+$(OUTPUT_DIR)/code/audio-visual/auvs_task.o\
 $(OUTPUT_DIR)/code/audio-visual/avs_colors_animations.o\
-$(OUTPUT_DIR)/code/audio-visual/avs_task_main.o\
-$(OUTPUT_DIR)/code/audio-visual/meritve.o\
 $(OUTPUT_DIR)/code/common/common.o\
 $(OUTPUT_DIR)/code/Events/events.o\
 $(OUTPUT_DIR)/code/libs/castimer/castimer.o\
@@ -137,17 +135,13 @@ $(OUTPUT_DIR)/code/audio-visual/audio_system_functions.o : code/audio-visual/aud
 	echo "Compiling C++ source file:audio_system_functions.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/audio_system_functions.cpp
 
+$(OUTPUT_DIR)/code/audio-visual/auvs_task.o : code/audio-visual/auvs_task.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/common/inc/common.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/castimer/castimer.hpp 
+	echo "Compiling C++ source file:auvs_task.cpp"
+	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/auvs_task.cpp
+
 $(OUTPUT_DIR)/code/audio-visual/avs_colors_animations.o : code/audio-visual/avs_colors_animations.cpp code/audio-visual/includes/audio.hpp 
 	echo "Compiling C++ source file:avs_colors_animations.cpp"
 	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/avs_colors_animations.cpp
-
-$(OUTPUT_DIR)/code/audio-visual/avs_task_main.o : code/audio-visual/avs_task_main.cpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/castimer/castimer.hpp code/libs/input/input.hpp code/libs/outputs_inputs/outputs_inputs.hpp 
-	echo "Compiling C++ source file:avs_task_main.cpp"
-	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/avs_task_main.cpp
-
-$(OUTPUT_DIR)/code/audio-visual/meritve.o : code/audio-visual/meritve.cpp code/libs/outputs_inputs/outputs_inputs.hpp code/common/inc/common.hpp code/libs/EEPROM/EEPROM.hpp code/audio-visual/includes/audio.hpp code/libs/castimer/castimer.hpp 
-	echo "Compiling C++ source file:meritve.cpp"
-	$(CPP_COMPILER) $(CPP_FLAGS) $(COMMON_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@ -c code/audio-visual/meritve.cpp
 
 $(OUTPUT_DIR)/code/common/common.o : code/common/common.cpp code/libs/FreeRTOS_m2560/include/FreeRTOS.h code/common/inc/common.hpp code/libs/input/input.hpp 
 	echo "Compiling C++ source file:common.cpp"

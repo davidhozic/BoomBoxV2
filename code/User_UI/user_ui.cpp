@@ -80,7 +80,6 @@ struct USER_UI
 	{
 		state = SU_STATE_UNSET;
 		menu_seek =  SU_MENU_SCROLL_TOGGLE_LCD;
-		SW2 = INPUT_t(GLOBAL_CFG_PIN_SU_SWITCH, GLOBAL_CFG_PORT_SU_SWITCH, 0);
 		hold_time = 0;
 		hold_timer.reset();
 		state_exit_timer.reset();
@@ -165,6 +164,7 @@ void user_ui_task(void *p)
                     m_user_ui.state = SU_STATE_SCROLL;
                     m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
                     m_audio_system.flash_strip();
+                    delay_FreeRTOS_ms(500);
                 }
             break;
                 /*****	END CASE *****/
@@ -238,7 +238,7 @@ void user_ui_task(void *p)
         /* Speaker has been turned off while in state -> reset */
         else if (m_user_ui.state != SU_STATE_UNSET)
         {
-            exit_scroll();
+            m_user_ui.init();
         }
 
 

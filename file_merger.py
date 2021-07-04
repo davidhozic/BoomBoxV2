@@ -1,19 +1,20 @@
-import os, sys, time
-
+import os
+import sys
+import time
 
 
 SEARCH_DIR = "./"
 OUTPUT_FILE = "ALL_IN_ONE.cpp"
 
-EXTENSIONS_TO_USE = [".cpp",".c",".h",".hpp",".hh"]
+EXTENSIONS_TO_USE = [".cpp", ".c", ".h", ".hpp", ".hh"]
 FOLDERS_TO_IGNORE = ["FreeRTOS_m2560"]
 
 
-#STEP CREATE FILE DATA
+# STEP CREATE FILE DATA
 data_output_file = ""
 file_count = 0
 total_line_count = 0
-for dir, dirname, files in os.walk(SEARCH_DIR, topdown=False):
+for dir, dirname, files in os.walk(SEARCH_DIR, topdown=True):
 
     for ign_fld in FOLDERS_TO_IGNORE:
         if dir.find(ign_fld) != -1:
@@ -25,11 +26,12 @@ for dir, dirname, files in os.walk(SEARCH_DIR, topdown=False):
             for extension in EXTENSIONS_TO_USE:
                 if file.endswith(extension):
                     print("Processing file: " + file)
-                    dir = dir.replace("\\","/")
+                    dir = dir.replace("\\", "/")
                     file = dir + "/" + file
 
                     file_count += 1
-                    total_line_count += sum (1 for line in open(file=file, mode="r", encoding="utf-8"))
+                    total_line_count += sum(1 for line in open(file=file,
+                                            mode="r", encoding="utf-8"))
 
                     lang = "NEZNAN"
                     if file.endswith(".cpp") or file.endswith(".hpp"):
@@ -43,7 +45,7 @@ for dir, dirname, files in os.walk(SEARCH_DIR, topdown=False):
 -> IME DATOTEKE: " + file + " \n\
 -> JEZIK: " + lang + "\n\
 #################################################################################################################################################*/\n"
-                    with open(file=file,mode="r",encoding="utf-8") as opened_file:
+                    with open(file=file, mode="r", encoding="utf-8") as opened_file:
                         data_output_file += opened_file.read()
                     break
 
@@ -59,8 +61,7 @@ file_info = "\n\n\n\n\
 data_output_file = file_info + data_output_file
 
 
-
-#STEP WRITE FILE
-output_file = open(file=OUTPUT_FILE, mode="w",encoding="utf-8")
+# STEP WRITE FILE
+output_file = open(file=OUTPUT_FILE, mode="w", encoding="utf-8")
 output_file.write(data_output_file)
 output_file.close()
