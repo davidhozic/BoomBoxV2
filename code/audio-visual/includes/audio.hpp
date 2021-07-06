@@ -71,25 +71,12 @@ struct STRIP_ANIMATION_t
 	void (*f_ptr)(void *);
 };
 
-struct MEASSUREMENT_t
-{
-	uint16_t  max_value = 0;
-	uint32_t  readings_sum	 = 0;
-	uint8_t	  readings_num : 7;
-	bool	  value_logged : 1;
-	uint16_t  current_value  = 0;
-	uint16_t  previous_value = 0;
 
-	uint16_t average_volume = 2048;
-    
-	TIMER_t val_log_timer;		// Timer that delays logging of max measured volume voltage
-    TIMER_t filter_timer;
-};
 
 class AUVS
 {
 public:
-    /*   Function Prototypes   */
+    /***   Function Prototypes   ***/
     void update_strip();
 	void strip_off();
 	void strip_on();
@@ -99,26 +86,43 @@ public:
 	void set_strip_color(unsigned char barva_index);
 	void set_strip_mode(uint8_t mode);
 	void set_strip_brightness(uint8_t value);
-    void CREATE_ANIMATION(uint8_t task_index, uint8_t color);
+    void create_animation(uint8_t task_index, uint8_t color);
     /****************************************************************************/
-	/****  Strip parameters   ****/
-	uint8_t strip_mode = AUVS_AN_STRIP_OFF;							// Current strip mode
-	uint16_t animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
-	/**** Strip current state ****/
-	int16_t current_color[3] = {255, 255, 255};					// Current RGB color of the strip
-	int16_t current_brightness = 0;								// Current brightness level of the strip
-	uint8_t curr_color_index = 0;									// Index of color that strip will turn on
 
-	/****   Task handles	****/
-	TaskHandle_t handle_audio_system = NULL;
-	TaskHandle_t handle_active_strip_mode = NULL;	
-	/***	Strip mode functions ***/
-	static STRIP_ANIMATION_t strip_animations[];
-	/***	Strip colors	***/
-	static STRIP_COLOR_t strip_colors[];
+    struct STRIP_t
+    {
+        /****  Strip parameters   ****/
+        uint8_t  strip_mode = AUVS_AN_STRIP_OFF;							// Current strip mode
+        uint16_t animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
+        /**** Strip current state ****/
+        int16_t current_color[3] = {255, 255, 255};					// Current RGB color of the strip
+        int16_t current_brightness = 0;								// Current brightness level of the strip
+        uint8_t curr_color_index = 0;									// Index of color that strip will turn on
+        /***	Strip mode functions ***/
+        static STRIP_ANIMATION_t strip_animations[];
+        /***	Strip colors	***/
+        static STRIP_COLOR_t strip_colors[];
+    }strip;
 
     /***    Meassurement    ***/
-    MEASSUREMENT_t  meass;
+    struct MEASSUREMENT_t
+    {
+        uint16_t  max_value = 0;
+        uint32_t  readings_sum	 = 0;
+        uint8_t	  readings_num : 7;
+        bool	  value_logged : 1;
+        uint16_t  current_value  = 0;
+        uint16_t  previous_value = 0;
+
+        uint16_t average_volume = 2048;
+        
+        TIMER_t val_log_timer;		// Timer that delays logging of max measured volume voltage
+        TIMER_t filter_timer;
+    }meass;
+
+    /****   Task handles	****/
+	TaskHandle_t handle_audio_system = NULL;
+	TaskHandle_t handle_active_strip_mode = NULL;	
 };
 
 

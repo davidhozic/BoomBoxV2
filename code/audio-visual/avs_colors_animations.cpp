@@ -1,6 +1,7 @@
 #include "audio.hpp"
 
-STRIP_COLOR_t AUVS::strip_colors[] =
+
+STRIP_COLOR_t AUVS::STRIP_t::strip_colors[] =
 {
 	{ COLOR_WHITE, 	    {255, 255, 255}  },
 	{ COLOR_ZELENA,     {0, 255, 0}	     },
@@ -15,9 +16,10 @@ STRIP_COLOR_t AUVS::strip_colors[] =
 
 
 /* Needs to be sorted by enum */
-STRIP_ANIMATION_t AUVS::strip_animations[] = 
+STRIP_ANIMATION_t AUVS::STRIP_t::strip_animations[] = 
 { 
 	{ AUVS_AN_NORMAL_FADE,    normal_fade_task   },
  	{ AUVS_AN_INVERTED_FADE,  inverted_fade_task },
  	{ AUVS_AN_BREATHE_FADE,   breathe_fade_task  },
 };
+

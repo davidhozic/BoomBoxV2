@@ -47,8 +47,6 @@ void power_task(void *p)
         /******************************************************************/
         /*                    POWER ON/OFF/SWITCH/SLEEP                   */                                                
         /******************************************************************/
-
-
         if (m_power.voltage_read_timer.value() >= POWER_CFG_VOLTAGE_READ_PERIOD_MS)
         {
             m_power.battery_voltage = readANALOG(GLOBAL_CFG_PIN_VOLTAGE_DIV) * (5000.00/1023);
@@ -63,6 +61,16 @@ void power_task(void *p)
         }			
         
         
+        if (m_hw_status.external_power || m_power.switch_pwr.value())
+        {
+            m_power.sleep_timer.reset();
+        }
+        else if (m_power.sleep_timer.value() >= POWER_CFG_SLEEP_DELAY_MS)
+        {
+            m_power.sleep_timer.reset();
+            system_event(EV_SLEEP);
+        }
+
         /* Switch disabled or power too low */
         if (!m_power.switch_pwr.value() || (m_power.battery_voltage <= POWER_CFG_MIN_BATTERY_VOLTAGE && !m_hw_status.external_power))
         {
@@ -71,21 +79,6 @@ void power_task(void *p)
             {
                 system_event(EV_SHUTDOWN);
                 m_power.power_up_delay_timer.reset();
-            }
-
-            /***************************/
-            /*          SLEEP          */
-            /***************************/
-            /* If not on external power (for charging) -> go to sleep after timer elapses */
-            if (!m_hw_status.external_power && m_power.sleep_timer.value() >= POWER_CFG_SLEEP_DELAY_MS)
-            {
-                m_power.sleep_timer.reset();
-                system_event(EV_SLEEP);
-            }
-            /* Reset timer in case power went from internal to external while timer was running */
-            else if (m_hw_status.external_power)
-            {
-                m_power.sleep_timer.reset();
             }
         }
 

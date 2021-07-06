@@ -16,12 +16,12 @@ HW_STATUS_t m_hw_status = {0};
 
 void holdTASK(TaskHandle_t* task)
 {
-	if (eTaskGetState(*task) != eSuspended && *task != NULL)
+	if (*task != NULL)
 	vTaskSuspend(*task);
 }
 void resumeTASK(TaskHandle_t* task)
 {
-	if (eTaskGetState(*task) == eSuspended && *task != NULL)
+	if (*task != NULL)
 	vTaskResume(*task);
 }
 

@@ -20,7 +20,7 @@
 	#define POWER_CFG_MIN_BATTERY_VOLTAGE							3200	  
 	#define POWER_CFG_MAX_BATTERY_VOLTAGE							4150	  
 	#define POWER_CFG_CHARGE_HYSTERESIS_PERCENT 					5		// When charging finishes, the speaker needs to discharge for atleast this percent
-    #define POWER_CFG_SLEEP_DELAY_MS                                2000
+    #define POWER_CFG_SLEEP_DELAY_MS                                3000
     #define POWER_CFG_VOLTAGE_READ_PERIOD_MS                        500
 /************************************************************************/
 
@@ -43,10 +43,10 @@
 #define AUVS_CFG_BRIGHTNESS_CHANGE					                5
 #define AUVS_CFG_COLOR_CHANGE                                       5
 /*   MEASSUREMENT CONFIG   */          
-#define	AUVS_CFG_MEASS_MAX_READINGS	                                50
-#define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            5 
-#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                0.20
-#define AUVS_CFG_MEASS_FILTER_TIME_MS                               340
+#define	AUVS_CFG_MEASS_MAX_READINGS	                                45
+#define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            8 
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                18
+#define AUVS_CFG_MEASS_FILTER_TIME_MS                               250
 /************************************************************************/
 
 

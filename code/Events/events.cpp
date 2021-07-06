@@ -74,12 +74,7 @@ void system_event(enum_system_event event){
 		break;
 		
 		case EV_INITIALIZATION:
-			/************************************************************************/
-			/*						SET DATA DIRECTION REGISTERS			        */
-			/************************************************************************/
-			DDRE = 1;
-			DDRH = (1 << PH3) | (1 << PH4) | (1 << PH5);
-			DDRB =( 1 << PB4) | (1 << PB5) | (1 << PB6) | (1 << PB7);
+
 			/************************************************************************/
 			/*						SETUP TIMER3 FOR TIMER_t LIBRARY                */
 			/************************************************************************/
@@ -98,13 +93,20 @@ void system_event(enum_system_event event){
 			DIDR0   =	0xFF;
 			ADMUX   =   1;
 			ADCSRA |=	(1 << ADSC);		
+            /************************************************************************/
+			/*						SET DATA DIRECTION REGISTERS			        */
+			/************************************************************************/
+			DDRK = 0;
+            DDRE = 1;
+			DDRH = (1 << PH3) | (1 << PH4) | (1 << PH5);
+			DDRB = (1 << PB4) | (1 << PB5) | (1 << PB6) | (1 << PB7);
             
 			/************************************************************************/
 			/*							   SETUP TASKS                              */
 			/************************************************************************/
 			xTaskCreate(power_task, "Power", TASK_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
 			xTaskCreate(user_ui_task, "User UI", TASK_CFG_TASK_DEFAULT_STACK, NULL, 2, NULL);
-            xTaskCreate(audio_visual_task, "audio-visual", TASK_CFG_TASK_DEFAULT_STACK, NULL, 3, NULL);
+            xTaskCreate(audio_visual_task, "audio-visual", TASK_CFG_TASK_DEFAULT_STACK, NULL, 3, &m_audio_system.handle_audio_system);
             holdTASK(&m_audio_system.handle_audio_system); // <---- Gets resumed after strip .strip_on() function gets called
 			/************************************************************************/
 			/*								OTHER                                   */

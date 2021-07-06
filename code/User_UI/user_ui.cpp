@@ -164,7 +164,6 @@ void user_ui_task(void *p)
                     m_user_ui.state = SU_STATE_SCROLL;
                     m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
                     m_audio_system.flash_strip();
-                    delay_FreeRTOS_ms(500);
                 }
             break;
                 /*****	END CASE *****/
@@ -274,6 +273,7 @@ void user_ui_task(void *p)
 
         else
         {
+            m_user_ui.capacity_lcd_en = 0;
             writeOUTPUT(GLOBAL_CFG_PIN_BATTERY_LCD, GLOBAL_CFG_PORT_BATTERY_LCD, 0);
         }
 
@@ -318,7 +318,7 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
-            m_audio_system.CREATE_ANIMATION(element.index, COLOR_WHITE);
+            m_audio_system.create_animation(element.index, COLOR_WHITE);
 		}
 	break;
 
