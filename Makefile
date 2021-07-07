@@ -7,7 +7,7 @@ CPP_FLAGS := -std=c++17\
 
 COMMON_FLAGS := -D F_CPU=16000000\
 -mmcu=atmega2560\
--Os\
+-Os
 
 GLOBAL_INC := -include stdint.h\
 -include settings.hpp\

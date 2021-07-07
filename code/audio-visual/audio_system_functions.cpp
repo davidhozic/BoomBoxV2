@@ -11,15 +11,13 @@
  **********************************************************************/
 void AUVS::create_animation(uint8_t task_index, uint8_t color)                
 {
-    /* If terminator is sent in, don't change color (assume task will take care of that) */
-    if (color < COLOR_TERMINATOR)
-        set_strip_color(color);
+    set_strip_color(color);
     
     if (strip.strip_mode == AUVS_AN_STRIP_OFF)                  
         strip.animation_time = AUVS_CFG_SLOW_ANIMATION_TIME_MS;   // Strip light up by user ui (for showcase)
     else
         strip.animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
-
+        
     deleteTASK(&handle_active_strip_mode);
     xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
 }
@@ -38,24 +36,6 @@ void AUVS::update_strip()
 }
 
 
-/**********************************************************************
- *  FUNCTION:    flash_strip
- *  PARAMETERS:  void
- *  DESCRIPTION: flashes the strip (used in settings_ui in state
- *               transition)                         
- **********************************************************************/
-void AUVS::flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
-{
-	for (uint8_t i = 0; i < 5; i++)
-	{
-        delay_FreeRTOS_ms(125);
-        set_strip_brightness(255);
-        update_strip();
-        delay_FreeRTOS_ms(125);
-        set_strip_brightness(0);
-        update_strip();
-	}
-}
 
 /**********************************************************************
  *  FUNCTION:    color_shift
@@ -67,7 +47,7 @@ void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 	char smer[3];
     do
 	{
-		strip.strip_colors[BARVA].color_data[STRIP_RED]   >= strip.current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	  = -1;
+		strip.strip_colors[BARVA].color_data[STRIP_RED]   >= strip.current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	 = -1;
 		strip.strip_colors[BARVA].color_data[STRIP_GREEN] >= strip.current_color[STRIP_GREEN]  ?  smer[STRIP_GREEN] = 1 : smer[STRIP_GREEN] = -1;
 		strip.strip_colors[BARVA].color_data[STRIP_BLUE]  >= strip.current_color[STRIP_BLUE]   ?  smer[STRIP_BLUE]  = 1 : smer[STRIP_BLUE]  = -1;
 

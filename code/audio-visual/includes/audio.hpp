@@ -49,13 +49,13 @@ enum enum_COLOR_SPACE_indexes
 enum enum_BARVE
 {
 	COLOR_WHITE = 0,
+    COLOR_BLUE,
 	COLOR_ZELENA,
-	COLOR_RED,
-	COLOR_BLUE,
 	COLOR_YELLOW,
 	COLOR_LBLUE,
 	COLOR_VIOLET,
 	COLOR_PINK,
+    COLOR_RED,
 	COLOR_TERMINATOR
 };
 
@@ -77,12 +77,11 @@ class AUVS
 {
 public:
     /***   Function Prototypes   ***/
-    void update_strip();
+    inline void update_strip();
 	void strip_off();
 	void strip_on();
-	void color_shift(uint8_t BARVA, unsigned short animation_time);
+    void color_shift(uint8_t BARVA, unsigned short animation_time);
 	void brightness_fade(char smer, unsigned short animation_time);
-	void flash_strip();
 	void set_strip_color(unsigned char barva_index);
 	void set_strip_mode(uint8_t mode);
 	void set_strip_brightness(uint8_t value);
@@ -95,7 +94,7 @@ public:
         uint8_t  strip_mode = AUVS_AN_STRIP_OFF;							// Current strip mode
         uint16_t animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
         /**** Strip current state ****/
-        int16_t current_color[3] = {255, 255, 255};					// Current RGB color of the strip
+        int16_t current_color[3] = {0, 0, 0};					// Current RGB color of the strip
         int16_t current_brightness = 0;								// Current brightness level of the strip
         uint8_t curr_color_index = 0;									// Index of color that strip will turn on
         /***	Strip mode functions ***/

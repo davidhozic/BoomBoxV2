@@ -307,24 +307,22 @@ inline void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku 
 	switch(element.state)
 	{
 	case SU_STATE_SCROLL:
-		m_audio_system.color_shift(element.index, AUVS_CFG_FAST_ANIMATION_TIME_MS);
-        brightUP(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
+		    brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS);
+            m_audio_system.set_strip_color(element.index);
+            brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS);
 	break;
 
 	case SU_STATE_STRIP_SELECTION:
 		if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
 		{
-			deleteTASK(&m_audio_system.handle_active_strip_mode);
-			m_audio_system.color_shift(COLOR_RED, AUVS_CFG_FAST_ANIMATION_TIME_MS);
-            brightUP(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
+            deleteTASK(&m_audio_system.handle_active_strip_mode);
+            m_audio_system.set_strip_brightness(255);
+            m_audio_system.color_shift(COLOR_RED, AUVS_CFG_NORMAL_ANIMATION_TIME_MS);
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
             m_audio_system.create_animation(element.index, COLOR_WHITE);
 		}
-	break;
-
-	default:
 	break;
 	}
 }
