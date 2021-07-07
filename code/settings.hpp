@@ -18,10 +18,11 @@
 /************************************************************************/
 	#define POWER_CFG_ADC_REF_mV							        5000	  
 	#define POWER_CFG_MIN_BATTERY_VOLTAGE							3200	  
-	#define POWER_CFG_MAX_BATTERY_VOLTAGE							4150	  
+	#define POWER_CFG_MAX_BATTERY_VOLTAGE							4100	  
 	#define POWER_CFG_CHARGE_HYSTERESIS_PERCENT 					5		// When charging finishes, the speaker needs to discharge for atleast this percent
     #define POWER_CFG_SLEEP_DELAY_MS                                3000
     #define POWER_CFG_VOLTAGE_READ_PERIOD_MS                        500
+    #define POWER_CFG_TURN_ON_PERCENT                               2
 /************************************************************************/
 
 /************************************************************************/

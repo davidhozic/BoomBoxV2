@@ -27,12 +27,13 @@ enum SETTINGS_UI_KEY_EVENT
 void zaslon();
 void settings_UI();
 void exit_scroll();
-void showSEEK(SETTINGS_UI_MENU_LIST element) ;
+void showSEEK(SETTINGS_UI_MENU_LIST element);
+void enter_scroll();
 /************************/
 /*         MACROS       */
 /************************/
 
-#define SU_MENU_SCROLL(index, menu_table)  index + 1 >= sizeof(menu_table)/sizeof(menu_table[0])  ?  index = 0 :  index++
+#define SU_NEXT(index, menu_table)  index + 1 >= sizeof(menu_table)/sizeof(menu_table[0])  ?  index = 0 :  index++
 
 
 

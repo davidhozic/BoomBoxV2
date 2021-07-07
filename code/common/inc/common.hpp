@@ -8,10 +8,10 @@
 
 struct HW_STATUS_t
 {
-    bool charging_enabled   : 1;
-    bool charging_finished  : 1;
-    bool external_power     : 1;
-    bool powered_up         : 1;
+    uint8_t charging_enabled   : 1;
+    uint8_t charging_finished  : 1;
+    uint8_t external_power     : 1;
+    uint8_t powered_up         : 1;
 }extern m_hw_status;
 
 

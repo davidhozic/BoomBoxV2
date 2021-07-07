@@ -42,6 +42,7 @@ ISR(PCINT2_vect)
 
 void power_task(void *p)
 {
+    
     for (;;)
     {
         /******************************************************************/
@@ -49,12 +50,12 @@ void power_task(void *p)
         /******************************************************************/
         if (m_power.voltage_read_timer.value() >= POWER_CFG_VOLTAGE_READ_PERIOD_MS)
         {
-            m_power.battery_voltage = readANALOG(GLOBAL_CFG_PIN_VOLTAGE_DIV) * (5000.00/1023);
             m_power.voltage_read_timer.reset();
+            m_power.battery_voltage = readANALOG(GLOBAL_CFG_PIN_VOLTAGE_DIV) * (5000.00/1023);
         }   
 
         /* No need to worry about the timer running because the first condition will always be false while speaker is enabled, meaning other elements won't execute in the if statement */
-        if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > POWER_CFG_CHARGE_HYSTERESIS_PERCENT || m_hw_status.external_power) && m_power.switch_pwr.value() && m_power.power_up_delay_timer.value() >= 2000 )
+        if ( !m_hw_status.powered_up && (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) > POWER_CFG_TURN_ON_PERCENT || m_hw_status.external_power) && m_power.switch_pwr.value() && m_power.power_up_delay_timer.value() >= 2000 )
         { // Elapsed 2000 ms, not overheated, enough power or (already switched to)external power and not already powered up
             system_event(EV_POWER_UP);
             m_power.power_up_delay_timer.reset();
@@ -97,13 +98,13 @@ void power_task(void *p)
         /******************************************************************/
         /*                           CHARGING                             */                                                
         /******************************************************************/
-        if (m_hw_status.charging_finished == 0 && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) >= 100)
+        if (m_hw_status.charging_finished == 0  && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) >= 100)
         {
             m_hw_status.charging_finished = 1;
             EEPROM.pisi(m_hw_status.charging_finished, GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS); //Posodobitev EEPROM-a na bajtu 1 z spremenljivko readBIT(m_hw_status, m_Hardware_STATUS_REG_CHARGING_EN); Na vsake 5000 pisanj zamenja bajt na katerega piše
         }
 
-        else if (m_hw_status.charging_finished && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) <= 100 - POWER_CFG_CHARGE_HYSTERESIS_PERCENT)
+        else if (m_hw_status.charging_finished && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) < 100 - POWER_CFG_CHARGE_HYSTERESIS_PERCENT)
         {	/* Histereza */
             m_hw_status.charging_finished = 0;
             EEPROM.pisi(m_hw_status.charging_finished, GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS);

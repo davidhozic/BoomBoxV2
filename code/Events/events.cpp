@@ -106,7 +106,7 @@ void system_event(enum_system_event event){
 			/************************************************************************/
 			xTaskCreate(power_task, "Power", TASK_CFG_TASK_DEFAULT_STACK, NULL, 1, NULL);
 			xTaskCreate(user_ui_task, "User UI", TASK_CFG_TASK_DEFAULT_STACK, NULL, 2, NULL);
-            xTaskCreate(audio_visual_task, "audio-visual", TASK_CFG_TASK_DEFAULT_STACK, NULL, 3, &m_audio_system.handle_audio_system);
+            xTaskCreate(audio_visual_task, "audio-visual", TASK_CFG_TASK_DEFAULT_STACK, NULL, 2, &m_audio_system.handle_audio_system);
             holdTASK(&m_audio_system.handle_audio_system); // <---- Gets resumed after strip .strip_on() function gets called
 			/************************************************************************/
 			/*								OTHER                                   */

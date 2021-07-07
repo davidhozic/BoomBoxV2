@@ -46,17 +46,15 @@ void AUVS::update_strip()
  **********************************************************************/
 void AUVS::flash_strip() //Utripanje (Izhod iz STATE_SCROLL stata / menjava mikrofona)
 {
-	set_strip_color(COLOR_WHITE);
 	for (uint8_t i = 0; i < 5; i++)
 	{
-        set_strip_brightness(0);
-        update_strip();
         delay_FreeRTOS_ms(125);
         set_strip_brightness(255);
         update_strip();
         delay_FreeRTOS_ms(125);
+        set_strip_brightness(0);
+        update_strip();
 	}
-    brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS);
 }
 
 /**********************************************************************
@@ -183,8 +181,7 @@ void AUVS::set_strip_color(unsigned char barva_index)
 /**********************************************************************
  *  FUNCTION:    set_strip_brightness 
  *  PARAMETERS:  uint8_t brightness
- *  DESCRIPTION: Sets strip brightness to wanted brightness and updates
- *               strip       
+ *  DESCRIPTION: Sets strip brightness to wanted brightness       
  **********************************************************************/
 void AUVS::set_strip_brightness(uint8_t value)
 {

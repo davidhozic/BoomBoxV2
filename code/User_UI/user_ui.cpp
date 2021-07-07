@@ -160,10 +160,7 @@ void user_ui_task(void *p)
             case SU_STATE_UNSET:
                 if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	/* Long press -> Enter into settings scroll menu */
                 {
-                    m_audio_system.strip_off();
-                    m_user_ui.state = SU_STATE_SCROLL;
-                    m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
-                    m_audio_system.flash_strip();
+                    enter_scroll();
                 }
             break;
                 /*****	END CASE *****/
@@ -187,6 +184,7 @@ void user_ui_task(void *p)
 
                     case SU_MENU_SCROLL_STRIP_ANIMATION:
                         m_user_ui.state = SU_STATE_STRIP_SELECTION;
+                        m_user_ui.menu_seek = 0;
                         brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
                     break;
                     }
@@ -197,7 +195,7 @@ void user_ui_task(void *p)
 
                 else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
                 {
-                    SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_scroll);	
+                    SU_NEXT(m_user_ui.menu_seek, su_menu_scroll);	
                     m_user_ui.state_exit_timer.reset();
                 }
             break;
@@ -220,7 +218,7 @@ void user_ui_task(void *p)
 
                 else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
                 {
-                    SU_MENU_SCROLL(m_user_ui.menu_seek, su_menu_strip_animation);	
+                    SU_NEXT(m_user_ui.menu_seek, su_menu_strip_animation);	
                     m_user_ui.state_exit_timer.reset();
                 }
 
@@ -278,7 +276,7 @@ void user_ui_task(void *p)
         }
 
 
-        delay_FreeRTOS_ms(50);
+        delay_FreeRTOS_ms(30);
         //End loop
     }
 }
@@ -306,7 +304,7 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 	{
 	case SU_STATE_SCROLL:
 		m_audio_system.color_shift(element.index, AUVS_CFG_FAST_ANIMATION_TIME_MS);
-		brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS);
+        brightUP(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
 	break;
 
 	case SU_STATE_STRIP_SELECTION:
@@ -314,7 +312,7 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 		{
 			deleteTASK(&m_audio_system.handle_active_strip_mode);
 			m_audio_system.color_shift(COLOR_RED, AUVS_CFG_FAST_ANIMATION_TIME_MS);
-			brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS);
+            brightUP(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
 		}
 		else if (m_audio_system.handle_active_strip_mode == NULL)
 		{
@@ -327,8 +325,6 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
 	}
 }
 
-
-
 /**********************************************************************
  *  FUNCTION:    exit_scroll
  *  PARAMETERS:  void
@@ -336,8 +332,22 @@ void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je S
  **********************************************************************/
 void exit_scroll()
 {
-	m_audio_system.flash_strip();
-	delay_FreeRTOS_ms(1000);
+    deleteTASK(&m_audio_system.handle_active_strip_mode);
+	brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
+	delay_FreeRTOS_ms(500);
 	m_audio_system.strip_on();
 	m_user_ui.init();
+}
+
+/**********************************************************************
+ *  FUNCTION:    enter_scroll
+ *  PARAMETERS:  void
+ *  DESCRIPTION: Enters the scroll after animation                       
+ **********************************************************************/
+void enter_scroll()
+{
+    m_audio_system.strip_off();
+    /* Set into scroll */
+    m_user_ui.state = SU_STATE_SCROLL;
+    m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
 }
