@@ -144,7 +144,6 @@ void AUVS::strip_off()
  **********************************************************************/
 void AUVS::strip_on()
 {
-    resumeTASK(&m_audio_system.handle_audio_system);
 	strip.strip_mode = EEPROM.beri(GLOBAL_CFG_EEPROM_ADDR_STRIP_MODE);
 	
 	/* EEPROM address is empty */
@@ -152,6 +151,10 @@ void AUVS::strip_on()
 	{
 		strip.strip_mode = 0;
 	}   
+
+    if (strip.strip_mode != AUVS_AN_STRIP_OFF)
+        resumeTASK(&m_audio_system.handle_audio_system);
+
 }
 
 /**********************************************************************

@@ -170,9 +170,10 @@ void user_ui_task(void *p)
                 if (m_user_ui.state_exit_timer.value() > SU_CFG_AUTO_EXIT_SCROLL_PERIOD)
                 {
                     exit_scroll();
+                    break;
                 }
 
-                showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
+                
                 if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	 /* Long press -> execute selected option from the menu */
                 {
                     switch(m_user_ui.menu_seek)
@@ -196,6 +197,7 @@ void user_ui_task(void *p)
                 else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
                 {
                     SU_NEXT(m_user_ui.menu_seek, su_menu_scroll);	
+                    showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
                     m_user_ui.state_exit_timer.reset();
                 }
             break;
@@ -207,7 +209,8 @@ void user_ui_task(void *p)
                 if (m_user_ui.state_exit_timer.value() > SU_CFG_AUTO_EXIT_SCROLL_PERIOD)
                 {
                     exit_scroll();
-                }
+                    break;
+                }       
 
                 showSEEK(su_menu_strip_animation[m_user_ui.menu_seek]);
                 if (m_user_ui.key_event == SU_KEY_LONG_PRESS)
@@ -219,6 +222,7 @@ void user_ui_task(void *p)
                 else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
                 {
                     SU_NEXT(m_user_ui.menu_seek, su_menu_strip_animation);	
+                    deleteTASK(&m_audio_system.handle_active_strip_mode);
                     m_user_ui.state_exit_timer.reset();
                 }
 
@@ -298,7 +302,7 @@ void user_ui_task(void *p)
  *  DESCRIPTION: Displays the currently selected element in the
  *               settings ui.
  **********************************************************************/
-void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
+inline void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku ce je SU_STATE_SCROLL aktiven
 {		
 	switch(element.state)
 	{
@@ -349,5 +353,6 @@ void enter_scroll()
     m_audio_system.strip_off();
     /* Set into scroll */
     m_user_ui.state = SU_STATE_SCROLL;
-    m_user_ui.menu_seek = SU_MENU_SCROLL_TOGGLE_LCD;
+    m_user_ui.menu_seek = 0;
+    showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
 }

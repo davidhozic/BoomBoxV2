@@ -27,7 +27,7 @@ enum SETTINGS_UI_KEY_EVENT
 void zaslon();
 void settings_UI();
 void exit_scroll();
-void showSEEK(SETTINGS_UI_MENU_LIST element);
+inline void showSEEK(SETTINGS_UI_MENU_LIST element);
 void enter_scroll();
 /************************/
 /*         MACROS       */
