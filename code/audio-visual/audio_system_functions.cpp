@@ -11,15 +11,27 @@
  **********************************************************************/
 void AUVS::create_animation(uint8_t task_index, uint8_t color)                
 {
-    set_strip_color(color);
-    
-    if (strip.strip_mode == AUVS_AN_STRIP_OFF)                  
-        strip.animation_time = AUVS_CFG_SLOW_ANIMATION_TIME_MS;   // Strip light up by user ui (for showcase)
-    else
-        strip.animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
-        
-    deleteTASK(&handle_active_strip_mode);
-    xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
+    /* If on breathe, wait until animation has finished */
+    switch(task_index)
+    {
+        case AUVS_AN_NORMAL_FADE:
+        case AUVS_AN_INVERTED_FADE:
+            set_strip_color(color);
+            deleteTASK(&handle_active_strip_mode);
+            xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
+        break;
+
+        case AUVS_AN_BREATHE_FADE:
+            if (handle_active_strip_mode == NULL)
+            {
+                set_strip_color(color);
+                xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
+            }
+        break;
+
+        default:
+        break;
+    } 
 }
 
 
@@ -82,6 +94,7 @@ void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 	}while ( strip.current_color[STRIP_RED]	  != strip.strip_colors[BARVA].color_data[STRIP_RED]   ||
 			 strip.current_color[STRIP_GREEN]   != strip.strip_colors[BARVA].color_data[STRIP_GREEN] ||
 		 	 strip.current_color[STRIP_BLUE]	  != strip.strip_colors[BARVA].color_data[STRIP_BLUE]	);	// While current colors different from wanted
+    
 }
 
 /**********************************************************************

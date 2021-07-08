@@ -31,6 +31,7 @@ void system_event(enum_system_event event){
         break;
 
 		case EV_POWER_SWITCH_INTERNAL:
+            /* Need to switch power asap */
 			system_event(EV_SHUTDOWN);
 			delay_FreeRTOS_ms(3);
 			writeOUTPUT(GLOBAL_CFG_PIN_MENJALNIK,GLOBAL_CFG_PORT_MENJALNIK, 0);
@@ -66,8 +67,9 @@ void system_event(enum_system_event event){
 		break;
 		
 		case EV_SHUTDOWN:
-            writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET , 0);
+            m_audio_system.set_strip_brightness(0);
             m_audio_system.strip_off();
+            writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET , 0);
             writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 0);
             m_hw_status.powered_up = 0;
 		break;

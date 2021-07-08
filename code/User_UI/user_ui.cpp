@@ -65,7 +65,7 @@ struct USER_UI
 	SETTINGS_UI_STATES state = SU_STATE_UNSET;
 	SETTINGS_UI_KEY_EVENT key_event = SU_KEY_CLEAR;
 
-	unsigned short hold_time;
+	uint16_t hold_time = 0;
 	uint8_t	menu_seek = 0;
 	INPUT_t SW2 = INPUT_t(GLOBAL_CFG_PIN_SU_SWITCH, GLOBAL_CFG_PORT_SU_SWITCH, 0);
 	TIMER_t state_exit_timer;
@@ -74,7 +74,7 @@ struct USER_UI
 	/* LCD charge display module variables */
 	TIMER_t lcd_call_timer;
 	TIMER_t LCD_timer;
-	uint8_t capacity_lcd_en;	/* This bit is set if it was set in settings ui */
+	bool capacity_lcd_en;	/* This bit is set if it was set in settings ui */
 	
 	void init()
 	{
@@ -336,6 +336,7 @@ void exit_scroll()
     deleteTASK(&m_audio_system.handle_active_strip_mode);
 	brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
 	delay_FreeRTOS_ms(500);
+    m_audio_system.strip.animation_time = AUVS_CFG_NORMAL_ANIMATION_TIME_MS;
 	m_audio_system.strip_on();
 	m_user_ui.init();
 }
@@ -348,8 +349,10 @@ void exit_scroll()
 void enter_scroll()
 {
     m_audio_system.strip_off();
+    m_audio_system.strip.animation_time = AUVS_CFG_SLOW_ANIMATION_TIME_MS;
     /* Set into scroll */
     m_user_ui.state = SU_STATE_SCROLL;
     m_user_ui.menu_seek = 0;
+    delay_FreeRTOS_ms(500);
     showSEEK(su_menu_scroll[m_user_ui.menu_seek]);
 }
