@@ -3,8 +3,6 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-
-
 /************************************************************************/
 /*								EEPROM IDs                              */
 /************************************************************************/
@@ -44,10 +42,10 @@
 #define AUVS_CFG_BRIGHTNESS_CHANGE					                7
 #define AUVS_CFG_COLOR_CHANGE                                       7
 /*   MEASSUREMENT CONFIG   */          
-#define	AUVS_CFG_MEASS_MAX_READINGS	                                50
+#define	AUVS_CFG_MEASS_MAX_READINGS	                                60
 #define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            10 
-#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                18
-#define AUVS_CFG_MEASS_FILTER_TIME_MS                               250
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                17
+#define AUVS_CFG_MEASS_FILTER_TIME_MS                               220
 /************************************************************************/
 
 

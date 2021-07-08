@@ -222,7 +222,6 @@ void user_ui_task(void *p)
                 else if (m_user_ui.key_event == SU_KEY_SHORT_PRESS)	/* Short press -> Move to the next element in the menu */
                 {
                     SU_NEXT(m_user_ui.menu_seek, su_menu_strip_animation);	
-                    deleteTASK(&m_audio_system.handle_active_strip_mode);
                     m_user_ui.state_exit_timer.reset();
                 }
 
