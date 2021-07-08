@@ -113,7 +113,7 @@ void AUVS::strip_off()
 	strip.strip_mode = AUVS_AN_STRIP_OFF;
 	holdTASK(&handle_audio_system);
 	deleteTASK(&handle_active_strip_mode);
-	brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
+	brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS);
 }
 
 /**********************************************************************
@@ -133,8 +133,10 @@ void AUVS::strip_on()
 	}   
 
     if (strip.strip_mode != AUVS_AN_STRIP_OFF)
+    {
         resumeTASK(&m_audio_system.handle_audio_system);
-
+        create_animation(strip.strip_mode, strip.curr_color_index);
+    }
 }
 
 /**********************************************************************

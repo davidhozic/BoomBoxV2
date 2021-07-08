@@ -18,6 +18,7 @@ AUVS m_audio_system;
 /*                                                     */
 /*******************************************************/
 
+
 void audio_visual_task(void* p)
 {
 	for (;;)

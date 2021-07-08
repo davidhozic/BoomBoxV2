@@ -44,7 +44,7 @@
 /*   MEASSUREMENT CONFIG   */          
 #define	AUVS_CFG_MEASS_MAX_READINGS	                                60
 #define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            10 
-#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                17
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                16
 #define AUVS_CFG_MEASS_FILTER_TIME_MS                               220
 /************************************************************************/
 
@@ -81,8 +81,8 @@
 	#define GLOBAL_CFG_PIN_SU_SWITCH				        5
 	#define GLOBAL_CFG_PORT_SU_SWITCH				       'G'
 
-	#define  GLOBAL_CFG_PIN_12V_LINE				        7			
-	#define  GLOBAL_CFG_PORT_12V_LINE				       'B'
+	#define GLOBAL_CFG_PIN_12V_LINE				            7			
+	#define GLOBAL_CFG_PORT_12V_LINE		    	       'B'
 	
 	#define GLOBAL_CFG_PIN_LED_STRIP_R				    	4 
 	#define GLOBAL_CFG_PIN_LED_STRIP_G				    	5
