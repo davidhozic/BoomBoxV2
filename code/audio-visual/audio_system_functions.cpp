@@ -44,39 +44,54 @@ void AUVS::update_strip()
 void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 {
 	char smer[3];
+    uint16_t loop_times[3] = { animation_time * AUVS_CFG_COLOR_CHANGE/abs(strip.strip_colors[BARVA].color_data[STRIP_RED] - strip.current_color[STRIP_RED]     ) ,
+                               animation_time * AUVS_CFG_COLOR_CHANGE/abs(strip.strip_colors[BARVA].color_data[STRIP_GREEN] - strip.current_color[STRIP_GREEN] ),
+                               animation_time * AUVS_CFG_COLOR_CHANGE/abs(strip.strip_colors[BARVA].color_data[STRIP_BLUE] - strip.current_color[STRIP_BLUE]   ) };
+    static TIMER_t timers[3] = {TIMER_t(), TIMER_t(), TIMER_t()};
+
+    strip.strip_colors[BARVA].color_data[STRIP_RED]   >= strip.current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	= -1;
+	strip.strip_colors[BARVA].color_data[STRIP_GREEN] >= strip.current_color[STRIP_GREEN]  ?  smer[STRIP_GREEN] = 1 : smer[STRIP_GREEN] = -1;
+	strip.strip_colors[BARVA].color_data[STRIP_BLUE]  >= strip.current_color[STRIP_BLUE]   ?  smer[STRIP_BLUE]  = 1 : smer[STRIP_BLUE]  = -1;
     do
 	{
-		strip.strip_colors[BARVA].color_data[STRIP_RED]   >= strip.current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	 = -1;
-		strip.strip_colors[BARVA].color_data[STRIP_GREEN] >= strip.current_color[STRIP_GREEN]  ?  smer[STRIP_GREEN] = 1 : smer[STRIP_GREEN] = -1;
-		strip.strip_colors[BARVA].color_data[STRIP_BLUE]  >= strip.current_color[STRIP_BLUE]   ?  smer[STRIP_BLUE]  = 1 : smer[STRIP_BLUE]  = -1;
+        
+        if (timers[STRIP_RED].value() >= loop_times[STRIP_RED] )
+        {
+            strip.current_color[STRIP_RED]	 +=	 (AUVS_CFG_COLOR_CHANGE * smer[STRIP_RED]);
+            if (smer[STRIP_RED] == 1  && strip.current_color[STRIP_RED] > strip.strip_colors[BARVA].color_data[STRIP_RED] ||
+                smer[STRIP_RED] == -1 && strip.current_color[STRIP_RED] < strip.strip_colors[BARVA].color_data[STRIP_RED] )
+            {
+                strip.current_color[STRIP_RED] = strip.strip_colors[BARVA].color_data[STRIP_RED];
+            }
+            timers[STRIP_RED].reset();
+        }
 
-		strip.current_color[STRIP_RED]	 +=	 (AUVS_CFG_COLOR_CHANGE * smer[STRIP_RED]);
-		strip.current_color[STRIP_GREEN] +=(AUVS_CFG_COLOR_CHANGE * smer[STRIP_GREEN]);
-		strip.current_color[STRIP_BLUE]	 +=	(AUVS_CFG_COLOR_CHANGE * smer[STRIP_BLUE]);
+		if (timers[STRIP_GREEN].value() >= loop_times[STRIP_GREEN] )
+        {
+            strip.current_color[STRIP_GREEN]	 +=	 (AUVS_CFG_COLOR_CHANGE * smer[STRIP_GREEN]);
+            if (smer[STRIP_GREEN] == 1  && strip.current_color[STRIP_GREEN] > strip.strip_colors[BARVA].color_data[STRIP_GREEN] ||
+                smer[STRIP_GREEN] == -1 && strip.current_color[STRIP_GREEN] < strip.strip_colors[BARVA].color_data[STRIP_GREEN] )
+            {
+                strip.current_color[STRIP_GREEN] = strip.strip_colors[BARVA].color_data[STRIP_GREEN];
+            }
+            timers[STRIP_GREEN].reset();
+        }
 
-		/* Check over color for seperate color indexes */
-		if (smer[STRIP_RED] == 1  && strip.current_color[STRIP_RED] > strip.strip_colors[BARVA].color_data[STRIP_RED] ||
-            smer[STRIP_RED] == -1 && strip.current_color[STRIP_RED] < strip.strip_colors[BARVA].color_data[STRIP_RED] )
-		{
-			strip.current_color[STRIP_RED] = strip.strip_colors[BARVA].color_data[STRIP_RED];
-		}
-	
-		if (smer[STRIP_GREEN] ==  1 && strip.current_color[STRIP_GREEN] > strip.strip_colors[BARVA].color_data[STRIP_GREEN] || 
-            smer[STRIP_GREEN] == -1 && strip.current_color[STRIP_GREEN] < strip.strip_colors[BARVA].color_data[STRIP_GREEN] )
-		{
-			strip.current_color[STRIP_GREEN] = strip.strip_colors[BARVA].color_data[STRIP_GREEN];
-		}
+        if (timers[STRIP_BLUE].value() >= loop_times[STRIP_BLUE] )
+        {
+            strip.current_color[STRIP_BLUE]	 +=	 (AUVS_CFG_COLOR_CHANGE * smer[STRIP_BLUE]);
+            if (smer[STRIP_BLUE] == 1  && strip.current_color[STRIP_BLUE] > strip.strip_colors[BARVA].color_data[STRIP_BLUE] ||
+                smer[STRIP_BLUE] == -1 && strip.current_color[STRIP_BLUE] < strip.strip_colors[BARVA].color_data[STRIP_BLUE] )
+            {
+                strip.current_color[STRIP_BLUE] = strip.strip_colors[BARVA].color_data[STRIP_BLUE];
+            }
+            timers[STRIP_BLUE].reset();
+        }
 
-		if (smer[STRIP_BLUE] ==  1 && strip.current_color[STRIP_BLUE] > strip.strip_colors[BARVA].color_data[STRIP_BLUE] ||
-            smer[STRIP_BLUE] == -1 && strip.current_color[STRIP_BLUE] < strip.strip_colors[BARVA].color_data[STRIP_BLUE] )
-		{
-			strip.current_color[STRIP_BLUE] = strip.strip_colors[BARVA].color_data[STRIP_BLUE];
-		}
-
-
+		
 		update_strip();
 		
-		delay_FreeRTOS_ms(  (animation_time*AUVS_CFG_COLOR_CHANGE) / 255  );
+		delay_FreeRTOS_ms(2);
 
 	}while ( strip.current_color[STRIP_RED]	  != strip.strip_colors[BARVA].color_data[STRIP_RED]   ||
 			 strip.current_color[STRIP_GREEN]   != strip.strip_colors[BARVA].color_data[STRIP_GREEN] ||

@@ -79,18 +79,18 @@ void normal_fade_task(void *input) //Prizig na barbi in pocasen izklop
 	vTaskDelete(NULL);
 }
 
-void breathe_fade_task(void *input)
-{
-	brightUP(m_audio_system.strip.animation_time/2 + 1);
-	brightDOWN(m_audio_system.strip.animation_time/2 + 1);
-	m_audio_system.handle_active_strip_mode = NULL;
-	vTaskDelete(NULL);
-}
-
 void inverted_fade_task(void *input)
 {
 	m_audio_system.set_strip_brightness(0);
 	brightUP(m_audio_system.strip.animation_time);
+	m_audio_system.handle_active_strip_mode = NULL;
+	vTaskDelete(NULL);
+}
+
+void breathe_fade_task(void *input)
+{
+	brightUP(m_audio_system.strip.animation_time/2 + 1);
+	brightDOWN(m_audio_system.strip.animation_time/2 + 1);
 	m_audio_system.handle_active_strip_mode = NULL;
 	vTaskDelete(NULL);
 }

@@ -77,7 +77,7 @@ class AUVS
 {
 public:
     /***   Function Prototypes   ***/
-    inline void update_strip();
+    void update_strip();
 	void strip_off();
 	void strip_on();
     void color_shift(uint8_t BARVA, unsigned short animation_time);

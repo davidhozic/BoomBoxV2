@@ -16,7 +16,7 @@ enum SETTINGS_UI_STATES
 {
 	SU_STATE_UNSET = 0,
 	SU_STATE_SCROLL, 
-	SU_STATE_STRIP_SELECTION
+	SU_STATE_STRIP_SELECTION,
 };
 
 /******************************************************************************************/
@@ -43,7 +43,7 @@ enum SETTINGS_UI_MENU_STRIP_SELECTION
 static SETTINGS_UI_MENU_LIST su_menu_scroll[]  =
 {
     { SU_MENU_SCROLL_TOGGLE_LCD, 			SU_STATE_SCROLL },
-    { SU_MENU_SCROLL_STRIP_ANIMATION, 		SU_STATE_SCROLL }
+    { SU_MENU_SCROLL_STRIP_ANIMATION, 		SU_STATE_SCROLL },
 };
 
 
@@ -185,9 +185,9 @@ void user_ui_task(void *p)
 
                     case SU_MENU_SCROLL_STRIP_ANIMATION:
                         m_user_ui.state = SU_STATE_STRIP_SELECTION;
-                        m_user_ui.menu_seek = 0;
                         brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
                     break;
+
                     }
 
                     m_user_ui.menu_seek = 0;

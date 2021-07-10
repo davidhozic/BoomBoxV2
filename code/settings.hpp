@@ -39,12 +39,14 @@
 #define AUVS_CFG_NORMAL_ANIMATION_TIME_MS		                    500	
 #define AUVS_CFG_FAST_ANIMATION_TIME_MS				                125		
 #define	AUVS_CFG_SLOW_ANIMATION_TIME_MS				                800	  
+
 #define AUVS_CFG_BRIGHTNESS_CHANGE					                7
 #define AUVS_CFG_COLOR_CHANGE                                       7
+
 /*   MEASSUREMENT CONFIG   */          
 #define	AUVS_CFG_MEASS_MAX_READINGS	                                40
 #define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            10 
-#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                17
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                15
 #define AUVS_CFG_MEASS_FILTER_TIME_MS                               220
 /************************************************************************/
 

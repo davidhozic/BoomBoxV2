@@ -9,6 +9,16 @@ OUTPUT_FILE = "ALL_IN_ONE.cpp"
 EXTENSIONS_TO_USE = [".cpp", ".c", ".h", ".hpp", ".hh"]
 FOLDERS_TO_IGNORE = ["FreeRTOS_m2560"]
 
+LANGUAGE_ENDINGS  = [ ("Python", ".py"), ("C", ".c", ".h"), ("C++", ".cpp", ".cc", ".hpp", ".hh")]
+
+
+#########################################################################################################################
+
+def find_lang_by_extension(extension):
+    for lang in LANGUAGE_ENDINGS:
+        if extension in lang:
+            return lang[0]
+    return "NEZNAN"
 
 # STEP CREATE FILE DATA
 data_output_file = ""
@@ -33,13 +43,7 @@ for dir, dirname, files in os.walk(SEARCH_DIR, topdown=True):
                     total_line_count += sum(1 for line in open(file=file,
                                             mode="r", encoding="utf-8"))
 
-                    lang = "NEZNAN"
-                    if file.endswith(".cpp") or file.endswith(".hpp"):
-                        lang = "C++"
-                    elif file.endswith(".c") or file.endswith(".h"):
-                        lang = "C"
-                    elif file.endswith(".py"):
-                        lang = "Python"
+                    lang = find_lang_by_extension(extension)
                     data_output_file += "\n\
 /*###############################################################################################################################################\n\
 -> IME DATOTEKE: " + file + " \n\

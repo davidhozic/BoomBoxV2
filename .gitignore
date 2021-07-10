@@ -26,3 +26,4 @@ code/libs/linked_list/linked_list.hpp
 code/libs/linked_list/list_settings.hpp
 code/libs/linked_list/llist_funct.hpp
 code/libs/castimer/castimer.cpp
+file_merger.py
