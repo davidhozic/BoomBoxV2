@@ -11,27 +11,14 @@
  **********************************************************************/
 void AUVS::create_animation(uint8_t task_index, uint8_t color)                
 {
-    /* If on breathe, wait until animation has finished */
-    switch(task_index)
-    {
-        case AUVS_AN_NORMAL_FADE:
-        case AUVS_AN_INVERTED_FADE:
-            set_strip_color(color);
-            deleteTASK(&handle_active_strip_mode);
-            xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
-        break;
 
-        case AUVS_AN_BREATHE_FADE:
-            if (handle_active_strip_mode == NULL)
-            {
-                set_strip_color(color);
-                xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
-            }
-        break;
+    /* Set strip color only if not on breathe fade or if on breathe fade, check if animation has finished */
+    if (task_index != AUVS_AN_BREATHE_FADE || task_index == AUVS_AN_BREATHE_FADE && handle_active_strip_mode == NULL)
+        set_strip_color(color);
 
-        default:
-        break;
-    } 
+    deleteTASK(&handle_active_strip_mode);
+    xTaskCreate(strip.strip_animations[task_index].f_ptr, "str", TASK_CFG_TASK_DEFAULT_STACK, NULL, 4, &handle_active_strip_mode);
+
 }
 
 

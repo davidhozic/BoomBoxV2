@@ -279,7 +279,7 @@ void user_ui_task(void *p)
         }
 
 
-        delay_FreeRTOS_ms(30);
+        delay_FreeRTOS_ms(40);
         //End loop
     }
 }

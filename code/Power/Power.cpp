@@ -42,7 +42,6 @@ ISR(PCINT2_vect)
 
 void power_task(void *p)
 {
-    
     for (;;)
     {
         /******************************************************************/
@@ -122,7 +121,7 @@ void power_task(void *p)
             writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE,1);
             m_hw_status.charging_enabled = 1;
         }
-        delay_FreeRTOS_ms(50);
+        delay_FreeRTOS_ms(20);
     }
 }
 

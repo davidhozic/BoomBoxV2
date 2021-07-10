@@ -32,8 +32,8 @@ void audio_visual_task(void* p)
             m_audio_system.meass.current_value > m_audio_system.meass.average_volume + m_audio_system.meass.average_volume * AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT / 100)
         {
             m_audio_system.meass.filter_timer.reset();
-            COLOR_NEXT(m_audio_system.strip.curr_color_index, AUVS::STRIP_t::strip_colors);
             m_audio_system.create_animation(m_audio_system.strip.strip_mode, m_audio_system.strip.curr_color_index);
+            COLOR_NEXT(m_audio_system.strip.curr_color_index, AUVS::STRIP_t::strip_colors);
         }
 
 		/* Finds the signal amplitude */
