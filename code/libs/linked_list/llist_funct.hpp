@@ -4,7 +4,7 @@
 
 
 template <typename tip>
-void LIST_t<tip>::pojdi_zacetek()
+inline void LIST_t<tip>::pojdi_zacetek()
 {
     while (glava != NULL && glava->prejsnji != NULL)
     {
@@ -13,7 +13,7 @@ void LIST_t<tip>::pojdi_zacetek()
     glava_index = 0;
 }
 template <typename tip>
-void LIST_t<tip>::pojdi_konec()
+inline void LIST_t<tip>::pojdi_konec()
 {
     while (glava != NULL && glava->naslednji != NULL)
     {
@@ -31,7 +31,7 @@ void LIST_t<tip>::pojdi_konec()
  **********************************************************************/
 
 template <typename tip>
-void LIST_t<tip>::head_to_index(uint32_t index)
+inline void LIST_t<tip>::head_to_index(uint32_t index)
 {
     while (glava_index > index)
     {
@@ -54,7 +54,7 @@ void LIST_t<tip>::head_to_index(uint32_t index)
  *  RETURN:      void                                   
  **********************************************************************/
 template <typename tip>
-unsigned short LIST_t<tip>::length()
+uint32_t LIST_t<tip>::length()
 {
     return count;
 }
@@ -165,14 +165,11 @@ tip LIST_t<tip>::pop_end()
 template <typename tip>
 void LIST_t<tip>::sort(int (*comparator_fnct)(tip, tip))
 {
-    tip temp;
     for (uint32_t i = 0; i < count - 1;)
     {
         if (comparator_fnct((*this)[i], (*this)[i + 1]) > 0)
         {
-            temp = (*this)[i];
-            (*this)[i] = (*this)[i + 1];
-            (*this)[i + 1] = temp;
+            menjaj_glava_naslednji();
             if (i > 0)
                 i--;
         }
@@ -212,7 +209,7 @@ void LIST_t<tip>::print_console()
  *  RETURN:      void
  **********************************************************************/
 template <typename tip>
-void LIST_t<tip>::remove_by_index(uint32_t index)
+inline void LIST_t<tip>::remove_by_index(uint32_t index)
 {
     head_to_index(index);
     vpdt *new_head;
@@ -230,12 +227,10 @@ void LIST_t<tip>::remove_by_index(uint32_t index)
     else
     {
         new_head = glava->prejsnji;
-        glava_index--;
+        glava_index = glava_index > 0 ? glava_index - 1  : 0;
     }
 
-    this->glava->podatek.~tip();  // Call the deconstructor in case data is another list 
     free(glava);
-
 
     glava = new_head;
     count--;
@@ -259,6 +254,76 @@ void LIST_t<tip>::splice(uint32_t start_index, uint32_t num_to_remove)
     }
 }
 
+/**********************************************************************
+ *  FUNCTION:    peek ()
+ *  PARAMETERS:  void
+ *  DESCRIPTION: returns a copy of the last element 
+ *  RETURN:      void
+ **********************************************************************/
+template <typename tip>
+tip LIST_t<tip>::peek()
+{
+    pojdi_konec();
+    return glava->podatek;
+}
+
+/**********************************************************************
+ *  FUNCTION:    menjaj_glava_naslednji ()
+ *  PARAMETERS:  void
+ *  DESCRIPTION: switches current element with the next by manipulating pointers
+ *  RETURN:      void
+ **********************************************************************/
+template <typename tip>
+inline void LIST_t <tip>::menjaj_glava_naslednji()
+{
+    vpdt *temp = glava->naslednji;
+    if (temp != NULL)
+    {
+        temp->prejsnji = glava->prejsnji;
+        if (temp->prejsnji != NULL)
+            temp->prejsnji->naslednji = temp;
+        glava->naslednji = temp->naslednji;
+
+        if (temp->naslednji != NULL)
+        glava->naslednji->prejsnji = glava;
+    
+        temp->naslednji = glava;
+    }
+    if (glava != NULL)
+    {
+        glava->prejsnji = temp;
+        glava = glava->prejsnji;
+    }
+}
+
+/**********************************************************************
+ *  FUNCTION:    clone
+ *  PARAMETERS:  List of same type
+ *  DESCRIPTION: copies data from a different list to current list
+ *  RETURN:      void
+ **********************************************************************/
+template <typename tip>
+void LIST_t<tip>::clone(LIST_t<tip> &src)
+{
+    splice(0, length());
+    for (uint32_t i = 0, len = src.length(); i < len; i++)
+        add_end(src[i]);
+}   
+
+/**********************************************************************
+ *  FUNCTION:    pop 
+ *  PARAMETERS:  index of element to pop
+ *  DESCRIPTION: Removes the element at index and returns it
+ *  RETURN:      custom data type element at index
+ **********************************************************************/
+template <typename tip>
+tip LIST_t<tip>::pop(uint32_t index)
+{
+    head_to_index(index);
+    tip temp = glava->podatek;
+    remove_by_index(index);
+    return temp;   
+}
 
 
 /********************************************************************************************/
@@ -272,7 +337,8 @@ void LIST_t<tip>::splice(uint32_t start_index, uint32_t num_to_remove)
  *  RETURN:      Reference return of custom type data at specific index
  **********************************************************************/
 
-#if (USE_OPERATORS == 1)
+#if (USE_OPERATORS)
+
 template <typename tip>
 tip &LIST_t<tip>::operator[](unsigned long index)
 {
@@ -291,6 +357,25 @@ template <typename tip>
 void LIST_t<tip>::operator+=(tip pod)
 {
     this->add_end(pod);
+}
+
+/**********************************************************************
+ *  OPERATOR:    +
+ *  PARAMETERS:  custom data
+ *  DESCRIPTION: Adds data to the back/front of the list (data on left, object on right means it will be added to the front)                   
+ *  RETURN:      reference to the original object (must be reference otherwise deconstructor will delete the entire content)
+ **********************************************************************/
+template <typename tip>
+LIST_t<tip> &operator + (LIST_t<tip> &object, tip src)
+{
+    object.add_end(src);
+    return object;
+}
+template <typename tip>
+LIST_t<tip>  &operator+ (tip data, LIST_t<tip> &object)
+{
+    object.add_front(data);
+    return object;
 }
 
 

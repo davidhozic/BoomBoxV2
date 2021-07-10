@@ -27,7 +27,6 @@ FOLDER_INCLUDE:= -I code/\
 -I code/Events/inc\
 -I code/libs\
 -I code/libs/castimer\
--I code/libs/castimer/.vscode\
 -I code/libs/EEPROM\
 -I code/libs/FreeRTOS_m2560\
 -I code/libs/FreeRTOS_m2560/include\
@@ -62,7 +61,7 @@ code/libs/FreeRTOS_m2560/stream_buffer.c\
 code/libs/FreeRTOS_m2560/tasks.c\
 code/libs/FreeRTOS_m2560/timers.c\
 
-SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/common/inc code/Events code/Events/inc code/libs code/libs/castimer code/libs/castimer/.vscode code/libs/EEPROM code/libs/FreeRTOS_m2560 code/libs/FreeRTOS_m2560/include code/libs/input code/libs/linked_list code/libs/outputs_inputs code/Power code/Power/inc code/User_UI code/User_UI/inc 
+SRC_DIR := code/ code/audio-visual code/audio-visual/includes code/common code/common/inc code/Events code/Events/inc code/libs code/libs/castimer code/libs/EEPROM code/libs/FreeRTOS_m2560 code/libs/FreeRTOS_m2560/include code/libs/input code/libs/linked_list code/libs/outputs_inputs code/Power code/Power/inc code/User_UI code/User_UI/inc 
 
 
 O := $(OUTPUT_DIR)/code/libs/FreeRTOS_m2560/croutine.o\

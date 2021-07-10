@@ -43,11 +43,18 @@ void AUVS::update_strip()
  **********************************************************************/
 void AUVS::color_shift(uint8_t BARVA, unsigned short animation_time)
 {
+
+    if (strip.current_color[STRIP_RED] == strip.strip_colors[BARVA].color_data[STRIP_RED]  &&  strip.current_color[STRIP_GREEN]   == strip.strip_colors[BARVA].color_data[STRIP_GREEN] && strip.current_color[STRIP_BLUE] == strip.strip_colors[BARVA].color_data[STRIP_BLUE])
+    {
+        return;
+    }
+
 	char smer[3];
     uint16_t loop_times[3] = { animation_time * AUVS_CFG_COLOR_CHANGE/abs(strip.strip_colors[BARVA].color_data[STRIP_RED] - strip.current_color[STRIP_RED]     ) ,
                                animation_time * AUVS_CFG_COLOR_CHANGE/abs(strip.strip_colors[BARVA].color_data[STRIP_GREEN] - strip.current_color[STRIP_GREEN] ),
                                animation_time * AUVS_CFG_COLOR_CHANGE/abs(strip.strip_colors[BARVA].color_data[STRIP_BLUE] - strip.current_color[STRIP_BLUE]   ) };
-    static TIMER_t timers[3] = {TIMER_t(), TIMER_t(), TIMER_t()};
+
+    TIMER_t timers[3] = {TIMER_t(), TIMER_t(), TIMER_t()};
 
     strip.strip_colors[BARVA].color_data[STRIP_RED]   >= strip.current_color[STRIP_RED]	   ?  smer[STRIP_RED]   = 1 : smer[STRIP_RED]	= -1;
 	strip.strip_colors[BARVA].color_data[STRIP_GREEN] >= strip.current_color[STRIP_GREEN]  ?  smer[STRIP_GREEN] = 1 : smer[STRIP_GREEN] = -1;

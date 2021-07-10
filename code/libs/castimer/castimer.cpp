@@ -66,6 +66,23 @@ void TIMER_t::init()
 	}
 }
 
+
+TIMER_t::~TIMER_t()
+{    
+    /* Remove the timer address out of the linked list when the timer is deleted */
+    ATOMIC_BLOCK(ATOMIC_FORCEON)
+    {
+        for (uint32_t i = 0, len = timer_list.length();  i < len; i++)
+        {
+            if (timer_list[i] == this)
+            {
+                timer_list.remove_by_index(i);
+                break;
+            }
+        }
+    }   
+}
+
 void TIMER_t::increment()
 {
     if (timer_enabled)
