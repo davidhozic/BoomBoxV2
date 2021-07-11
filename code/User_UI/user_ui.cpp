@@ -55,7 +55,6 @@ static SETTINGS_UI_MENU_LIST su_menu_strip_animation[] =
     { SU_MENU_STRIP_ANIMATION_STRIP_OFF,			SU_STATE_STRIP_SELECTION }
 };
 
-
 /************************************************************************/
 /*							VARIABLE STRUCT	                            */
 /************************************************************************/
@@ -176,7 +175,7 @@ void user_ui_task(void *p)
                 
                 if (m_user_ui.key_event == SU_KEY_LONG_PRESS)	 /* Long press -> execute selected option from the menu */
                 {
-                    switch(m_user_ui.menu_seek)
+                    switch(su_menu_scroll[m_user_ui.menu_seek].index)
                     {
                     case SU_MENU_SCROLL_TOGGLE_LCD:
                         m_user_ui.capacity_lcd_en = !m_user_ui.capacity_lcd_en;
@@ -187,7 +186,6 @@ void user_ui_task(void *p)
                         m_user_ui.state = SU_STATE_STRIP_SELECTION;
                         brightDOWN(AUVS_CFG_SLOW_ANIMATION_TIME_MS);
                     break;
-
                     }
 
                     m_user_ui.menu_seek = 0;
@@ -305,24 +303,24 @@ inline void showSEEK(SETTINGS_UI_MENU_LIST element)  // Prikaze element v seeku 
 {		
 	switch(element.state)
 	{
-	case SU_STATE_SCROLL:
-		    brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS);
+        case SU_STATE_SCROLL:
+            brightDOWN(AUVS_CFG_FAST_ANIMATION_TIME_MS);
             m_audio_system.set_strip_color(element.index);
             brightUP(AUVS_CFG_FAST_ANIMATION_TIME_MS);
-	break;
+        break;
 
-	case SU_STATE_STRIP_SELECTION:
-		if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
-		{
-            deleteTASK(&m_audio_system.handle_active_strip_mode);
-            m_audio_system.set_strip_brightness(255);
-            m_audio_system.color_shift(COLOR_RED, AUVS_CFG_NORMAL_ANIMATION_TIME_MS);
-		}
-		else if (m_audio_system.handle_active_strip_mode == NULL)
-		{
-            m_audio_system.create_animation(element.index, COLOR_WHITE);
-		}
-	break;
+        case SU_STATE_STRIP_SELECTION:
+            if (element.index == SU_MENU_STRIP_ANIMATION_STRIP_OFF)
+            {
+                deleteTASK(&m_audio_system.handle_active_strip_mode);
+                m_audio_system.set_strip_brightness(255);
+                m_audio_system.color_shift(COLOR_RED, AUVS_CFG_NORMAL_ANIMATION_TIME_MS);
+            }
+            else if (m_audio_system.handle_active_strip_mode == NULL)
+            {
+                m_audio_system.create_animation(element.index, COLOR_WHITE);
+            }
+        break;
 	}
 }
 
