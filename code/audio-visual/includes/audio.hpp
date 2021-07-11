@@ -80,7 +80,6 @@ public:
     void update_strip();
 	void strip_off();
 	void strip_on();
-    void color_shift(uint8_t BARVA, unsigned short animation_time);
 	void brightness_fade(char smer, unsigned short animation_time);
 	void set_strip_color(unsigned char barva_index);
 	void set_strip_mode(uint8_t mode);

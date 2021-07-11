@@ -41,7 +41,6 @@
 #define	AUVS_CFG_SLOW_ANIMATION_TIME_MS				                800	  
 
 #define AUVS_CFG_BRIGHTNESS_CHANGE					                7
-#define AUVS_CFG_COLOR_CHANGE                                       7
 
 /*   MEASSUREMENT CONFIG   */          
 #define	AUVS_CFG_MEASS_MAX_READINGS	                                40
