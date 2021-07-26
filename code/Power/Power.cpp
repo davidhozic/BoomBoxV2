@@ -97,31 +97,31 @@ void power_task(void *p)
         /******************************************************************/
         /*                           CHARGING                             */                                                
         /******************************************************************/
-        if (m_hw_status.charging_finished == 0  && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) >= 100)
+
+        if (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) >= 100 && !m_hw_status.charging_finished)
         {
             m_hw_status.charging_finished = 1;
-            EEPROM.pisi(m_hw_status.charging_finished, GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS); //Posodobitev EEPROM-a na bajtu 1 z spremenljivko readBIT(m_hw_status, m_Hardware_STATUS_REG_CHARGING_EN); Na vsake 5000 pisanj zamenja bajt na katerega piše
+            EEPROM.pisi(GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS, 1);
         }
-
-        else if (m_hw_status.charging_finished && BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) < 100 - POWER_CFG_CHARGE_HYSTERESIS_PERCENT)
-        {	/* Histereza */
-            m_hw_status.charging_finished = 0;
-            EEPROM.pisi(m_hw_status.charging_finished, GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS);
-        }
-
-
-        if (m_hw_status.charging_enabled && (m_hw_status.charging_finished || m_power.napajalnik.value() == 0))
+        else if (BATTERY_VOLTAGE_PERCENT(m_power.battery_voltage) < 100 - POWER_CFG_CHARGE_HYSTERESIS_PERCENT && m_hw_status.charging_finished)
         {
-            writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE,0);
+            m_hw_status.charging_finished = 0;
+            EEPROM.pisi(GLOBAL_CFG_EEPROM_ADDR_BATTERY_CHARGING_STATUS, 0);
+        }
+
+        if (!m_hw_status.charging_finished && m_power.napajalnik.value())
+        {
+            writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE, 1);
+            m_hw_status.charging_enabled = 1;
+        }
+        else 
+        {
+            writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE, 0);
             m_hw_status.charging_enabled = 0;
         }
 
-        else if (m_hw_status.charging_enabled == 0 && m_power.napajalnik.value() && !m_hw_status.charging_finished)
-        {
-            writeOUTPUT(GLOBAL_CFG_PIN_CHARGE, GLOBAL_CFG_PORT_CHARGE,1);
-            m_hw_status.charging_enabled = 1;
-        }
-        delay_FreeRTOS_ms(20);
+
+        delay_FreeRTOS_ms(10);
     }
 }
 
