@@ -114,7 +114,8 @@ clean:
 
 
 
-compile: echo_compile mkdir $(O)
+compile: echo_compile mkdir 
+	make $(O) -j12
 	echo "------------------------------------"
 	echo " STEP[]: LINKING INTO ELF           "
 	echo "------------------------------------"
