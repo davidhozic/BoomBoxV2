@@ -107,10 +107,8 @@ public:
     {
         uint16_t  max_value = 0;
         uint32_t  readings_sum	 = 0;
-        uint8_t	  readings_num : 7;
-        bool	  value_logged : 1;
+        uint8_t	  readings_num;
         uint16_t  current_value  = 0;
-        uint16_t  previous_value = 0;
 
         uint16_t average_volume = 2048;
         
@@ -122,6 +120,8 @@ public:
 	TaskHandle_t handle_audio_system = NULL;
 	TaskHandle_t handle_active_strip_mode = NULL;	
 };
+
+
 
 
 extern AUVS m_audio_system;

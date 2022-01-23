@@ -23,22 +23,11 @@ struct POWER_t
 
 	/*		TIMER_t objects		*/
 	TIMER_t power_up_delay_timer;  // Turns on the speaker if all conditions met for at least 2 seconds
-    TIMER_t sleep_timer;
     TIMER_t voltage_read_timer;
 
     /*      Other        */
     uint16_t battery_voltage;   // Battery voltage in milivolts
 }m_power;
-
-
-/************************************************/
-/*       POWER INTERRUPT SERVICE ROUTINE        */
-/************************************************/
-/* WAKE_UP ISR */
-ISR(PCINT2_vect)
-{
-    system_event(EV_WAKE);
-}
 
 void power_task(void *p)
 {
@@ -59,38 +48,26 @@ void power_task(void *p)
             system_event(EV_POWER_UP);
             m_power.power_up_delay_timer.reset();
         }			
-        
-        
-        if (m_hw_status.external_power || m_power.switch_pwr.value())
-        {
-            m_power.sleep_timer.reset();
-        }
-        else if (m_power.sleep_timer.value() >= POWER_CFG_SLEEP_DELAY_MS)
-        {
-            m_power.sleep_timer.reset();
-            system_event(EV_SLEEP);
-        }
-
+    
         /* Switch disabled or power too low */
         if (!m_power.switch_pwr.value() || (m_power.battery_voltage <= POWER_CFG_MIN_BATTERY_VOLTAGE && !m_hw_status.external_power))
         {
             /* Shutdown in any case */
             if (m_hw_status.powered_up)
             {
-                system_event(EV_SHUTDOWN);
-                m_power.power_up_delay_timer.reset();
+                system_event(EV_SHUTDOWN);     // Perform power down without turning off the 5V line (MCU is still alive)
             }
         }
 
 
         if (m_power.napajalnik.value() && !m_hw_status.external_power)
         {
-            system_event(EV_POWER_SWITCH_EXTERNAL);
+            system_event(EV_POWER_SWITCH_EXTERNAL);             // Switch to external (21V PSU) power
         }
 
         else if (m_power.napajalnik.value() == 0 && m_hw_status.external_power)
         {
-            system_event(EV_POWER_SWITCH_INTERNAL);
+            system_event(EV_POWER_SWITCH_INTERNAL);             // Switch to internal (12V battery) power
         }
 
 

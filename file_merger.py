@@ -1,30 +1,19 @@
-import os
-import sys
-import time
+import os, sys, time
 
 
-SEARCH_DIR = "./"
+
+SEARCH_DIR = "./code"
 OUTPUT_FILE = "ALL_IN_ONE.cpp"
 
-EXTENSIONS_TO_USE = [".cpp", ".c", ".h", ".hpp", ".hh"]
+EXTENSIONS_TO_USE = [".cpp",".c",".h",".hpp",".hh"]
 FOLDERS_TO_IGNORE = ["FreeRTOS_m2560"]
 
-LANGUAGE_ENDINGS  = [ ("Python", ".py"), ("C", ".c", ".h"), ("C++", ".cpp", ".cc", ".hpp", ".hh")]
 
-
-#########################################################################################################################
-
-def find_lang_by_extension(extension):
-    for lang in LANGUAGE_ENDINGS:
-        if extension in lang:
-            return lang[0]
-    return "NEZNAN"
-
-# STEP CREATE FILE DATA
+#STEP CREATE FILE DATA
 data_output_file = ""
 file_count = 0
 total_line_count = 0
-for dir, dirname, files in os.walk(SEARCH_DIR, topdown=True):
+for dir, dirname, files in os.walk(SEARCH_DIR, topdown=False):
 
     for ign_fld in FOLDERS_TO_IGNORE:
         if dir.find(ign_fld) != -1:
@@ -36,20 +25,25 @@ for dir, dirname, files in os.walk(SEARCH_DIR, topdown=True):
             for extension in EXTENSIONS_TO_USE:
                 if file.endswith(extension):
                     print("Processing file: " + file)
-                    dir = dir.replace("\\", "/")
+                    dir = dir.replace("\\","/")
                     file = dir + "/" + file
 
                     file_count += 1
-                    total_line_count += sum(1 for line in open(file=file,
-                                            mode="r", encoding="utf-8"))
+                    total_line_count += sum (1 for line in open(file=file, mode="r", encoding="utf-8"))
 
-                    lang = find_lang_by_extension(extension)
+                    lang = "NEZNAN"
+                    if file.endswith(".cpp") or file.endswith(".hpp"):
+                        lang = "C++"
+                    elif file.endswith(".c") or file.endswith(".h"):
+                        lang = "C"
+                    elif file.endswith(".py"):
+                        lang = "Python"
                     data_output_file += "\n\
 /*###############################################################################################################################################\n\
 -> IME DATOTEKE: " + file + " \n\
 -> JEZIK: " + lang + "\n\
 #################################################################################################################################################*/\n"
-                    with open(file=file, mode="r", encoding="utf-8") as opened_file:
+                    with open(file=file,mode="r",encoding="utf-8") as opened_file:
                         data_output_file += opened_file.read()
                     break
 
@@ -65,7 +59,8 @@ file_info = "\n\n\n\n\
 data_output_file = file_info + data_output_file
 
 
-# STEP WRITE FILE
-output_file = open(file=OUTPUT_FILE, mode="w", encoding="utf-8")
+
+#STEP WRITE FILE
+output_file = open(file=OUTPUT_FILE, mode="w",encoding="utf-8")
 output_file.write(data_output_file)
 output_file.close()

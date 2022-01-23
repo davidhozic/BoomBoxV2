@@ -38,27 +38,6 @@ void system_event(enum_system_event event){
 			m_hw_status.external_power = 0;
 		break;
 		
-        case EV_SLEEP:
-            asm("cli");
-            /* Set sleep mode to power down */
-            SMCR = 0;
-            SMCR |= (1 << SM1);
-            SMCR |= (1 << SE);
-            /* Setup PCINT interrupt */
-            PCICR = (1 << PCIE2);
-            PCMSK2 = (1 << PCINT16) | (1 << PCINT17);
-            asm("sei");
-            asm("SLEEP");
-        break;
-
-        case EV_WAKE:
-            asm("cli");
-            SMCR = 0;
-            PCICR = 0;
-            PCMSK2 = 0;
-            asm("sei");
-        break;
-
 		case EV_POWER_UP:
             writeOUTPUT(GLOBAL_CFG_PIN_12V_LINE, GLOBAL_CFG_PORT_12V_LINE, 1);
 			writeOUTPUT(GLOBAL_CFG_PIN_OUTPUT_MOSFET, GLOBAL_CFG_PORT_OUTPUT_MOSFET, 1);
