@@ -45,21 +45,18 @@ void audio_visual_task(void* p)
 		{
 			m_audio_system.meass.readings_sum += m_audio_system.meass.max_value;
 			m_audio_system.meass.max_value = 0;
-			m_audio_system.meass.readings_num++;
-			m_audio_system.meass.val_log_timer.reset();
-			
 			/* Maximum number of readings has been reached, calculate average */
-			if (m_audio_system.meass.readings_num >= AUVS_CFG_MEASS_MAX_READINGS)
+			if (++m_audio_system.meass.readings_num >= AUVS_CFG_MEASS_MAX_READINGS)
 			{
 				m_audio_system.meass.average_volume  = m_audio_system.meass.readings_sum / m_audio_system.meass.readings_num;
 				m_audio_system.meass.readings_sum  = 0;
 				m_audio_system.meass.readings_num  = 0;
 				m_audio_system.meass.max_value	 = 0;
 			}
-			
+            m_audio_system.meass.val_log_timer.reset();
 		}
 
-		delay_FreeRTOS_ms(3);
+		delay_FreeRTOS_ms(2);
 		//END LOOP
 	}
 }

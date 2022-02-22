@@ -43,9 +43,9 @@
 #define AUVS_CFG_BRIGHTNESS_CHANGE					                7
 
 /*   MEASSUREMENT CONFIG   */          
-#define	AUVS_CFG_MEASS_MAX_READINGS	                                40
-#define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            10 
-#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                15
+#define	AUVS_CFG_MEASS_MAX_READINGS	                                50
+#define AUVS_CFG_MEASS_LOG_PERIOD_MS	                            30 
+#define	AUVS_CFG_MEASS_MIC_TRIGGER_PERCENT			                12
 #define AUVS_CFG_MEASS_FILTER_TIME_MS                               220
 /************************************************************************/
 

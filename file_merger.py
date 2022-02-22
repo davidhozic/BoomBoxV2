@@ -2,11 +2,26 @@ import os, sys, time
 
 
 
-SEARCH_DIR = "./code"
+SEARCH_DIR = "./"
 OUTPUT_FILE = "ALL_IN_ONE.cpp"
 
-EXTENSIONS_TO_USE = [".cpp",".c",".h",".hpp",".hh"]
-FOLDERS_TO_IGNORE = ["FreeRTOS_m2560"]
+EXTENSIONS_TO_USE = [".cpp",".c",".h",".hpp",".hh",".py",".pyw"]
+FOLDERS_TO_IGNORE = ["FreeRTOS"]
+
+
+
+class LANGEXTENSION:
+    def __init__(this, lang,  *extensions):
+        this.lang = lang
+        this.extensions = extensions
+
+CONST_EXTENSIONS = \
+    [
+        LANGEXTENSION("C", ".c",".h"),
+        LANGEXTENSION("C++", ".cpp",".hpp"),
+        LANGEXTENSION("Python", ".py",".pyw")
+    ]
+
 
 
 #STEP CREATE FILE DATA
@@ -29,19 +44,20 @@ for dir, dirname, files in os.walk(SEARCH_DIR, topdown=False):
                     file = dir + "/" + file
 
                     file_count += 1
-                    total_line_count += sum (1 for line in open(file=file, mode="r", encoding="utf-8"))
+                    total_line_count += sum (1 for line in open(file=file, mode="r", encoding="utf-8") if line.strip() != "")
 
-                    lang = "NEZNAN"
-                    if file.endswith(".cpp") or file.endswith(".hpp"):
-                        lang = "C++"
-                    elif file.endswith(".c") or file.endswith(".h"):
-                        lang = "C"
-                    elif file.endswith(".py"):
-                        lang = "Python"
+                    lang = "Unknown"
+                    for ext in CONST_EXTENSIONS:
+                        for ending in ext.extensions:
+                            if file.endswith(ending):
+                                lang = ext.lang
+                                break
+
+
                     data_output_file += "\n\
 /*###############################################################################################################################################\n\
--> IME DATOTEKE: " + file + " \n\
--> JEZIK: " + lang + "\n\
+-> FILENAME : " + file + " \n\
+-> LANGUAGE: " + lang + "\n\
 #################################################################################################################################################*/\n"
                     with open(file=file,mode="r",encoding="utf-8") as opened_file:
                         data_output_file += opened_file.read()
@@ -50,10 +66,10 @@ for dir, dirname, files in os.walk(SEARCH_DIR, topdown=False):
 
 file_info = "\n\n\n\n\
 ============================================================================================\n\
-    ! ! ! AUTOMATICNO GENERIRANA DATOTEKA PREK SKRIPTE ! ! !    \n\
+    ! ! ! AUTOMATICALLY GENERATED FILE ! ! !    \n\
     --------------------------------------------------------------\n\
-    -> STEVILO SKUPNIH VRSTIC (s presledki): " + str(total_line_count) + "\n" + "\
-    -> STEVILO DATOTEK VKLJUCENIH V SKUPNO DATOTEKO: " + str(file_count) + "\n\
+    -> NUMBER OF LINES (excluding empty lines): " + str(total_line_count) + "\n" + "\
+    -> NUMBER OF FILES MERGED: " + str(file_count) + "\n\
 ============================================================================================\n\n\n\n"
 
 data_output_file = file_info + data_output_file
