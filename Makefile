@@ -102,7 +102,7 @@ O += $(patsubst %.c,$(OUTPUT_DIR)/%.o,$(C))
 
 
 
-all: clean compile flash
+all: compile flash
 
 
 clean:
@@ -114,8 +114,7 @@ clean:
 
 
 
-compile: echo_compile mkdir 
-	make $(O) -j12
+compile: echo_compile mkdir $(O)
 	echo "------------------------------------"
 	echo " STEP[]: LINKING INTO ELF           "
 	echo "------------------------------------"
@@ -127,17 +126,17 @@ compile: echo_compile mkdir
 	sleep 0.5
 	avr-objcopy -j .text -j .data -R .eeprom -O ihex $(OUTPUT_DIR)/$(OUTPUT_NAME).elf $(OUTPUT_DIR)/$(OUTPUT_NAME).hex
 
-flash : 
+flash: compile 
 	echo "------------------------------------"
 	echo " STEP[]: FLASHING TO $(MCU_PART)    "
 	echo "------------------------------------"
 	sleep 0.5
 	avrdude -p $(MCU_PART) -c $(PROGRAMMER) -U flash:w:"$(OUTPUT_DIR)/$(OUTPUT_NAME).hex"
 
-mkdir : 
-	for dir in $(SRC_DIR); do mkdir -p $(OUTPUT_DIR)/$$dir; done
+mkdir: 
+	mkdir -p $(OUTPUT_DIR)
 
-echo_compile : 
+echo_compile: 
 	echo "------------------------------------"
 	echo " STEP[]: COMPILING SOURCE FILES     "
 	echo "------------------------------------"
@@ -146,10 +145,12 @@ echo_compile :
 
 $(OUTPUT_DIR)/%.o : %.c
 	echo Compiling C SOURCE  $^
+	mkdir -p $(dir $@)
 	$(C_COMPILER) -c $^ $(COMMON_FLAGS) $(C_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@
 
 $(OUTPUT_DIR)/%.o : %.cpp
 	echo Compiling CPP SOURCE  $^
+	mkdir -p $(dir $@)
 	$(CPP_COMPILER) -c $^ $(COMMON_FLAGS) $(CPP_FLAGS) $(GLOBAL_INC) $(FOLDER_INCLUDE) -o $@
 
 
